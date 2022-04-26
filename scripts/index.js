@@ -1,5 +1,9 @@
 function loadCard(data) {
   window.mtgCard.cardData = data;
+
+  if (data['set_type'] == 'token')
+    location.reload();
+
   document.getElementById("cardImage").src = data['image_uris']['art_crop'];
 
   let str = data['name'];
