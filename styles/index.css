@@ -18,7 +18,15 @@ body {
 #cardName {
   font-size: 35px;
   color: white;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
+  word-spacing: 5px;
+  font-family: 'Beleren Bold';
+}
+
+#cardMana {
+  font-size: 30px;
+  color: white;
+  letter-spacing: 4px;
   word-spacing: 5px;
   font-family: 'Beleren Bold';
 }
@@ -28,4 +36,8 @@ body {
   color: white;
   letter-spacing: 1px;
   font-family: 'Beleren Bold';
+}
+
+.manaSymbol {
+  width: 30px;
 }
