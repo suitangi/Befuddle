@@ -1,10 +1,10 @@
-#cardImage {
-  width: 400px;
-  border-radius: 5px;
-}
-
 body {
   background-color: #333333;
+}
+
+#cardImage {
+  width: min(400px, 90vw);
+  border-radius: 5px;
 }
 
 #card {
@@ -16,7 +16,7 @@ body {
 }
 
 #cardName {
-  font-size: 35px;
+  font-size: min(35px, 5vw);
   color: white;
   letter-spacing: 4px;
   word-spacing: 5px;
@@ -25,6 +25,7 @@ body {
 
 #cardMana {
   font-size: 30px;
+  font-size: min(30px, 4vw);
   color: white;
   letter-spacing: 4px;
   word-spacing: 5px;
@@ -39,12 +40,12 @@ body {
 }
 
 .manaSymbol {
-  width: 30px;
+  width: min(30px, 4vw);
 }
 
 #keyboardContainer {
   position: absolute;
-  top: calc(12% + 500px);
+  top: min(calc(12% + 500px), calc(100vw + 12%));
   left: 50%;
   transform: translate(-50%, 0);
   width: 100%;
@@ -75,9 +76,9 @@ body {
 #keyboard li {
   float: left;
   margin: 0 5px 5px 0;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
+  width: min(50px, 7vw);
+  height: 50px;
+  line-height: 50px;
   text-align: center;
   background: #151515;
   color: #bbb;
@@ -95,17 +96,17 @@ body {
 }
 
 #keyboard .qKey {
-  margin-left: calc(50vw - 230px);
+  margin-left: max(calc(50vw - 280px), calc(15vw - 30px));
 }
 
 #keyboard .aKey {
   clear: left;
-  margin-left: calc(50vw - 205px);
+  margin-left: max(calc(50vw - 255px), calc(18.5vw - 27px));
 }
 
 #keyboard .zKey {
   clear: left;
-  margin-left: calc(50vw - 170px);
+  margin-left: max(calc(50vw - 210px), calc(24vw - 24px));
 }
 
 #keyboard li:hover {

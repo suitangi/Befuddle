@@ -105,7 +105,7 @@ function submitLetter(char) {
         animation: 'top',
         closeAnimation: 'top',
         animateFromElement: false,
-        boxWidth: '400px',
+        boxWidth: 'min(400px, 80%)',
         draggable: false,
         bgOpacity: 0,
         useBootstrap: false,
