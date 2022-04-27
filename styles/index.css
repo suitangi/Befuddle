@@ -23,6 +23,7 @@ body {
   letter-spacing: 4px;
   word-spacing: 5px;
   font-family: 'Beleren Bold';
+  white-space: nowrap;
 }
 
 #cardMana {
@@ -95,6 +96,7 @@ body {
   transition: background .5s;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 #keyboard .qKey {

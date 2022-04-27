@@ -154,9 +154,9 @@ $(document).ready(function() {
 
   let li = document.getElementById('keyboard').children;
   for (var i = 0; i < li.length; i++) {
-    window.displayKeyboard[li[i].innerText] = li[i];
+    window.displayKeyboard[li[i].innerText.toLowerCase()] = li[i];
     li[i].addEventListener('click', function() {
-      submitLetter(this.innerText);
+      submitLetter(this.innerText.toLowerCase());
     });
   }
 
@@ -167,6 +167,9 @@ $(document).ready(function() {
     e = e || window.event;
     if (!window.mtgCard.win && e.keyCode >= 97 && e.keyCode <= 122) {
       submitLetter(String.fromCharCode(e.keyCode));
+    }
+    if (!window.mtgCard.win && e.keyCode >= 65 && e.keyCode <= 90) {
+      submitLetter(String.fromCharCode(e.keyCode).toLowerCase());
     }
   };
 
