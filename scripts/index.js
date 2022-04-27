@@ -3,7 +3,7 @@ function requestCard() {
   window.mtgCard = {};
   window.mtgCard.win = false;
   window.mtgCard.wrongGuess = '';
-  document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
+  // document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
 
   fetch('https://api.scryfall.com/cards/random')
     .then(response => response.json())
@@ -14,6 +14,13 @@ function requestCard() {
 //function to load the card data into memory
 function loadCard(data) {
   window.mtgCard.cardData = data;
+
+  //reset display keyboard
+  let li = document.getElementById('keyboard').children;
+  for (var i = 0; i < li.length; i++) {
+    li[i].classList.remove('correct');
+    li[i].classList.remove('incorrect');
+  }
 
   let html = '';
 
@@ -56,11 +63,16 @@ function loadCard(data) {
   document.getElementById('card').style = "";
 }
 
+//letter submtted by player
 function submitLetter(char) {
 
-  const asciiOffset = 32;
+  //if letter already guessed, return
+  if (window.mtgCard.wrongGuess.includes(char))
+    return;
 
   let found = false;
+
+  //search in real card name and replace with correct letter
   let uChar = char.toUpperCase();
   let s = window.mtgCard.cardData.name;
   let r = '';
@@ -72,12 +84,14 @@ function submitLetter(char) {
       r += window.mtgCard.hiddenName.charAt(i);
     }
   }
+
+
   if (!found) {
-    if (!window.mtgCard.wrongGuess.includes(char)) {
-      window.mtgCard.wrongGuess += char;
-      document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
-    }
-  } else {
+    window.mtgCard.wrongGuess += char;
+    //document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
+    window.displayKeyboard[char].classList.add('incorrect');
+  } else { //card name complete
+    window.displayKeyboard[char].classList.add('correct');
     window.mtgCard.hiddenName = r;
     document.getElementById("cardName").innerText = window.mtgCard.hiddenName;
 
@@ -127,6 +141,16 @@ function hideName(str) {
 
 //start script
 $(document).ready(function() {
+
+  window.displayKeyboard = {};
+
+  let li = document.getElementById('keyboard').children;
+  for (var i = 0; i < li.length; i++) {
+    window.displayKeyboard[li[i].innerText] = li[i];
+    li[i].addEventListener('click', function() {
+      submitLetter(this.innerText);
+    });
+  }
 
   document.getElementById('card').style = "display:none;";
   requestCard();

@@ -10,9 +10,9 @@ body {
 #card {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 12%;
   text-align: center;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0%);
 }
 
 #cardName {
@@ -40,4 +40,70 @@ body {
 
 .manaSymbol {
   width: 30px;
+}
+
+#keyboardContainer {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+#keyboard {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#keyboard li.correct {
+  background: #292929 !important;
+  color: #444 !important;
+  border-color: rgba(135, 46, 46, 0);
+  border-width: 1px;
+  border-style: solid;
+}
+
+#keyboard li.incorrect {
+  background: #292929 !important;
+  color: #444 !important;
+  border-color: rgba(135, 46, 46, 100);
+  border-width: 1px;
+  border-style: solid;
+}
+
+#keyboard li {
+  float: left;
+  margin: 0 5px 5px 0;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  background: #151515;
+  color: #bbb;
+  border-color: rgba(135, 46, 46, 0);
+  border-width: 1px;
+  border-style: solid;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  font-family: 'Beleren Bold';
+  transition: .5s;
+}
+
+#keyboard .aKey {
+  clear: left;
+  margin-left: 25px;
+}
+
+#keyboard .zKey {
+  clear: left;
+  margin-left: 60px;
+}
+
+#keyboard li:hover {
+  position: relative;
+  top: 1px;
+  left: 1px;
+  color: #ccc;
+  background: #252525;
+  cursor: pointer;
 }

@@ -7,7 +7,6 @@ Currently using Scryfall api for random card, please don't overwhelm them and re
 # Todo:
 
 ### Misc.
-- mobile keyboard
 - Better animations
 - Migrate off of scryfall api, self host trimmed data and list
 - Daily card, make the game social
