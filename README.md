@@ -9,7 +9,7 @@ Currently using Scryfall api for random card, please don't overwhelm them and re
 ### Misc.
 - Better animations
 - Migrate off of scryfall api, self host trimmed data and list
-- Daily card, make the game social
+- Daily card, make the game social (with sharing)
 
 ### Options menu:
 - Hide mana cost
@@ -23,6 +23,7 @@ Currently using Scryfall api for random card, please don't overwhelm them and re
 ### Stats:
 - Keep track with cookies
 - Stat displays
+- Daily tracking
 
 ### Credits:
 - Art Images: Scryfall
