@@ -47,6 +47,7 @@ body {
   top: calc(12% + 500px);
   left: 50%;
   transform: translate(-50%, 0);
+  width: 100%;
 }
 
 #keyboard {
@@ -86,17 +87,25 @@ body {
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
   font-family: 'Beleren Bold';
-  transition: .5s;
+  transition: border-color .5s;
+  transition: color .5s;
+  transition: background .5s;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+#keyboard .qKey {
+  margin-left: calc(50vw - 230px);
 }
 
 #keyboard .aKey {
   clear: left;
-  margin-left: 25px;
+  margin-left: calc(50vw - 205px);
 }
 
 #keyboard .zKey {
   clear: left;
-  margin-left: 60px;
+  margin-left: calc(50vw - 170px);
 }
 
 #keyboard li:hover {
