@@ -4,7 +4,8 @@ function requestCard() {
   window.mtgCard.win = false;
   window.mtgCard.wrongGuess = '';
   // document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
-
+  document.getElementById("cardImage").style="opacity:0; transition: opacity 0s;";
+  document.getElementById("imageLoading").style="";
   fetch('https://api.scryfall.com/cards/random')
     .then(response => response.json())
     .then(data => loadCard(data));
@@ -55,7 +56,14 @@ function loadCard(data) {
     return;
   }
 
-  document.getElementById("cardImage").src = data['image_uris']['art_crop'];
+  var img = document.getElementById("cardImage");
+  var newImg = new Image;
+  newImg.onload = function() {
+    img.src = this.src;
+    document.getElementById("cardImage").style="opacity:1;";
+    document.getElementById("imageLoading").style="display:none;";
+  }
+  newImg.src = data['image_uris']['art_crop'];
 
   let str = data['name'];
   window.mtgCard.hiddenName = hideName(str);
