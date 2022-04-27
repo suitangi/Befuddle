@@ -6,8 +6,8 @@ function requestCard() {
   document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
 
   fetch('https://api.scryfall.com/cards/random')
-  .then(response => response.json())
-  .then(data => loadCard(data));
+    .then(response => response.json())
+    .then(data => loadCard(data));
 }
 
 
@@ -20,8 +20,7 @@ function loadCard(data) {
   //get mana costs
   if (data['mana_cost'] == '') {
     html = 'No mana cost';
-  }
-  else {
+  } else {
     let tmp = data['mana_cost'].split(' // '); //for the double faced/ 2 in 1 cards
     window.mtgCard.manaCost = [];
     for (var i = 0; i < tmp.length; i++) {
@@ -54,7 +53,7 @@ function loadCard(data) {
   let str = data['name'];
   window.mtgCard.hiddenName = hideName(str);
   document.getElementById("cardName").innerText = window.mtgCard.hiddenName;
-  console.log(data);
+  document.getElementById('card').style = "";
 }
 
 function submitLetter(char) {
@@ -86,27 +85,28 @@ function submitLetter(char) {
     if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
       window.mtgCard.win = true;
       $.confirm({
-      title: "<span style=\"font-family: 'Beleren Bold';font-size:30px;\">Nice</span>",
-      content: "<span style=\"font-family: 'Beleren Bold';\">" + window.mtgCard.wrongGuess.length + " wrong letter(s).</span>",
-      theme: 'dark',
-      animation: 'top',
-      closeAnimation: 'top',
-      animateFromElement: false,
-      boxWidth: '400px',
-      draggable: false,
-      bgOpacity: 0,
-      useBootstrap: false,
-      typeAnimated: true,
-      buttons: {
-        close: {
-          text: "Next Card",
-          btnClass: 'btn-blue',
-          action: function() {
-            requestCard();
+        title: "<span style=\"font-family: 'Beleren Bold';font-size:30px;\">Nice</span>",
+        content: "<span style=\"font-family: 'Beleren Bold';\">" + window.mtgCard.wrongGuess.length + " wrong letter(s).</span>",
+        theme: 'dark',
+        animation: 'top',
+        closeAnimation: 'top',
+        animateFromElement: false,
+        boxWidth: '400px',
+        draggable: false,
+        bgOpacity: 0,
+        useBootstrap: false,
+        typeAnimated: true,
+        buttons: {
+          close: {
+            text: "Next Card",
+            btnClass: 'btn-blue',
+            keys: ['enter'],
+            action: function() {
+              requestCard();
+            }
           }
         }
-      }
-    });
+      });
     }
   }
 }
@@ -128,13 +128,14 @@ function hideName(str) {
 //start script
 $(document).ready(function() {
 
+  document.getElementById('card').style = "display:none;";
   requestCard();
 
-  document.onkeypress = function (e) {
+  document.onkeypress = function(e) {
     e = e || window.event;
     if (!window.mtgCard.win && e.keyCode >= 97 && e.keyCode <= 122) {
       submitLetter(String.fromCharCode(e.keyCode));
-   }
+    }
   };
 
 });
