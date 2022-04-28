@@ -118,7 +118,7 @@ function submitLetter(char) {
     if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
       window.mtgCard.win = true;
       $.confirm({
-        title: "<br><span style=\"font-family: 'Beleren Bold';font-size:30px;\">" + terms[window.mtgCard.wrongGuess.length] +
+        title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">" + terms[window.mtgCard.wrongGuess.length] +
           (window.mtgCard.wrongGuess.length !=0? (" — " + window.mtgCard.wrongGuess.length + " incorrect"): '') + "</span>",
         content: "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">",
         theme: 'dark',

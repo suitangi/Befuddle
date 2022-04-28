@@ -1,16 +1,18 @@
 # MTG Hangman game!
 
 
-Currently using Scryfall api for random card, please don't overwhelm them and refresh unnecessarily. Thanks!
+Currently using Scryfall api, please don't overwhelm them and refresh unnecessarily. Thanks!
 
 
 # Todo:
 
-### Misc.
+### Misc/Bugs
 - Better animations
 - Daily card, make the game social (with sharing)
   - Daily card needs to be self hosted json
 - Fix bugs on double sided cards, better system with split cards
+- Remove arena and mtgo cards, remove flavor-named cards (original card name shows)
+- Investigate 'unique' art and reprint art in list
 
 ### Options menu:
 - Hide mana cost

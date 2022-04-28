@@ -17,7 +17,7 @@ body {
   opacity: 1;
   transition: opacity 1.5s;
   object-fit: cover;
-  max-height: min(350px, 10px + 70vw);
+  max-height: min(335px, -40px + 85vw);
 }
 
 
