@@ -110,16 +110,17 @@ function submitLetter(char) {
     window.mtgCard.hiddenName = r;
     document.getElementById("cardName").innerText = window.mtgCard.hiddenName;
 
-    let terms = ['Perfect!', 'Exceptional', 'Precise', 'Great', 'Nice', 'Nice', 'Good', 'Good', 'Fine', 'Fine',
-      'Almost', 'Close', 'Close', 'Modest', 'Modest', 'Rough', 'Subpar', 'Bummer', 'Bummer', 'Meager',
-      'Disastrous', 'Disastrous', 'Disastrous', 'Disastrous', 'Disastrous', 'Disastrous',]
+    let terms = ['Perfect!', 'Exceptional', 'Precise', 'Great', 'Nice', 'Good', 'Fine', 'Almost', 'Close', 'Modest',
+      'Modest', 'Rough', 'Rough', 'Subpar', 'Bummer', 'Bummer', 'Meager', 'Meager', 'Feeble', 'Feeble',
+      'Disastrous', 'Disastrous', 'Disastrous', 'Incredible', 'Incredible', 'Incredible',]
 
     //player got the card
     if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
       window.mtgCard.win = true;
+      let wr = window.mtgCard.wrongGuess.length;
       $.confirm({
-        title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">" + terms[window.mtgCard.wrongGuess.length] +
-          (window.mtgCard.wrongGuess.length !=0? (" — " + window.mtgCard.wrongGuess.length + " incorrect"): '') + "</span>",
+        title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">" + terms[wr] +
+          (wr !=0? (" — " + wr + " incorrect"): '') + "</span>",
         content: "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">",
         theme: 'dark',
         animation: 'top',
@@ -135,7 +136,9 @@ function submitLetter(char) {
             text: "Share",
             btnClass: 'btn-green',
             action: function(linkButton) {
-              var data = [new ClipboardItem({ "text/plain": new Blob(['https://suitangi.github.io/MTGHangman/?cardId=' + window.mtgCard.id], { type: "text/plain" }) })];
+              var data = [new ClipboardItem({ "text/plain": new Blob([
+                'I got this card with ' + wr + ' wrong guess' + (wr == 1? '': 'es') + '. \nhttps://suitangi.github.io/MTGHangman/?cardId=' + window.mtgCard.id
+              ], { type: "text/plain" }) })];
               navigator.clipboard.write(data).then(function() {
                 linkButton.addClass('displayButton');
                 console.log("Copied to clipboard successfully!");
@@ -197,7 +200,7 @@ $(document).ready(function() {
 
   document.getElementById('card').style = "display:none;";
 
-  fetch('./cardList.json')
+  fetch('https://raw.githubusercontent.com/suitangi/MTGHangman/main/cardList.json')
   .then(response => response.json())
   .then(data => {
     window.cardList = data;
