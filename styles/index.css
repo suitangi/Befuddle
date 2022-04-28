@@ -5,7 +5,7 @@ body {
 #card {
   position: absolute;
   left: 50%;
-  top: 12%;
+  top: 8%;
   text-align: center;
   transform: translate(-50%, 0%);
   max-width: 95%;
@@ -53,7 +53,7 @@ body {
 
 #keyboardContainer {
   position: absolute;
-  top: min(calc(12% + 500px), calc(120vw + 12%));
+  top: min(calc(8% + 500px), calc(120vw + 8%));
   left: 50%;
   transform: translate(-50%, 0);
   width: 100%;

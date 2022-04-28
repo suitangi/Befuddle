@@ -13,6 +13,7 @@ function getParameterByName(name, url) {
 function requestCard(id) {
   window.mtgCard = {};
   window.mtgCard.win = false;
+  window.mtgCard.id = id;
   window.mtgCard.wrongGuess = '';
   // document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
   document.getElementById("cardImage").style="opacity:0; transition: opacity 0s;";
@@ -125,7 +126,22 @@ function submitLetter(char) {
         useBootstrap: false,
         typeAnimated: true,
         buttons: {
-          close: {
+          link: {
+            text: "Share",
+            btnClass: 'btn-green',
+            action: function(linkButton) {
+              var data = [new ClipboardItem({ "text/plain": new Blob(['https://suitangi.github.io/MTGHangman/?cardId=' + window.mtgCard.id], { type: "text/plain" }) })];
+              navigator.clipboard.write(data).then(function() {
+                console.log("Copied to clipboard successfully!");
+                linkButton.setText('Copied!');
+                linkButton.addClass('btn-dark');
+                linkButton.removeClass('btn-green');
+              }, function() {
+                console.error("Unable to write to clipboard. :-(");
+              });
+              return false;
+            }
+          }, close: {
             text: "Next Card",
             btnClass: 'btn-blue',
             keys: ['enter'],
@@ -168,7 +184,7 @@ $(document).ready(function() {
 
   document.getElementById('card').style = "display:none;";
 
-  fetch('./cardList.json')
+  fetch('https://raw.githubusercontent.com/suitangi/MTGHangman/main/cardList.json')
   .then(response => response.json())
   .then(data => {
     window.cardList = data;
