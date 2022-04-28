@@ -8,18 +8,14 @@ Currently using Scryfall api for random card, please don't overwhelm them and re
 
 ### Misc.
 - Better animations
-- Migrate off of scryfall api, self host trimmed data and list
 - Daily card, make the game social (with sharing)
+  - Daily card needs to be self hosted json
 - Fix bugs on double sided cards, better system with split cards
 
 ### Options menu:
 - Hide mana cost
 - Card color
 - Number of attempts
-
-### Post round:
-- Show card afterwards
-- Show artist name
 
 ### Stats:
 - Keep track with cookies

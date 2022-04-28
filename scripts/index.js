@@ -110,12 +110,17 @@ function submitLetter(char) {
     window.mtgCard.hiddenName = r;
     document.getElementById("cardName").innerText = window.mtgCard.hiddenName;
 
+    let terms = ['Perfect!', 'Exceptional', 'Precise', 'Great', 'Nice', 'Nice', 'Good', 'Good', 'Fine', 'Fine',
+      'Almost', 'Close', 'Close', 'Modest', 'Modest', 'Rough', 'Subpar', 'Bummer', 'Bummer', 'Meager',
+      'Disastrous', 'Disastrous', 'Disastrous', 'Disastrous', 'Disastrous', 'Disastrous',]
+
     //player got the card
     if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
       window.mtgCard.win = true;
       $.confirm({
-        title: "<span style=\"font-family: 'Beleren Bold';font-size:30px;\">Nice</span>",
-        content: "<span style=\"font-family: 'Beleren Bold';\">" + window.mtgCard.wrongGuess.length + " wrong letter(s).</span>",
+        title: "<br><span style=\"font-family: 'Beleren Bold';font-size:30px;\">" + terms[window.mtgCard.wrongGuess.length] +
+          (window.mtgCard.wrongGuess.length !=0? (" — " + window.mtgCard.wrongGuess.length + " incorrect"): '') + "</span>",
+        content: "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">",
         theme: 'dark',
         animation: 'top',
         closeAnimation: 'top',
@@ -132,12 +137,20 @@ function submitLetter(char) {
             action: function(linkButton) {
               var data = [new ClipboardItem({ "text/plain": new Blob(['https://suitangi.github.io/MTGHangman/?cardId=' + window.mtgCard.id], { type: "text/plain" }) })];
               navigator.clipboard.write(data).then(function() {
+                linkButton.addClass('displayButton');
                 console.log("Copied to clipboard successfully!");
                 linkButton.setText('Copied!');
                 linkButton.addClass('btn-dark');
                 linkButton.removeClass('btn-green');
+                setTimeout(function(lb) {
+                  linkButton.removeClass('btn-dark');
+                  linkButton.addClass('btn-green');
+                }, 1000, linkButton);
+                setTimeout(function(lb) {
+                  linkButton.setText('Share');
+                }, 3000, linkButton);
               }, function() {
-                console.error("Unable to write to clipboard. :-(");
+                console.error("Unable to write to clipboard.");
               });
               return false;
             }
@@ -184,7 +197,7 @@ $(document).ready(function() {
 
   document.getElementById('card').style = "display:none;";
 
-  fetch('https://raw.githubusercontent.com/suitangi/MTGHangman/main/cardList.json')
+  fetch('./cardList.json')
   .then(response => response.json())
   .then(data => {
     window.cardList = data;
