@@ -35,18 +35,30 @@ function loadCard(data) {
     li[i].classList.remove('incorrect');
   }
 
+  // select card face if MDFC or transform
+  if (data['layout'] == 'transform' || data['layout'] == 'modal_dfc') {
+    let cf = data['card_faces'][Math.floor(Math.random() * data['card_faces'].length)];
+    data['mana_cost'] = cf['mana_cost'];
+    data['image_uris'] = cf['image_uris'];
+    data['name'] = cf['name'];
+  }
+
   let html = '';
 
   //get mana costs
   if (data['mana_cost'] == '') {
     html = 'No mana cost';
   } else {
-    let tmp = data['mana_cost'].split(' // '); //for the double faced/ 2 in 1 cards
     window.mtgCard.manaCost = [];
-    for (var i = 0; i < tmp.length; i++) {
-      if (i > 0)
-        window.mtgCard.manaCost.push('//');
-      window.mtgCard.manaCost = window.mtgCard.manaCost.concat(tmp[i].substring(1, tmp[i].length - 1).split('}{'));
+    if (data['layout'] == 'split' || data['layout'] == 'adventure' || data['layout'] == 'flip') {
+      let tmp = data['mana_cost'].split(' // '); //for the double faced/ 2 in 1 cards
+      for (var i = 0; i < tmp.length; i++) {
+        if (i > 0)
+          window.mtgCard.manaCost.push('//');
+        window.mtgCard.manaCost = window.mtgCard.manaCost.concat(tmp[i].substring(1, tmp[i].length - 1).split('}{'));
+      }
+    } else {
+      window.mtgCard.manaCost = window.mtgCard.manaCost.concat(data['mana_cost'].substring(1, data['mana_cost'].length - 1).split('}{'));
     }
 
     for (var i = 0; i < window.mtgCard.manaCost.length; i++) {
@@ -114,6 +126,15 @@ function submitLetter(char) {
       'Modest', 'Rough', 'Rough', 'Subpar', 'Bummer', 'Bummer', 'Meager', 'Meager', 'Feeble', 'Feeble',
       'Disastrous', 'Disastrous', 'Disastrous', 'Incredible', 'Incredible', 'Incredible',]
 
+    let html;
+    if (window.mtgCard.cardData['layout'] == 'transform' || window.mtgCard.cardData['layout'] == 'modal_dfc') {
+      html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
+        '<img src=\"' + window.mtgCard.cardData['card_faces'][0]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><img class=\"flip-symbol-front\" src=\"./img/flip.jpg\"></div> <div class="flip-card-back">' +
+        '<img src=\"' + window.mtgCard.cardData['card_faces'][1]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><img class=\"flip-symbol-back\" src=\"./img/flip.jpg\"></div></div></div>';
+    } else {
+      html = "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">";
+    }
+
     //player got the card
     if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
       window.mtgCard.win = true;
@@ -121,7 +142,7 @@ function submitLetter(char) {
       $.confirm({
         title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">" + terms[wr] +
           (wr !=0? (" — " + wr + " incorrect"): '') + "</span>",
-        content: "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">",
+        content: html,
         theme: 'dark',
         animation: 'top',
         closeAnimation: 'top',
