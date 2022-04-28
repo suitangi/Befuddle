@@ -48,7 +48,7 @@ body {
 
 #keyboardContainer {
   position: absolute;
-  top: min(calc(12% + 500px), calc(100vw + 15%));
+  top: min(calc(12% + 500px), calc(95vw + 16%));
   left: 50%;
   transform: translate(-50%, 0);
   width: 100%;
@@ -63,7 +63,7 @@ body {
 #keyboard li.correct {
   background: #292929 !important;
   color: #444 !important;
-  border-color: rgba(135, 46, 46, 0);
+  border-color: rgba(193, 47, 47, 0);
   border-width: 1px;
   border-style: solid;
 }
@@ -71,7 +71,7 @@ body {
 #keyboard li.incorrect {
   background: #292929 !important;
   color: #444 !important;
-  border-color: rgba(135, 46, 46, 100);
+  border-color: rgba(193, 47, 47, 100);
   border-width: 1px;
   border-style: solid;
 }
@@ -91,7 +91,7 @@ body {
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
   font-family: 'Beleren Bold';
-  transition: border-color .5s;
+  transition: border-color 1s;
   transition: color .5s;
   transition: background .5s;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);

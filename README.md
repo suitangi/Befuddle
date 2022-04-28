@@ -10,6 +10,7 @@ Currently using Scryfall api for random card, please don't overwhelm them and re
 - Better animations
 - Migrate off of scryfall api, self host trimmed data and list
 - Daily card, make the game social (with sharing)
+- Fix bugs on double sided cards, better system with split cards
 
 ### Options menu:
 - Hide mana cost

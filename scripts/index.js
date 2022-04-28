@@ -1,12 +1,12 @@
 //function to request random card data from scryfall api
-function requestCard() {
+function requestCard(id) {
   window.mtgCard = {};
   window.mtgCard.win = false;
   window.mtgCard.wrongGuess = '';
   // document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
   document.getElementById("cardImage").style="opacity:0; transition: opacity 0s;";
   document.getElementById("imageLoading").style="";
-  fetch('https://api.scryfall.com/cards/random')
+  fetch('https://api.scryfall.com/cards/' + id)
     .then(response => response.json())
     .then(data => loadCard(data));
 }
@@ -50,11 +50,6 @@ function loadCard(data) {
 
   html += '<br><br>';
   document.getElementById('cardMana').innerHTML = html;
-
-  if (data['set_type'] == 'token') {
-    requestCard();
-    return;
-  }
 
   var img = document.getElementById("cardImage");
   var newImg = new Image;
@@ -124,7 +119,7 @@ function submitLetter(char) {
             btnClass: 'btn-blue',
             keys: ['enter'],
             action: function() {
-              requestCard();
+              requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
             }
           }
         }
@@ -161,7 +156,14 @@ $(document).ready(function() {
   }
 
   document.getElementById('card').style = "display:none;";
-  requestCard();
+
+  fetch('./cardList.json')
+  .then(response => response.json())
+  .then(data => {
+    window.cardList = data;
+    requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+  })
+
 
   document.onkeypress = function(e) {
     e = e || window.event;
