@@ -1,3 +1,14 @@
+//Helper: Get Query
+function getParameterByName(name, url) {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, '\\$&');
+  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 //function to request random card data from scryfall api
 function requestCard(id) {
   window.mtgCard = {};
@@ -161,6 +172,9 @@ $(document).ready(function() {
   .then(response => response.json())
   .then(data => {
     window.cardList = data;
+    if (getParameterByName('cardId'))
+      requestCard(getParameterByName('cardId'));
+    else
     requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
   })
 
