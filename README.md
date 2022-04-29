@@ -1,4 +1,4 @@
-# MTG Hangman game!
+# Befuddle!
 
 
 Currently using Scryfall api, please don't overwhelm them and refresh unnecessarily. Thanks!
@@ -8,6 +8,8 @@ Currently using Scryfall api, please don't overwhelm them and refresh unnecessar
 
 ### Misc/Bugs
 - Better animations
+- Darkmode/ light mode
+- CSS cleanup
 - Daily card, make the game social (with sharing)
   - Daily card needs to be self hosted json
 
@@ -25,6 +27,7 @@ Currently using Scryfall api, please don't overwhelm them and refresh unnecessar
 - Art Images: Scryfall
 - Card Information: Scryfall
 - Beleren Font: WotC
+- Icons: Google Material Library
 
 
 # Stretch:

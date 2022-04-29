@@ -2,6 +2,74 @@ body {
   background-color: #333333;
 }
 
+#top-nav {
+  position: fixed;
+  width: 100%;
+  top: 0%;
+  left: 0%;
+  background-color: #222;
+  height: 50px;
+  height: min(50px, 15vw);
+}
+
+#title {
+  font-family: 'Beleren Bold';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ddd;
+  font-size: min(30px, 10vw);
+  user-select: none;
+}
+
+#menu-button {
+  font-size: min(30px, 8vw);
+  top: 50%;
+  transform: translate(0, -50%);
+  left: 1%;
+  font-variation-settings: 'FILL' 0, 'wght' 300;
+}
+
+#help-button {
+  font-size: min(30px, 8vw);
+  top: 50%;
+  transform: translate(125%, -50%);
+  left: 1%;
+  font-variation-settings: 'FILL'0, 'wght'250;
+}
+
+#stats-button {
+  font-size: min(30px, 8vw);
+  top: 50%;
+  right: 1%;
+  transform: translate(-125%, -50%);
+  font-variation-settings: 'FILL'0, 'wght'150;
+}
+
+#settings-button {
+  font-size: min(30px, 8vw);
+  top: 50%;
+  right: 1%;
+  transform: translate(0, -50%);
+  font-variation-settings: 'FILL'1, 'wght'150;;
+}
+
+#top-nav .nav-buttons {
+  cursor: pointer;
+  color: #ccc;
+  position: absolute;
+  user-select: none;
+  transition: color .5s;
+}
+
+#top-nav .nav-buttons:hover {
+  cursor: pointer;
+  color: #ffffff;
+  position: absolute;
+  user-select: none;
+}
+
 #card {
   position: absolute;
   left: 50%;
@@ -15,11 +83,10 @@ body {
   width: min(400px, 90vw);
   border-radius: 5px;
   opacity: 1;
-  transition: opacity 1.5s;
+  transition: opacity 2s;
   object-fit: cover;
   max-height: min(335px, -40px + 85vw);
 }
-
 
 #cardName {
   font-size: min(35px, 8vw);
@@ -67,7 +134,7 @@ body {
 
 #keyboard li.correct {
   background: #292929 !important;
-  color: #444 !important;
+  color: #444;
   border-color: rgba(193, 47, 47, 0);
   border-width: 1px;
   border-style: solid;
@@ -75,10 +142,14 @@ body {
 
 #keyboard li.incorrect {
   background: #292929 !important;
-  color: #444 !important;
+  color: #444;
   border-color: rgba(193, 47, 47, 100);
   border-width: 1px;
   border-style: solid;
+}
+
+#keyboard li.incorrect.redText {
+  color: rgba(193, 47, 47, 100) !important;
 }
 
 #keyboard li {
@@ -115,7 +186,7 @@ body {
 
 #keyboard .zKey {
   clear: left;
-  margin-left: max(calc(50vw - 210px), calc(14vw - 8px));
+  margin-left: max(calc(50vw - 199px), calc(17.5vw - 4px));
 }
 
 #keyboard li:hover {
@@ -153,26 +224,29 @@ body {
 }
 
 .btn-green {
-  transition: background 3s!important;
+  transition: background 3s !important;
 }
 
 .flip-symbol-front {
-    position: absolute;
-    top: 0%;
-    right: 0%;
-    border-radius: 5% 50% 5% 25%;
-    background: cyan;
-    width: min(35px, 8.75vw);
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  border-radius: 5% 50% 5% 25%;
+  color: white;
+  background: cyan;
+  font-size: min(35px, 8.75vw) !important;
+  user-select: none;
 }
 
 .flip-symbol-back {
-    position: absolute;
-    top: 0%;
-    right: 0%;
-    border-radius: 5% 50% 5% 25%;
-    background: lime;
-    width: min(35px, 8.75vw);
-    filter: invert(1);
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  border-radius: 5% 50% 5% 25%;
+  color: white;
+  background: magenta;
+  font-size: min(35px, 8.75vw) !important;
+  user-select: none;
 }
 
 .flip-card {
@@ -192,7 +266,7 @@ body {
 }
 
 .flip-card:hover .flip-card-inner {
-  transform: rotateY(180deg);
+  transform: rotateY(-180deg);
 }
 
 .flip-card-front, .flip-card-back {
@@ -208,7 +282,11 @@ body {
 }
 
 .flip-card-back {
-  transform: rotateY(180deg);
+  transform: rotateY(-180deg);
+}
+
+.jconfirm.jconfirm-dark .jconfirm-bg {
+  background-color: black !important;
 }
 
 @keyframes lds-dual-ring {
