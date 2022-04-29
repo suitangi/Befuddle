@@ -144,73 +144,91 @@ function submitLetter(char) {
 
     //player got the card
     if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
-
-      let terms = ['Compleat Perfection!', 'Ancestrally Recalled', 'Thought Twice', 'Pondered Well', 'Delved into Secrets', 'Pieces Pored Over', 'Faithlessly Looted', 'Tome Scoured', 'Dashed Hopes', 'Thoughts Siezed',
-        'Mind Ground', 'Wildly Guessed', 'Yawgmoth\'s Wouldn\'t', 'Triskaidekaphobia!', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank',
-        'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank'
-      ]
-
-      let html;
-      if (window.mtgCard.cardData['layout'] == 'transform' || window.mtgCard.cardData['layout'] == 'modal_dfc') {
-        html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
-          '<img src=\"' + window.mtgCard.cardData['card_faces'][window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
-          '<img src=\"' + window.mtgCard.cardData['card_faces'][1 - window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
-      } else {
-        html = "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">";
-      }
-      window.mtgCard.win = true;
-
-      let wr = window.mtgCard.wrongGuess.length;
-      $.confirm({
-        title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">" + terms[wr] +
-          (wr != 0 ? (" — " + wr + " incorrect") : '') + "</span>",
-        content: html,
-        theme: 'dark',
-        animation: 'top',
-        closeAnimation: 'top',
-        animateFromElement: false,
-        boxWidth: 'min(400px, 80%)',
-        draggable: false,
-        useBootstrap: false,
-        typeAnimated: true,
-        buttons: {
-          link: {
-            text: "Share",
-            btnClass: 'btn-green',
-            action: function(linkButton) {
-              var str = 'I got this card with ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + '. \nhttps://suitangi.github.io/MTGHangman/?cardId=' + window.mtgCard.id;
-              navigator.clipboard.writeText(str).then(function() {
-                linkButton.addClass('displayButton');
-                linkButton.setText('Copied!');
-                linkButton.addClass('btn-dark');
-                linkButton.removeClass('btn-green');
-                setTimeout(function(lb) {
-                  linkButton.removeClass('btn-dark');
-                  linkButton.addClass('btn-green');
-                }, 1000, linkButton);
-                setTimeout(function(lb) {
-                  linkButton.setText('Share');
-                }, 3000, linkButton);
-              }, function() {
-                console.error("Unable to write to clipboard.");
-              });
-              return false;
-            }
-          },
-          close: {
-            text: "Next Card",
-            btnClass: 'btn-blue',
-            keys: ['enter'],
-            action: function() {
-              requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
-            }
-          }
-        }
-      });
+      gameWin();
     }
   }
 }
 
+//handler for winning the game
+function gameWin() {
+  let terms = ['Compleat Perfection!', 'Ancestrally Recalled', 'Thought Twice', 'Pondered Well', 'Delved into Secrets', 'Pieces Pored Over', 'Faithlessly Looted', 'Tome Scoured', 'Dashed Hopes', 'Thoughts Siezed',
+    'Mind Ground', 'Wildly Guessed', 'Yawgmoth\'s Wouldn\'t', 'Triskaidekaphobia!', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank',
+    'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank'
+  ];
+
+  let html;
+  if (window.mtgCard.cardData['layout'] == 'transform' || window.mtgCard.cardData['layout'] == 'modal_dfc') {
+    html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
+      '<img src=\"' + window.mtgCard.cardData['card_faces'][window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
+      '<img src=\"' + window.mtgCard.cardData['card_faces'][1 - window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
+  } else {
+    html = "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">";
+  }
+  window.mtgCard.win = true;
+
+  let wr = window.mtgCard.wrongGuess.length;
+  $.confirm({
+    title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">" + terms[wr] +
+      (wr != 0 ? (" — " + wr + " incorrect") : '') + "</span>",
+    content: html,
+    theme: 'dark',
+    animation: 'top',
+    closeAnimation: 'top',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    useBootstrap: false,
+    typeAnimated: true,
+    buttons: {
+      link: {
+        text: "Share",
+        btnClass: 'btn-green',
+        action: function(linkButton) {
+          var str = 'Befuddle: ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + '. \nhttps://suitangi.github.io/MTGHangman/?cardId=' + window.mtgCard.id;
+          navigator.clipboard.writeText(str).then(function() {
+            linkButton.addClass('displayButton');
+            linkButton.setText('Copied!');
+            linkButton.addClass('btn-dark');
+            linkButton.removeClass('btn-green');
+            setTimeout(function(lb) {
+              linkButton.removeClass('btn-dark');
+              linkButton.addClass('btn-green');
+            }, 100, linkButton);
+            setTimeout(function(lb) {
+              linkButton.setText('Share');
+            }, 3000, linkButton);
+          }, function() {
+            $.dialog({
+              title: 'Error',
+              content: 'Clipboard access denied, you can manually copy the text below:<br>' + str,
+              type: 'red',
+              theme: 'dark',
+              animation: 'top',
+              closeAnimation: 'top',
+              animateFromElement: false,
+              boxWidth: 'min(400px, 80%)',
+              draggable: false,
+              useBootstrap: false,
+              typeAnimated: true,
+              backgroundDismiss: true
+            });
+          });
+          return false;
+        }
+      },
+      close: {
+        text: "Next Card",
+        btnClass: 'btn-blue',
+        keys: ['enter'],
+        action: function() {
+          requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+        }
+      }
+    }
+  });
+}
+
+//function to hide the name of the card
 function hideName(str) {
   let s = str.toLowerCase();
   let c;
@@ -225,6 +243,7 @@ function hideName(str) {
   return r;
 }
 
+//function to handle status button
 function statsModal() {
   $.dialog({
     title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Statistics</span>',
@@ -242,6 +261,8 @@ function statsModal() {
 
 //start script
 $(document).ready(function() {
+
+  console.log('https://scryfall.com/card/unh/30/cheatyface')
 
   window.displayKeyboard = {};
   window.settings = {};
