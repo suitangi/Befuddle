@@ -10,7 +10,7 @@ Currently using Scryfall api, please don't overwhelm them and refresh unnecessar
 - Darkmode/ light mode
 - CSS cleanup
 - Daily card, make the game social (with sharing)
-  - Daily card needs to be self hosted json
+- Use smaller daily list
 
 ### Options menu:
 - Hide mana cost

@@ -312,6 +312,10 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.jconfirm.jconfirm-supervan .jconfirm-bg {
+  background-color: rgba(30, 30, 30, .95) !important;
+}
+
 .copyText {
   word-break: break-word;
   background: #333;

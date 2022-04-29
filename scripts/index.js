@@ -15,7 +15,7 @@ function requestCard(id) {
   window.mtgCard.win = false;
   window.mtgCard.id = id;
   window.mtgCard.wrongGuess = '';
-  window.mtgCard.lives = window.settings.lives;
+  window.mtgCard.lives = window.game.free.settings.lives;
   window.mtgCard.guesses = new Set();
 
   // document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
@@ -259,14 +259,46 @@ function statsModal() {
   });
 }
 
-//start script
-$(document).ready(function() {
 
-  console.log('https://scryfall.com/card/unh/30/cheatyface')
+//function to display initial main menu
+function mainMenuDisplay() {
+  $.confirm({
+    title: '<span style=\"font-family: \'Beleren Bold\';font-size:30px;\">Welcome to Befuddle</span>',
+    content: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Select your game mode:</span>',
+    theme: 'supervan',
+    animation: 'opacity',
+    closeAnimation: 'top',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    backgroundDismiss: false,
+    backgroundDismissAnimation: 'none',
+    useBootstrap: false,
+    buttons: {
+      daily: {
+        text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Daily Befuddle</span>',
+        action: function() {
+          window.game.state = 'daily';
+        }
+      },
+      free: {
+        text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Free Play</span>',
+        action: function() {
+          window.game.state = 'free';
+          loadGame();
+        }
+      }
+    }
+  });
+}
 
-  window.displayKeyboard = {};
-  window.settings = {};
-  window.settings.lives = -1;
+//functinon to load the game
+function loadGame() {
+
+  if (window.game.state == undefined) {
+    mainManuDisplay();
+    return;
+  }
 
   //setup the keyboard
   let li = document.getElementById('keyboard').children;
@@ -277,25 +309,6 @@ $(document).ready(function() {
       submitLetter(this.getAttribute('data-key').toLowerCase());
     });
   }
-
-  //hide card for now (prevent fuoc)
-  document.getElementById('card').style = "display:none;";
-
-  //fetch list then request
-  fetch('https://raw.githubusercontent.com/suitangi/MTGHangman/main/cardList.json')
-    .then(response => response.json())
-    .then(data => {
-      window.cardList = data;
-      if (getParameterByName('cardId'))
-        requestCard(getParameterByName('cardId'));
-      else
-        requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
-    });
-
-  //setup onclick for top nav button
-  document.getElementById('stats-button').addEventListener('click', function() {
-    statsModal();
-  });
 
   //setup keyboard typing
   document.onkeypress = function(e) {
@@ -308,4 +321,62 @@ $(document).ready(function() {
     }
   };
 
+
+  //Fetch different things based on different mode
+  if (window.game.state == 'daily') {
+
+  } else if (window.game.state == 'free') {
+    //fetch card list then request
+    fetch('https://raw.githubusercontent.com/suitangi/MTGHangman/main/cardList.json')
+      .then(response => response.json())
+      .then(data => {
+        window.cardList = data;
+        if (getParameterByName('cardId'))
+          requestCard(getParameterByName('cardId'));
+        else
+          requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+      });
+  }
+}
+
+//start script
+$(document).ready(function() {
+
+  console.log('https://scryfall.com/card/unh/30/cheatyface')
+
+  window.displayKeyboard = {};
+  window.game = {};
+  window.game.free = {};
+  window.game.daily = {};
+  window.game.free.settings = {};
+  window.game.free.settings.lives = -1;
+
+  mainMenuDisplay();
+
+  //hide card for now (prevent fuoc)
+  document.getElementById('card').style = "display:none;";
+
+  //setup onclick for top nav button
+  document.getElementById('stats-button').addEventListener('click', function() {
+    statsModal();
+  });
+
 });
+
+//Stackoverflow it
+//Get leap year
+Date.prototype.isLeapYear = function() {
+    var year = this.getFullYear();
+    if((year & 3) != 0) return false;
+    return ((year % 100) != 0 || (year % 400) == 0);
+};
+
+// Get Day of Year
+Date.prototype.getDOY = function() {
+    var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    var mn = this.getMonth();
+    var dn = this.getDate();
+    var dayOfYear = dayCount[mn] + dn;
+    if(mn > 1 && this.isLeapYear()) dayOfYear++;
+    return dayOfYear;
+};
