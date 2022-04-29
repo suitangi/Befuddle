@@ -199,8 +199,8 @@ function gameWin() {
             }, 3000, linkButton);
           }, function() {
             $.dialog({
-              title: 'Error',
-              content: 'Clipboard access denied, you can manually copy the text below:<br>' + str,
+              title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Error: Clipboard Access Denied</span>',
+              content: '<span style=\"font-family: \'Beleren Bold\';\">You can manually copy the text below:<br><br><div class=\"copyText\">' + str + '</div></span>',
               type: 'red',
               theme: 'dark',
               animation: 'top',

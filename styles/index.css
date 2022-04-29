@@ -179,6 +179,12 @@ body {
   user-select: none;
 }
 
+@media only screen and (max-width: 160px) {
+  #keyboard li {
+    width: 7.5vw;
+  }
+}
+
 #keyboard .qKey {
   margin-left: max(calc(50vw - 280px), calc(5vw - 12px));
 }
@@ -304,6 +310,17 @@ body {
 .jconfirm-closeIcon {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
+}
+
+.copyText {
+  word-break: break-word;
+  background: #333;
+  padding: 6px;
+  font-size: 12px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  user-select: all;
+  font-family: 'Roboto Mono', monospace;
 }
 
 @keyframes lds-dual-ring {
