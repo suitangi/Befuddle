@@ -527,7 +527,7 @@ $(document).ready(function() {
   window.game.free.manaState = 2;
 
   //specific link to card
-  if (if (getParameterByName('cardId'))) {
+  if (getParameterByName('cardId')) {
     window.game.mode = 'free';
     fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/cardList.json')
       .then(response => response.json())
@@ -539,9 +539,12 @@ $(document).ready(function() {
     mainMenuDisplay();
   }
 
-  //setup onclick for top nav button
+  //setup onclick for top nav buttons
   document.getElementById('stats-button').addEventListener('click', function() {
     statsModal();
+  });
+  document.getElementById('settings-button').addEventListener('click', function() {
+    settingsModal();
   });
 
 });
