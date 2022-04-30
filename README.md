@@ -1,8 +1,5 @@
 # Befuddle!
 
-Currently using Scryfall api, please don't overwhelm them and refresh unnecessarily. Thanks!
-
-
 # Todo:
 
 ### Misc/Bugs
