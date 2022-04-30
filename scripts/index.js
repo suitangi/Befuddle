@@ -49,9 +49,13 @@ function loadCard(data) {
 
   // select card face if MDFC or transform
   if (data['layout'] == 'transform' || data['layout'] == 'modal_dfc') {
-    window.mtgCard.cardFace = Math.floor(Math.random() * data['card_faces'].length);
+    if (getParameterByName('cardFace'))
+      window.mtgCard.cardFac = getParameterByName('cardFace');
+    else
+      window.mtgCard.cardFace = Math.floor(Math.random() * data['card_faces'].length);
     let cf = data['card_faces'][window.mtgCard.cardFace];
     data['mana_cost'] = cf['mana_cost'];
+    data['colors'] = cf['colors'];
     data['image_uris'] = cf['image_uris'];
     data['name'] = cf['name'];
   }
@@ -59,33 +63,48 @@ function loadCard(data) {
   let html = '';
 
   //get mana costs
-  if (data['mana_cost'] == '') {
-    html = 'No mana cost';
-  } else {
-    window.mtgCard.manaCost = [];
-    if (data['layout'] == 'split' || data['layout'] == 'adventure' || data['layout'] == 'flip') {
-      let tmp = data['mana_cost'].split(' // '); //for the double faced/ 2 in 1 cards
-      for (var i = 0; i < tmp.length; i++) {
-        if (i > 0)
-          window.mtgCard.manaCost.push('//');
-        window.mtgCard.manaCost = window.mtgCard.manaCost.concat(tmp[i].substring(1, tmp[i].length - 1).split('}{'));
-      }
+  if ((window.game.mode == 'free' && window.game.free.manaState == 2) ||
+    (window.game.mode == 'daily' && !window.game.daily.hardMode)) {
+    if (data['mana_cost'] == '') {
+      html = 'No mana cost';
     } else {
-      window.mtgCard.manaCost = window.mtgCard.manaCost.concat(data['mana_cost'].substring(1, data['mana_cost'].length - 1).split('}{'));
-    }
+      window.mtgCard.manaCost = [];
+      if (data['layout'] == 'split' || data['layout'] == 'adventure' || data['layout'] == 'flip') {
+        let tmp = data['mana_cost'].split(' // '); //for the double faced/ 2 in 1 cards
+        for (var i = 0; i < tmp.length; i++) {
+          if (i > 0)
+            window.mtgCard.manaCost.push('//');
+          window.mtgCard.manaCost = window.mtgCard.manaCost.concat(tmp[i].substring(1, tmp[i].length - 1).split('}{'));
+        }
+      } else {
+        window.mtgCard.manaCost = window.mtgCard.manaCost.concat(data['mana_cost'].substring(1, data['mana_cost'].length - 1).split('}{'));
+      }
 
-    for (var i = 0; i < window.mtgCard.manaCost.length; i++) {
-      if (window.mtgCard.manaCost[i] == '')
-        continue;
-      else if (window.mtgCard.manaCost[i] == '//')
-        html += ' // ';
-      else {
-        html += '<img class="manaSymbol" src="' + window.mtgSymbols[window.mtgCard.manaCost[i]] + '">';
+      for (var i = 0; i < window.mtgCard.manaCost.length; i++) {
+        if (window.mtgCard.manaCost[i] == '')
+          continue;
+        else if (window.mtgCard.manaCost[i] == '//')
+          html += ' // ';
+        else {
+          html += '<img class="manaSymbol" src="' + window.mtgSymbols[window.mtgCard.manaCost[i]] + '">';
+        }
       }
     }
+    html += '<br><br>';
+  } else if ((window.game.mode == 'free' && window.game.free.manaState == 1)) {
+    html = 'Color(s):'
+    if (data['colors'].length == 0) {
+      html += '<img class="manaSymbol" src="' + window.mtgSymbols["C"] + '">';
+    } else {
+      for (var i = 0; i < data['colors'].length; i++) {
+        html += '<img class="manaSymbol" src="' + window.mtgSymbols[data['colors'][i]] + '">';
+      }
+    }
+    html += '<br><br>';
+  } else {
+    html = ''
   }
 
-  html += '<br><br>';
   document.getElementById('cardMana').innerHTML = html;
 
   var img = document.getElementById("cardImage");
@@ -178,7 +197,37 @@ function submitLetter(char) {
 
 //handler for game lost scenario in free mode
 function gameLostFree() {
-
+  $.confirm({
+    title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">Totally Lost</span>",
+    content: getCardHtml(),
+    theme: 'dark',
+    animation: 'top',
+    closeAnimation: 'top',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    useBootstrap: false,
+    typeAnimated: true,
+    buttons: {
+      link: {
+        text: "Share",
+        btnClass: 'btn-green',
+        action: function(linkButton) {
+          var str = 'Befuddle: X\nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
+          clipboardHandler(linkButton, str);
+          return false;
+        }
+      },
+      close: {
+        text: "Next Card",
+        btnClass: 'btn-blue',
+        keys: ['enter'],
+        action: function() {
+          requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+        }
+      }
+    }
+  });
 }
 
 //handler for game lost scenario in free mode
@@ -208,7 +257,7 @@ function gameLostDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nXX\nhttps://suitangi.github.io/Befuddle/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nX\nhttps://suitangi.github.io/Befuddle/';
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -262,13 +311,12 @@ function gameWinDaily() {
 //handler for winning the game in free mode
 function gameWinFree() {
 
-  let html = getCardHtml();
   let wr = window.mtgCard.wrongGuess.length;
 
   $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
       (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
-    content: html,
+    content: getCardHtml(),
     theme: 'dark',
     animation: 'top',
     closeAnimation: 'top',
@@ -375,13 +423,12 @@ function hideName(str) {
   return r;
 }
 
-
-//function to handle the settings button
-function settingsModal() {
+//function to handle the help button
+function helpModal() {
   if (window.game.mode == 'daily') {
     $.dialog({
-      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
-      content: '<span style=\"font-family: \'Beleren Bold\';\">This is the options page for the daily game settings</span>',
+      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">How to Play</span>',
+      content: '<span style=\"font-family: \'Beleren Bold\';\">This is the help page for the daily game</span>',
       theme: 'dark',
       animation: 'top',
       closeAnimation: 'top',
@@ -393,8 +440,8 @@ function settingsModal() {
     });
   } else if (window.game.mode == 'free') {
     $.dialog({
-      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
-      content: '<span style=\"font-family: \'Beleren Bold\';\">This is the options page for the free play game settings</span>',
+      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">How to Play</span>',
+      content: '<span style=\"font-family: \'Beleren Bold\';\">This is the help page for the free play game</span>',
       theme: 'dark',
       animation: 'top',
       closeAnimation: 'top',
@@ -403,6 +450,73 @@ function settingsModal() {
       draggable: false,
       backgroundDismiss: true,
       useBootstrap: false
+    });
+  }
+}
+
+//function to handle the settings button
+function settingsModal() {
+
+  let gameSettingsHtml = '';
+
+
+  if (window.game.mode == 'daily') {
+    $.dialog({
+      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
+      content: gameSettingsHtml,
+      theme: 'dark',
+      animation: 'top',
+      closeAnimation: 'top',
+      animateFromElement: false,
+      boxWidth: 'min(400px, 80%)',
+      draggable: false,
+      backgroundDismiss: true,
+      useBootstrap: false,
+      onContentReady: function() {
+
+      }
+    });
+  } else if (window.game.mode == 'free') {
+
+    let manastates = ['Show Nothing', 'Show Only Colors', 'Show Mana Cost'];
+
+    gameSettingsHtml += '<div class="gameSettings">' +
+      '<span class="menuText">Lives: <span id="livesdisplay">' + (window.game.free.lives == -1 ? 'Off' : window.game.free.lives) + '</span></span>' +
+      '<div class="slidecontainer"><input id="livesInput" type="range" min="0" max="25" value="' + window.game.free.lives + '" class="slider">' +
+      '<br><br><span class="menuText" id="manadisplay">' + manastates[window.game.free.manaState] + '</span>' +
+      '<div class="slidecontainer"><input id="manaInput" type="range" min="0" max="2" value="' + window.game.free.manaState + '" class="slider">' +
+      '<br><br><span class="smallText">Game changes won\'t be adjusted until next round.</span><br>' +
+      '</div></div>';
+    $.dialog({
+      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
+      content: gameSettingsHtml,
+      theme: 'dark',
+      animation: 'top',
+      closeAnimation: 'top',
+      animateFromElement: false,
+      boxWidth: 'min(400px, 80%)',
+      draggable: false,
+      backgroundDismiss: true,
+      useBootstrap: false,
+      onContentReady: function() {
+        let lv = this.$content.find('#livesInput');
+        lv.on('input', function() {
+          if (this.value > 0) {
+            document.getElementById('livesdisplay').innerText = this.value;
+            window.game.free.lives = this.value;
+          } else if (this.value == 0) {
+            document.getElementById('livesdisplay').innerText = 'Off';
+            window.game.free.lives = -1;
+          }
+        });
+
+        let mi = this.$content.find('#manaInput');
+        mi.on('input', function() {
+          let manastates = ['Show Nothing', 'Show Only Colors', 'Show Mana Cost'];
+          window.game.free.manaState = this.value;
+          document.getElementById('manadisplay').innerText = manastates[this.value];
+        });
+      }
     });
   }
 }
@@ -518,7 +632,7 @@ $(document).ready(function() {
   window.game = {};
 
   window.game.daily = {};
-  window.game.daily.lives = 5;
+  window.game.daily.lives = 7;
   window.game.daily.hardMode = false;
 
   window.game.free = {};
@@ -545,6 +659,9 @@ $(document).ready(function() {
   });
   document.getElementById('settings-button').addEventListener('click', function() {
     settingsModal();
+  });
+  document.getElementById('help-button').addEventListener('click', function() {
+    helpModal();
   });
 
 });

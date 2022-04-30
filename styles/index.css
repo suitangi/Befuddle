@@ -120,6 +120,8 @@ body {
 
 .manaSymbol {
   width: min(30px, 8vw);
+  position: relative;
+  top: 5px;
 }
 
 #keyboardContainer {
@@ -237,6 +239,68 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+}
+
+.gameSettings {
+  width: 80%;
+  height: 300px;
+}
+
+.gameSettings .smallText {
+  font-size: 12px;
+  font-family: 'Roboto Mono';
+}
+
+.gameSettings .menuText {
+  font-family: 'Beleren Bold';
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.gameSettings .slidecontainer {
+  width: 100%;
+}
+
+.gameSettings .slider {
+  -webkit-appearance: none;
+  height: 7px;
+  cursor: pointer;
+  border-radius: 5px;
+  background: #0a0a0a;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .5s;
+  transition: opacity .5s;
+}
+
+#livesInput {
+  width: 100%;
+}
+
+#manaInput {
+  width: 25%;
+}
+
+.gameSettings .slider:hover {
+  opacity: 1;
+}
+
+.gameSettings .slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #d7d7d7;
+  cursor: pointer;
+}
+
+.gameSettings .slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #d7d7d7;
+  cursor: pointer;
 }
 
 #seeCard:hover {
