@@ -646,7 +646,10 @@ function loadGame() {
       .then(response => response.json())
       .then(data => {
         window.cardList = data;
-        requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+        if (getParameterByName('cardId'))
+          requestCard(getParameterByName('cardId'));
+        else
+          requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
       });
   }
 }
@@ -671,12 +674,7 @@ $(document).ready(function() {
   //specific link to card
   if (getParameterByName('cardId')) {
     window.game.mode = 'free';
-    fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/cardList.json')
-      .then(response => response.json())
-      .then(data => {
-        window.cardList = data;
-        requestCard(getParameterByName('cardId'));
-      });
+    loadGame();
   } else {
     mainMenuDisplay();
   }
