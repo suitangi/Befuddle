@@ -249,12 +249,14 @@ body {
 .gameSettings .smallText {
   font-size: 12px;
   font-family: 'Roboto Mono';
+  user-select: none;
 }
 
 .gameSettings .menuText {
   font-family: 'Beleren Bold';
   font-size: 20px;
   line-height: 30px;
+  user-select: none;
 }
 
 .gameSettings .slidecontainer {

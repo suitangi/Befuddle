@@ -9,6 +9,18 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+//helper (mostly to clear listeners)
+function recreateNode(el, withChildren) {
+  if (withChildren) {
+    el.parentNode.replaceChild(el.cloneNode(true), el);
+  }
+  else {
+    var newEl = el.cloneNode(false);
+    while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
+    el.parentNode.replaceChild(newEl, el);
+  }
+}
+
 //function to request random card data from scryfall api
 function requestCard(id) {
 
@@ -46,6 +58,8 @@ function loadCard(data) {
     li[i].classList.remove('redText');
     li[i].innerText = li[i].getAttribute('data-key');
   }
+
+  document.getElementById('seeCard').style = 'display:none;';
 
   // select card face if MDFC or transform
   if (data['layout'] == 'transform' || data['layout'] == 'modal_dfc') {
@@ -92,7 +106,7 @@ function loadCard(data) {
     }
     html += '<br><br>';
   } else if ((window.game.mode == 'free' && window.game.free.manaState == 1)) {
-    html = 'Color(s):'
+    html = 'Color' + (data['colors'].length<2?'':'s') + ': '
     if (data['colors'].length == 0) {
       html += '<img class="manaSymbol" src="' + window.mtgSymbols["C"] + '">';
     } else {
@@ -162,13 +176,10 @@ function submitLetter(char) {
 
       if (window.mtgCard.lives == 0) { //game lost
         window.mtgCard.end = true;
+        document.getElementById('seeCard').style = '';
         if (window.game.mode == 'free') {
           gameLostFree();
         } else if (window.game.mode == 'daily') {
-          document.getElementById('seeCard').style = '';
-          document.getElementById('seeCard').addEventListener('click', function() {
-            gameLostDaily();
-          });
           gameLostDaily();
         }
       }
@@ -179,18 +190,33 @@ function submitLetter(char) {
     document.getElementById("cardName").innerText = window.mtgCard.hiddenName;
 
 
-    //player got the card
+    //player win!
     if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
       window.mtgCard.end = true;
+      document.getElementById('seeCard').style = '';
+
       if (window.game.mode == 'free') {
         gameWinFree();
       } else if (window.game.mode == 'daily') {
-        document.getElementById('seeCard').style = '';
-        document.getElementById('seeCard').addEventListener('click', function() {
-          gameWinDaily();
-        });
         gameWinDaily();
       }
+    }
+  }
+}
+
+//handler for see card button
+function seeCardHandler() {
+  if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
+    if (window.game.mode == 'free') {
+      gameWinFree();
+    } else if (window.game.mode == 'daily') {
+      gameWinDaily();
+    }
+  } else { //lost
+    if (window.game.mode == 'free') {
+      gameLostFree();
+    } else if (window.game.mode == 'daily') {
+      gameLostDaily();
     }
   }
 }
@@ -208,6 +234,7 @@ function gameLostFree() {
     draggable: false,
     useBootstrap: false,
     typeAnimated: true,
+    closeIcon: true,
     buttons: {
       link: {
         text: "Share",
@@ -325,6 +352,7 @@ function gameWinFree() {
     draggable: false,
     useBootstrap: false,
     typeAnimated: true,
+    closeIcon: true,
     buttons: {
       link: {
         text: "Share",
@@ -662,6 +690,10 @@ $(document).ready(function() {
   });
   document.getElementById('help-button').addEventListener('click', function() {
     helpModal();
+  });
+
+  document.getElementById('seeCard').addEventListener('click', function() {
+    seeCardHandler();
   });
 
 });
