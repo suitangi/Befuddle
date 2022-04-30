@@ -376,6 +376,37 @@ function hideName(str) {
 }
 
 
+//function to handle the settings button
+function settingsModal() {
+  if (window.game.mode == 'daily') {
+    $.dialog({
+      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
+      content: '<span style=\"font-family: \'Beleren Bold\';\">This is the options page for the daily game settings</span>',
+      theme: 'dark',
+      animation: 'top',
+      closeAnimation: 'top',
+      animateFromElement: false,
+      boxWidth: 'min(400px, 80%)',
+      draggable: false,
+      backgroundDismiss: true,
+      useBootstrap: false
+    });
+  } else if (window.game.mode == 'free') {
+    $.dialog({
+      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
+      content: '<span style=\"font-family: \'Beleren Bold\';\">This is the options page for the free play game settings</span>',
+      theme: 'dark',
+      animation: 'top',
+      closeAnimation: 'top',
+      animateFromElement: false,
+      boxWidth: 'min(400px, 80%)',
+      draggable: false,
+      backgroundDismiss: true,
+      useBootstrap: false
+    });
+  }
+}
+
 //function to handle status button
 function statsModal() {
   $.dialog({
@@ -473,10 +504,7 @@ function loadGame() {
       .then(response => response.json())
       .then(data => {
         window.cardList = data;
-        if (getParameterByName('cardId'))
-          requestCard(getParameterByName('cardId'));
-        else
-          requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+        requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
       });
   }
 }
@@ -498,7 +526,18 @@ $(document).ready(function() {
   window.game.free.lives = -1;
   window.game.free.manaState = 2;
 
-  mainMenuDisplay();
+  //specific link to card
+  if (if (getParameterByName('cardId'))) {
+    window.game.mode = 'free';
+    fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/cardList.json')
+      .then(response => response.json())
+      .then(data => {
+        window.cardList = data;
+        requestCard(getParameterByName('cardId'));
+      });
+  } else {
+    mainMenuDisplay();
+  }
 
   //setup onclick for top nav button
   document.getElementById('stats-button').addEventListener('click', function() {

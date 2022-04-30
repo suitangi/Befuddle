@@ -137,6 +137,9 @@ body {
 }
 
 #keyboard li.correct {
+  position: relative;
+  top: 1px;
+  left: 1px;
   background: #292929 !important;
   color: #444 !important;
   border-color: rgba(193, 47, 47, 0);
@@ -145,6 +148,9 @@ body {
 }
 
 #keyboard li.incorrect {
+  position: relative;
+  top: 1px;
+  left: 1px;
   background: #292929 !important;
   color: #444 !important;
   border-color: rgba(193, 47, 47, 100);
