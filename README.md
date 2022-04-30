@@ -9,13 +9,13 @@ Currently using Scryfall api, please don't overwhelm them and refresh unnecessar
 - Better animations
 - Darkmode/ light mode
 - CSS cleanup
-- Daily card, make the game social (with sharing)
-- Use smaller daily list
+- Daily hard mode
 
 ### Options menu:
 - Hide mana cost
 - Card color
 - Number of attempts
+- Hide Letter blanks
 
 ### Stats:
 - Keep track with cookies

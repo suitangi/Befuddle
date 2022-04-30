@@ -11,14 +11,7 @@ function getParameterByName(name, url) {
 
 //function to request random card data from scryfall api
 function requestCard(id) {
-  window.mtgCard = {};
-  window.mtgCard.win = false;
-  window.mtgCard.id = id;
-  window.mtgCard.wrongGuess = '';
-  window.mtgCard.lives = window.game.free.settings.lives;
-  window.mtgCard.guesses = new Set();
 
-  // document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
   document.getElementById("cardImage").style = "opacity:0; transition: opacity 0s;";
   document.getElementById("imageLoading").style = "";
   fetch('https://api.scryfall.com/cards/' + id)
@@ -26,9 +19,23 @@ function requestCard(id) {
     .then(data => loadCard(data));
 }
 
+//helper to see if char is an English letter
+function isAlpha(char) {
+  c = char.toLowerCase().charCodeAt(0);
+  return c >= 97 && c <= 122;
+}
+
 
 //function to load the card data into memory
 function loadCard(data) {
+
+  //setup mtg card object
+  window.mtgCard = {};
+  window.mtgCard.end = false;
+  window.mtgCard.id = data.id;
+  window.mtgCard.wrongGuess = '';
+  window.mtgCard.lives = window.game[window.game.mode].lives;
+  window.mtgCard.guesses = new Set();
   window.mtgCard.cardData = data;
 
   //reset display keyboard
@@ -128,12 +135,23 @@ function submitLetter(char) {
     if (window.mtgCard.lives != -1) {
       window.mtgCard.lives--;
       window.displayKeyboard[char].classList.add('redText');
-      if (window.mtgCard.lives > 0) {
-        for (e of document.getElementsByClassName('incorrect')) {
-          e.innerText = window.mtgCard.lives;
-        }
-      } else { //game lost
 
+      //set lives text on keyboard
+      for (e of document.getElementsByClassName('incorrect')) {
+        e.innerText = window.mtgCard.lives;
+      }
+
+      if (window.mtgCard.lives == 0) { //game lost
+        window.mtgCard.end = true;
+        if (window.game.mode == 'free') {
+          gameLostFree();
+        } else if (window.game.mode == 'daily') {
+          document.getElementById('seeCard').style = '';
+          document.getElementById('seeCard').addEventListener('click', function() {
+            gameLostDaily();
+          });
+          gameLostDaily();
+        }
       }
     }
   } else { //letter is in cardname
@@ -144,32 +162,112 @@ function submitLetter(char) {
 
     //player got the card
     if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
-      gameWin();
+      window.mtgCard.end = true;
+      if (window.game.mode == 'free') {
+        gameWinFree();
+      } else if (window.game.mode == 'daily') {
+        document.getElementById('seeCard').style = '';
+        document.getElementById('seeCard').addEventListener('click', function() {
+          gameWinDaily();
+        });
+        gameWinDaily();
+      }
     }
   }
 }
 
-//handler for winning the game
-function gameWin() {
-  let terms = ['Compleat Perfection!', 'Ancestrally Recalled', 'Thought Twice', 'Pondered Well', 'Delved into Secrets', 'Pieces Pored Over', 'Faithlessly Looted', 'Tome Scoured', 'Dashed Hopes', 'Thoughts Siezed',
-    'Mind Ground', 'Wildly Guessed', 'Yawgmoth\'s Wouldn\'t', 'Triskaidekaphobia!', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank',
-    'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank'
-  ];
+//handler for game lost scenario in free mode
+function gameLostFree() {
 
-  let html;
-  if (window.mtgCard.cardData['layout'] == 'transform' || window.mtgCard.cardData['layout'] == 'modal_dfc') {
-    html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
-      '<img src=\"' + window.mtgCard.cardData['card_faces'][window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
-      '<img src=\"' + window.mtgCard.cardData['card_faces'][1 - window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
-  } else {
-    html = "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">";
-  }
-  window.mtgCard.win = true;
+}
+
+//handler for game lost scenario in free mode
+function gameLostDaily() {
+  $.confirm({
+    title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">Totally Lost</span>",
+    content: getCardHtml(),
+    theme: 'dark',
+    animation: 'top',
+    closeAnimation: 'top',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    useBootstrap: false,
+    typeAnimated: true,
+    closeIcon: true,
+    buttons: {
+      close: {
+        text: "Stats",
+        btnClass: 'btn-blue',
+        action: function() {
+          statsModal();
+        }
+      },
+      link: {
+        text: "Share",
+        btnClass: 'btn-green',
+        action: function(linkButton) {
+          let d = new Date();
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nXX\nhttps://suitangi.github.io/Befuddle/';
+          clipboardHandler(linkButton, str);
+          return false;
+        }
+      }
+    }
+  });
+}
+
+
+//handler for winning the game in daily mode
+function gameWinDaily() {
 
   let wr = window.mtgCard.wrongGuess.length;
+
   $.confirm({
-    title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">" + terms[wr] +
-      (wr != 0 ? (" — " + wr + " incorrect") : '') + "</span>",
+    title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
+      (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
+    content: getCardHtml(),
+    theme: 'dark',
+    animation: 'top',
+    closeAnimation: 'top',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    useBootstrap: false,
+    typeAnimated: true,
+    closeIcon: true,
+    buttons: {
+      close: {
+        text: "Stats",
+        btnClass: 'btn-blue',
+        action: function() {
+          statsModal();
+        }
+      },
+      link: {
+        text: "Share",
+        btnClass: 'btn-green',
+        action: function(linkButton) {
+          let d = new Date();
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + '\nhttps://suitangi.github.io/Befuddle/';
+          clipboardHandler(linkButton, str);
+          return false;
+        }
+      }
+    }
+  });
+}
+
+
+//handler for winning the game in free mode
+function gameWinFree() {
+
+  let html = getCardHtml();
+  let wr = window.mtgCard.wrongGuess.length;
+
+  $.confirm({
+    title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
+      (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
     content: html,
     theme: 'dark',
     animation: 'top',
@@ -184,35 +282,8 @@ function gameWin() {
         text: "Share",
         btnClass: 'btn-green',
         action: function(linkButton) {
-          var str = 'Befuddle: ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + '. \nhttps://suitangi.github.io/MTGHangman/?cardId=' + window.mtgCard.id;
-          navigator.clipboard.writeText(str).then(function() {
-            linkButton.addClass('displayButton');
-            linkButton.setText('Copied!');
-            linkButton.addClass('btn-dark');
-            linkButton.removeClass('btn-green');
-            setTimeout(function(lb) {
-              linkButton.removeClass('btn-dark');
-              linkButton.addClass('btn-green');
-            }, 100, linkButton);
-            setTimeout(function(lb) {
-              linkButton.setText('Share');
-            }, 3000, linkButton);
-          }, function() {
-            $.dialog({
-              title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Error: Clipboard Access Denied</span>',
-              content: '<span style=\"font-family: \'Beleren Bold\';\">You can manually copy the text below:<br><br><div class=\"copyText\">' + str + '</div></span>',
-              type: 'red',
-              theme: 'dark',
-              animation: 'top',
-              closeAnimation: 'top',
-              animateFromElement: false,
-              boxWidth: 'min(400px, 80%)',
-              draggable: false,
-              useBootstrap: false,
-              typeAnimated: true,
-              backgroundDismiss: true
-            });
-          });
+          var str = 'Befuddle: ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + '. \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
+          clipboardHandler(linkButton, str);
           return false;
         }
       },
@@ -228,20 +299,82 @@ function gameWin() {
   });
 }
 
+//handler for the clipboard buttons
+function clipboardHandler(linkButton, str) {
+  navigator.clipboard.writeText(str).then(function() {
+    linkButton.addClass('displayButton');
+    linkButton.setText('Copied!');
+    linkButton.addClass('btn-dark');
+    linkButton.removeClass('btn-green');
+    setTimeout(function(lb) {
+      linkButton.removeClass('btn-dark');
+      linkButton.addClass('btn-green');
+    }, 100, linkButton);
+    setTimeout(function(lb) {
+      linkButton.setText('Share');
+    }, 3000, linkButton);
+  }, function() {
+    clipboardError(str);
+  });
+}
+
+
+//function to display clipboard error
+function clipboardError(str) {
+  $.dialog({
+    title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Error: Clipboard Access Denied</span>',
+    content: '<span style=\"font-family: \'Beleren Bold\';\">You can manually copy the text below:<br><br><div class=\"copyText\">' + str + '</div></span>',
+    type: 'red',
+    theme: 'dark',
+    animation: 'top',
+    closeAnimation: 'top',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    useBootstrap: false,
+    typeAnimated: true,
+    backgroundDismiss: true
+  });
+}
+
+
+//helper to get card html display for modals
+function getCardHtml() {
+  let html;
+  if (window.mtgCard.cardData['layout'] == 'transform' || window.mtgCard.cardData['layout'] == 'modal_dfc') {
+    html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
+      '<img src=\"' + window.mtgCard.cardData['card_faces'][window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
+      '<img src=\"' + window.mtgCard.cardData['card_faces'][1 - window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
+  } else {
+    html = "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">";
+  }
+  return html;
+}
+
+
+//function to get the terms for wrong guesses
+function getWinTerms(ind) {
+  let terms = ['Compleat Perfection!', 'Ancestrally Recalled', 'Thought Twice', 'Pondered Well', 'Delved into Secrets', 'Pieces Pored Over', 'Faithlessly Looted', 'Tome Scoured', 'Dashed Hopes', 'Thoughts Siezed',
+    'Mind Ground', 'Wildly Guessed', 'Yawgmoth\'s Wouldn\'t', 'Triskaidekaphobia!', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank',
+    'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank'
+  ];
+  if (window.mtgCard.lives == 1)
+    return 'Final Fortune';
+  return terms[ind];
+}
+
 //function to hide the name of the card
 function hideName(str) {
-  let s = str.toLowerCase();
-  let c;
   let r = '';
-  for (var i = 0; i < s.length; i++) {
-    c = s.charCodeAt(i);
-    if (c >= 97 && c <= 122)
+  for (var i = 0; i < str.length; i++) {
+    if (isAlpha(str.charAt(i)))
       r += '_';
     else
       r += str.charAt(i);
   }
   return r;
 }
+
 
 //function to handle status button
 function statsModal() {
@@ -263,7 +396,7 @@ function statsModal() {
 //function to display initial main menu
 function mainMenuDisplay() {
   $.confirm({
-    title: '<span style=\"font-family: \'Beleren Bold\';font-size:30px;\">Welcome to Befuddle</span>',
+    title: '<span style=\"font-family: \'Beleren Bold\';font-size:30px;line-height: 30px;\">Welcome to Befuddle</span>',
     content: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Select your game mode:</span>',
     theme: 'supervan',
     animation: 'opacity',
@@ -278,13 +411,14 @@ function mainMenuDisplay() {
       daily: {
         text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Daily Befuddle</span>',
         action: function() {
-          window.game.state = 'daily';
+          window.game.mode = 'daily';
+          loadGame();
         }
       },
       free: {
         text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Free Play</span>',
         action: function() {
-          window.game.state = 'free';
+          window.game.mode = 'free';
           loadGame();
         }
       }
@@ -295,7 +429,7 @@ function mainMenuDisplay() {
 //functinon to load the game
 function loadGame() {
 
-  if (window.game.state == undefined) {
+  if (window.game.mode == undefined) {
     mainManuDisplay();
     return;
   }
@@ -313,21 +447,29 @@ function loadGame() {
   //setup keyboard typing
   document.onkeypress = function(e) {
     e = e || window.event;
-    if (!window.mtgCard.win && e.keyCode >= 97 && e.keyCode <= 122) {
+    if (!window.mtgCard.end && e.keyCode >= 97 && e.keyCode <= 122) {
       submitLetter(String.fromCharCode(e.keyCode));
     }
-    if (!window.mtgCard.win && e.keyCode >= 65 && e.keyCode <= 90) {
+    if (!window.mtgCard.end && e.keyCode >= 65 && e.keyCode <= 90) {
       submitLetter(String.fromCharCode(e.keyCode).toLowerCase());
     }
   };
 
 
   //Fetch different things based on different mode
-  if (window.game.state == 'daily') {
-
-  } else if (window.game.state == 'free') {
+  if (window.game.mode == 'daily') {
     //fetch card list then request
-    fetch('https://raw.githubusercontent.com/suitangi/MTGHangman/main/cardList.json')
+    fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/dailyList.json')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("cardImage").style = "opacity:0; transition: opacity 0s;";
+        document.getElementById("imageLoading").style = "";
+        let d = new Date();
+        loadCard(data[d.getDOY()]);
+      });
+  } else if (window.game.mode == 'free') {
+    //fetch card list then request
+    fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/cardList.json')
       .then(response => response.json())
       .then(data => {
         window.cardList = data;
@@ -346,15 +488,17 @@ $(document).ready(function() {
 
   window.displayKeyboard = {};
   window.game = {};
-  window.game.free = {};
+
   window.game.daily = {};
-  window.game.free.settings = {};
-  window.game.free.settings.lives = -1;
+  window.game.daily.lives = 5;
+  window.game.daily.hardMode = false;
+
+  window.game.free = {};
+  window.game.free = {};
+  window.game.free.lives = -1;
+  window.game.free.manaState = 2;
 
   mainMenuDisplay();
-
-  //hide card for now (prevent fuoc)
-  document.getElementById('card').style = "display:none;";
 
   //setup onclick for top nav button
   document.getElementById('stats-button').addEventListener('click', function() {
@@ -366,17 +510,17 @@ $(document).ready(function() {
 //Stackoverflow it
 //Get leap year
 Date.prototype.isLeapYear = function() {
-    var year = this.getFullYear();
-    if((year & 3) != 0) return false;
-    return ((year % 100) != 0 || (year % 400) == 0);
+  var year = this.getFullYear();
+  if ((year & 3) != 0) return false;
+  return ((year % 100) != 0 || (year % 400) == 0);
 };
 
 // Get Day of Year
 Date.prototype.getDOY = function() {
-    var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-    var mn = this.getMonth();
-    var dn = this.getDate();
-    var dayOfYear = dayCount[mn] + dn;
-    if(mn > 1 && this.isLeapYear()) dayOfYear++;
-    return dayOfYear;
+  var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+  var mn = this.getMonth();
+  var dn = this.getDate();
+  var dayOfYear = dayCount[mn] + dn;
+  if (mn > 1 && this.isLeapYear()) dayOfYear++;
+  return dayOfYear;
 };

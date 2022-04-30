@@ -138,7 +138,7 @@ body {
 
 #keyboard li.correct {
   background: #292929 !important;
-  color: #444;
+  color: #444 !important;
   border-color: rgba(193, 47, 47, 0);
   border-width: 1px;
   border-style: solid;
@@ -146,7 +146,7 @@ body {
 
 #keyboard li.incorrect {
   background: #292929 !important;
-  color: #444;
+  color: #444 !important;
   border-color: rgba(193, 47, 47, 100);
   border-width: 1px;
   border-style: solid;
@@ -206,6 +206,47 @@ body {
   color: #ccc;
   background: #252525;
   cursor: pointer;
+}
+
+#seeCard {
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  float: left;
+  margin: 0 min(1vw, 5px) min(1vw, 5px) 0;
+  width: min(70px, 11vw);
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  background: #151515;
+  color: #bbb;
+  border-color: rgba(200, 200, 200, 1);
+  border-width: 1px;
+  border-style: solid;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  font-family: 'Beleren Bold';
+  transition: border-color 1s;
+  transition: color .5s;
+  transition: background .5s;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+#seeCard:hover {
+  position: relative;
+  top: 1px;
+  left: 1px;
+  color: #ccc;
+  background: #252525;
+  cursor: pointer;
+}
+
+#seeCard span {
+  font-size: min(30px, 9vw);
+  position: relative;
+  top: 50%;
+  transform: translate(0, -50%);
 }
 
 #imageLoading {
