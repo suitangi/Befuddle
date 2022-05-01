@@ -44,28 +44,46 @@ function loadCard(data) {
   if (data) {
     //setup new mtg card object
     window.mtgCard = {};
-    window.game.end = false;
     window.mtgCard.id = data['id'];
     window.mtgCard.layout = data['layout'];
-    window.mtgCard.card_faces = data['card_faces'];
     window.mtgCard.mana_cost = data['mana_cost'];
-    window.mtgCard.image_uris = data['image_uris'];
+
     window.mtgCard.name = data['name'];
     window.mtgCard.colors = data['colors'];
-  } else { //load old card from continued session
-    window.mtgCard = JSON.parse(Cookies.get('mtgCard'));
-  }
 
-  //define gameSesh attributes
-  window.gameSesh = {};
-  window.gameSesh.wrongGuess = '';
+    if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
+      window.mtgCard.card_faces = [];
+      for (var i = 0; i < data['card_faces'].length; i++) {
+        window.mtgCard.card_faces.push({
+          mana_cost: data['card_faces'][i]['mana_cost'],
+          colors: data['card_faces'][i]['colors'],
+          name: data['card_faces'][i]['name'],
+          image_uris: {
+            normal: data['card_faces'][i]['image_uris']['normal'],
+            art_crop: data['card_faces'][i]['image_uris']['art_crop'],
+          }
+        });
+      }
+    } else {
+      window.mtgCard.image_uris = {
+        normal: data['image_uris']['normal'],
+        art_crop: data['image_uris']['art_crop'],
+      };
+    }
+
+    //define gameSesh attributes
+    window.gameSesh = {};
+    window.gameSesh.end = false;
+    window.gameSesh.wrongGuess = '';
+    window.gameSesh.guesses = '';
+
+    if (window.game.mode == 'free') {
+      window.gameSesh.hideBlanks = window.game.free.hideBlanks;
+    }
+
+    window.gameSesh.card = window.mtgCard;
+  }
   window.gameSesh.lives = window.game[window.game.mode].lives;
-  window.gameSesh.guesses = '';
-
-  if (window.game.mode == 'free') {
-    window.mtgCard.hideBlanks = window.game.free.hideBlanks;
-  }
-
 
   //reset display keyboard
   let li = document.getElementById('keyboard').children;
@@ -149,7 +167,7 @@ function loadCard(data) {
 
   let str = window.mtgCard['name'];
 
-  if (window.mtgCard.hideBlanks)
+  if (window.gameSesh.hideBlanks)
     window.mtgCard.hiddenName = hideName(str, '');
   else
     window.mtgCard.hiddenName = hideName(str, '_');
@@ -160,7 +178,9 @@ function loadCard(data) {
 
 //function to laod guesses when reconnected to a game
 function loadGuesses() {
-  let g = Cookies.get('guesses');
+  let g = window.gameSesh.guesses;
+  window.gameSesh.wrongGuess = '';
+  window.gameSesh.guesses = '';
   for (var i = 0; i < g.length; i++) {
     submitLetter(g.charAt(i));
   }
@@ -168,9 +188,9 @@ function loadGuesses() {
 
 //function to savecookies
 function saveCookies() {
-  Cookies.set('mtgCard', JSON.stringify(window.mtgCard));
+  console.log('cookies saved');
+  Cookies.set(window.game.mode, JSON.stringify(window.gameSesh));
   Cookies.set('befuddle', JSON.stringify(window.game));
-  Cookies.set('guesses', window.gameSesh.guesses);
 }
 
 //letter submtted by player
@@ -191,7 +211,7 @@ function submitLetter(char) {
       found = true;
       r += s.charAt(i);
     } else {
-      if (!window.mtgCard.hideBlanks)
+      if (!window.gameSesh.hideBlanks)
         r += window.mtgCard.hiddenName.charAt(i);
       else {
         if (window.gameSesh.guesses.includes(s.toLowerCase().charAt(i)) || !isAlpha(s.charAt(i)))
@@ -216,7 +236,7 @@ function submitLetter(char) {
       }
 
       if (window.gameSesh.lives == 0) { //game lost
-        window.game.end = true;
+        window.gameSesh.end = true;
         document.getElementById('seeCard').style = '';
         if (window.game.mode == 'free') {
           gameLostFree();
@@ -233,7 +253,7 @@ function submitLetter(char) {
 
     //player win!
     if (window.mtgCard.hiddenName == window.mtgCard.name) {
-      window.game.end = true;
+      window.gameSesh.end = true;
       document.getElementById('seeCard').style = '';
 
       if (window.game.mode == 'free') {
@@ -400,7 +420,7 @@ function gameWinFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function(linkButton) {
-          var str = 'Befuddle: ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + (window.mtgCard.hideBlanks ? '*' : '') + ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
+          var str = 'Befuddle: ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + (window.gameSesh.hideBlanks ? '*' : '') + ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -630,6 +650,39 @@ function statsModal() {
 }
 
 
+//function for the continue game? modal
+function continueGameModal() {
+  $.confirm({
+    title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Continue?</span>',
+    content: '<span style=\"font-family: \'Beleren Bold\';\">Previous game data found, would you like to continue?</span>',
+    theme: 'dark',
+    animation: 'top',
+    closeAnimation: 'top',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    backgroundDismiss: false,
+    useBootstrap: false,
+    buttons: {
+      free: {
+        text: 'New Game',
+        btnClass: 'btn-purple',
+        action: function() {
+          window.gameSesh.end = true;
+          loadGame();
+        }
+      },
+      daily: {
+        text: 'Continue',
+        btnClass: 'btn-blue',
+        action: function() {
+          loadGame();
+        }
+      }
+    }
+  });
+}
+
 //function to display initial main menu
 function mainMenuDisplay() {
   $.confirm({
@@ -649,6 +702,12 @@ function mainMenuDisplay() {
         text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Daily Befuddle</span>',
         action: function() {
           window.game.mode = 'daily';
+          if (Cookies.get(window.game.mode)) {
+            window.gameSesh = JSON.parse(Cookies.get(window.game.mode));
+            window.mtgCard = window.gameSesh.card;
+            if (window.gameSesh.end && window.mtgCard.hiddenName == window.mtgCard.name)
+              window.gameSesh.end = false;
+          }
           loadGame();
         }
       },
@@ -656,6 +715,13 @@ function mainMenuDisplay() {
         text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Free Play</span>',
         action: function() {
           window.game.mode = 'free';
+          if (Cookies.get(window.game.mode)) {
+            window.gameSesh = JSON.parse(Cookies.get(window.game.mode));
+            window.mtgCard = window.gameSesh.card;
+          }
+          if (!window.gameSesh.end)
+            continueGameModal();
+          else
           loadGame();
         }
       }
@@ -671,9 +737,8 @@ function loadGame() {
     return;
   }
 
-
   //continue last game session
-  if (!window.game.end) {
+  if (!window.gameSesh.end) {
     console.log('Continued Game Session');
     loadCard();
     loadGuesses();
@@ -705,6 +770,13 @@ function loadGame() {
   }
 }
 
+//see if today is a new day locally
+function checkNewDay() {
+  d1 = new Date(window.game.timestamp);
+  d2 = new Date();
+  return d1.getDOY() != d2.getDOY();
+}
+
 //start script
 $(document).ready(function() {
 
@@ -712,6 +784,7 @@ $(document).ready(function() {
 
   window.displayKeyboard = {};
   window.game = {};
+  window.game.timestamp = (new Date()).getTime();
 
   window.game.daily = {};
   window.game.daily.lives = 7;
@@ -722,13 +795,20 @@ $(document).ready(function() {
   window.game.free.lives = -1;
   window.game.free.manaState = 2;
   window.game.free.hideBlanks = false;
-  window.game.end = true;
+
+  window.gameSesh = {};
+  window.gameSesh.end = true;
 
   if (Cookies.get('befuddle') == null) { //first time user
     Cookies.set('befuddle', JSON.stringify(window.game));
     window.game.firstTime = true;
   } else {
     window.game = JSON.parse(Cookies.get('befuddle'));
+    if (checkNewDay()) {
+      Cookies.remove('daily');
+    }
+    window.game.timestamp = (new Date()).getTime();
+    Cookies.set('befuddle', JSON.stringify(window.game));
   }
 
   //setup onclick for top nav buttons
@@ -751,7 +831,7 @@ $(document).ready(function() {
     window.displayKeyboard[li[i].innerText.toLowerCase()] = li[i];
     li[i].setAttribute('data-key', li[i].innerText);
     li[i].addEventListener('click', function() {
-      if (!window.game.end)
+      if (!window.gameSesh.end)
         submitLetter(this.getAttribute('data-key').toLowerCase());
     });
   }
@@ -759,25 +839,22 @@ $(document).ready(function() {
   //setup keyboard typing
   document.onkeypress = function(e) {
     e = e || window.event;
-    if (!window.game.end && e.keyCode >= 97 && e.keyCode <= 122) {
+    if (!window.gameSesh.end && e.keyCode >= 97 && e.keyCode <= 122) {
       submitLetter(String.fromCharCode(e.keyCode));
     }
-    if (!window.mtgCard.end && e.keyCode >= 65 && e.keyCode <= 90) {
+    if (!window.gameSesh.end && e.keyCode >= 65 && e.keyCode <= 90) {
       submitLetter(String.fromCharCode(e.keyCode).toLowerCase());
     }
   };
 
-  //resume last game session
-  if (!window.game.end) {
+
+  //specific link to card
+  if (getParameterByName('cardId')) {
+    window.game.mode = 'free';
+    window.gameSesh.end = true;
     loadGame();
   } else {
-    //specific link to card
-    if (getParameterByName('cardId')) {
-      window.game.mode = 'free';
-      loadGame();
-    } else {
-      mainMenuDisplay();
-    }
+    mainMenuDisplay();
   }
 
 
