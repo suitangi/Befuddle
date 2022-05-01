@@ -13,8 +13,7 @@ function getParameterByName(name, url) {
 function recreateNode(el, withChildren) {
   if (withChildren) {
     el.parentNode.replaceChild(el.cloneNode(true), el);
-  }
-  else {
+  } else {
     var newEl = el.cloneNode(false);
     while (el.hasChildNodes()) newEl.appendChild(el.firstChild);
     el.parentNode.replaceChild(newEl, el);
@@ -83,7 +82,7 @@ function loadCard(data) {
 
   //get mana costs
   if ((window.game.mode == 'free' && window.game.free.manaState == 2) ||
-    (window.game.mode == 'daily' && !window.game.daily.hardMode)) {
+    (window.game.mode == 'daily')) {
     if (data['mana_cost'] == '') {
       html = 'No mana cost';
     } else {
@@ -111,7 +110,7 @@ function loadCard(data) {
     }
     html += '<br><br>';
   } else if ((window.game.mode == 'free' && window.game.free.manaState == 1)) {
-    html = 'Color' + (data['colors'].length<2?'':'s') + ': '
+    html = 'Color' + (data['colors'].length < 2 ? '' : 's') + ': '
     if (data['colors'].length == 0) {
       html += '<img class="manaSymbol" src="' + window.mtgSymbols["C"] + '">';
     } else {
@@ -170,7 +169,7 @@ function submitLetter(char) {
         r += window.mtgCard.hiddenName.charAt(i);
       else {
         if (window.mtgCard.guesses.has(s.toLowerCase().charAt(i)) || !isAlpha(s.charAt(i)))
-          r+= s.charAt(i);
+          r += s.charAt(i);
       }
     }
   }
@@ -374,7 +373,7 @@ function gameWinFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function(linkButton) {
-          var str = 'Befuddle: ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + '. \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
+          var str = 'Befuddle: ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + (window.mtgCard.hideBlanks ? '*' : '') + ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -505,6 +504,14 @@ function settingsModal() {
 
 
   if (window.game.mode == 'daily') {
+
+    gameSettingsHtml += '<div class="gameSettings">' +
+      '<br><span class="menuText" id="hmdisplay">Hidden mode</span>' +
+      '<label class="switch"><input id="hmInput" type="checkbox" ' + (window.game.free.hideBlanks ? 'checked' : '') + '><div><span></span></div></label>' +
+      '<span class="smallText">Hidden mode hides the letter blanks.</span>' +
+      '<br><br><div class="hr"></div><span class="smallText">Changes won\'t apply until the next game you play.</span><br>' +
+      '</div>';
+
     $.dialog({
       title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
       content: gameSettingsHtml,
@@ -517,21 +524,25 @@ function settingsModal() {
       backgroundDismiss: true,
       useBootstrap: false,
       onContentReady: function() {
-
+        let hi = this.$content.find('#hideInput');
+        hi.on('input', function() {
+          window.game.daily.hideBlanks = this.checked;
+        });
       }
     });
   } else if (window.game.mode == 'free') {
 
-    let manastates = ['Show Nothing', 'Show Only Colors', 'Show Mana Cost'];
+    let manastates = ['Show Nothing', 'Show Colors', 'Show Mana Cost'];
 
     gameSettingsHtml += '<div class="gameSettings">' +
-      '<span class="menuText">Lives: <span id="livesdisplay">' + (window.game.free.lives == -1 ? 'Off' : window.game.free.lives) + '</span></span>' +
+      '<br><span class="menuText">Lives: <span id="livesdisplay">' + (window.game.free.lives == -1 ? 'Off' : window.game.free.lives) + '</span></span>' +
       '<div class="slidecontainer"><input id="livesInput" type="range" min="0" max="25" value="' + window.game.free.lives + '" class="slider"></div>' +
       '<br><span class="menuText" id="manadisplay">' + manastates[window.game.free.manaState] + '</span>' +
       '<div class="slidecontainer"><input id="manaInput" type="range" min="0" max="2" value="' + window.game.free.manaState + '" class="slider"></div>' +
-      '<br><span class="menuText" id="hidedisplay">' + (window.game.free.hideBlanks? 'Hide':'Show') + ' Letter Blanks</span>' +
-      '<label class="switch"><input id="hideInput" type="checkbox" ' + (window.game.free.hideBlanks? 'checked':'') + '><div><span></span></div></label>' +
-      '<br><span class="smallText">Game changes won\'t be adjusted until next round.</span><br>' +
+      '<br><span class="menuText" id="hidedisplay">Hidden Mode</span>' +
+      '<label class="switch"><input id="hideInput" type="checkbox" ' + (window.game.free.hideBlanks ? 'checked' : '') + '><div><span></span></div></label>' +
+      '<span class="smallText">Hidden mode hides the letter blanks.</span>' +
+      '<br><br><div class="hr"></div><span class="smallText">Game changes won\'t be adjusted until next card.</span><br>' +
       '</div>';
     $.dialog({
       title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
@@ -558,7 +569,7 @@ function settingsModal() {
 
         let mi = this.$content.find('#manaInput');
         mi.on('input', function() {
-          let manastates = ['Show Nothing', 'Show Only Colors', 'Show Mana Cost'];
+          let manastates = ['Show Nothing', 'Show Colors', 'Show Mana Cost'];
           window.game.free.manaState = this.value;
           document.getElementById('manadisplay').innerText = manastates[this.value];
         });
@@ -566,7 +577,6 @@ function settingsModal() {
         let hi = this.$content.find('#hideInput');
         hi.on('input', function() {
           window.game.free.hideBlanks = this.checked;
-          document.getElementById('hidedisplay').innerText = (window.game.free.hideBlanks? 'Hide':'Show') + ' Letter Blanks';
         });
       }
     });
@@ -688,7 +698,7 @@ $(document).ready(function() {
 
   window.game.daily = {};
   window.game.daily.lives = 7;
-  window.game.daily.hardMode = false;
+  window.game.daily.hideBlanks = false;
 
   window.game.free = {};
   window.game.free = {};
