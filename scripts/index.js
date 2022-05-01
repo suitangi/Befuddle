@@ -40,14 +40,27 @@ function isAlpha(char) {
 //function to load the card data into memory
 function loadCard(data) {
 
-  //setup mtg card object
-  window.mtgCard = {};
-  window.mtgCard.end = false;
-  window.mtgCard.id = data.id;
-  window.mtgCard.wrongGuess = '';
-  window.mtgCard.lives = window.game[window.game.mode].lives;
-  window.mtgCard.guesses = new Set();
-  window.mtgCard.cardData = data;
+
+  if (data) {
+    //setup new mtg card object
+    window.mtgCard = {};
+    window.game.end = false;
+    window.mtgCard.id = data['id'];
+    window.mtgCard.layout = data['layout'];
+    window.mtgCard.card_faces = data['card_faces'];
+    window.mtgCard.mana_cost = data['mana_cost'];
+    window.mtgCard.image_uris = data['image_uris'];
+    window.mtgCard.name = data['name'];
+    window.mtgCard.colors = data['colors'];
+  } else { //load old card from continued session
+    window.mtgCard = JSON.parse(Cookies.get('mtgCard'));
+  }
+
+  //define gameSesh attributes
+  window.gameSesh = {};
+  window.gameSesh.wrongGuess = '';
+  window.gameSesh.lives = window.game[window.game.mode].lives;
+  window.gameSesh.guesses = '';
 
   if (window.game.mode == 'free') {
     window.mtgCard.hideBlanks = window.game.free.hideBlanks;
@@ -66,16 +79,16 @@ function loadCard(data) {
   document.getElementById('seeCard').style = 'display:none;';
 
   // select card face if MDFC or transform
-  if (data['layout'] == 'transform' || data['layout'] == 'modal_dfc') {
+  if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
     if (getParameterByName('cardFace'))
-      window.mtgCard.cardFac = getParameterByName('cardFace');
+      window.mtgCard.cardFace = getParameterByName('cardFace');
     else
-      window.mtgCard.cardFace = Math.floor(Math.random() * data['card_faces'].length);
-    let cf = data['card_faces'][window.mtgCard.cardFace];
-    data['mana_cost'] = cf['mana_cost'];
-    data['colors'] = cf['colors'];
-    data['image_uris'] = cf['image_uris'];
-    data['name'] = cf['name'];
+      window.mtgCard.cardFace = Math.floor(Math.random() * window.mtgCard['card_faces'].length);
+    let cf = window.mtgCard['card_faces'][window.mtgCard.cardFace];
+    window.mtgCard['mana_cost'] = cf['mana_cost'];
+    window.mtgCard['colors'] = cf['colors'];
+    window.mtgCard['image_uris'] = cf['image_uris'];
+    window.mtgCard['name'] = cf['name'];
   }
 
   let html = '';
@@ -83,19 +96,19 @@ function loadCard(data) {
   //get mana costs
   if ((window.game.mode == 'free' && window.game.free.manaState == 2) ||
     (window.game.mode == 'daily')) {
-    if (data['mana_cost'] == '') {
+    if (window.mtgCard['mana_cost'] == '') {
       html = 'No mana cost';
     } else {
       window.mtgCard.manaCost = [];
-      if (data['layout'] == 'split' || data['layout'] == 'adventure' || data['layout'] == 'flip') {
-        let tmp = data['mana_cost'].split(' // '); //for the double faced/ 2 in 1 cards
+      if (window.mtgCard['layout'] == 'split' || window.mtgCard['layout'] == 'adventure' || window.mtgCard['layout'] == 'flip') {
+        let tmp = window.mtgCard['mana_cost'].split(' // '); //for the double faced/ 2 in 1 cards
         for (var i = 0; i < tmp.length; i++) {
           if (i > 0)
             window.mtgCard.manaCost.push('//');
           window.mtgCard.manaCost = window.mtgCard.manaCost.concat(tmp[i].substring(1, tmp[i].length - 1).split('}{'));
         }
       } else {
-        window.mtgCard.manaCost = window.mtgCard.manaCost.concat(data['mana_cost'].substring(1, data['mana_cost'].length - 1).split('}{'));
+        window.mtgCard.manaCost = window.mtgCard.manaCost.concat(window.mtgCard['mana_cost'].substring(1, window.mtgCard['mana_cost'].length - 1).split('}{'));
       }
 
       for (var i = 0; i < window.mtgCard.manaCost.length; i++) {
@@ -110,12 +123,12 @@ function loadCard(data) {
     }
     html += '<br><br>';
   } else if ((window.game.mode == 'free' && window.game.free.manaState == 1)) {
-    html = 'Color' + (data['colors'].length < 2 ? '' : 's') + ': '
-    if (data['colors'].length == 0) {
+    html = 'Color' + (window.mtgCard['colors'].length < 2 ? '' : 's') + ': '
+    if (window.mtgCard['colors'].length == 0) {
       html += '<img class="manaSymbol" src="' + window.mtgSymbols["C"] + '">';
     } else {
-      for (var i = 0; i < data['colors'].length; i++) {
-        html += '<img class="manaSymbol" src="' + window.mtgSymbols[data['colors'][i]] + '">';
+      for (var i = 0; i < window.mtgCard['colors'].length; i++) {
+        html += '<img class="manaSymbol" src="' + window.mtgSymbols[window.mtgCard['colors'][i]] + '">';
       }
     }
     html += '<br><br>';
@@ -132,9 +145,9 @@ function loadCard(data) {
     document.getElementById("cardImage").style = "opacity:1;";
     document.getElementById("imageLoading").style = "display:none;";
   }
-  newImg.src = data['image_uris']['art_crop'];
+  newImg.src = window.mtgCard['image_uris']['art_crop'];
 
-  let str = data['name'];
+  let str = window.mtgCard['name'];
 
   if (window.mtgCard.hideBlanks)
     window.mtgCard.hiddenName = hideName(str, '');
@@ -145,20 +158,33 @@ function loadCard(data) {
   document.getElementById('card').style = "";
 }
 
+//function to laod guesses when reconnected to a game
+function loadGuesses() {
+  let g = Cookies.get('guesses');
+  for (var i = 0; i < g.length; i++) {
+    submitLetter(g.charAt(i));
+  }
+}
 
+//function to savecookies
+function saveCookies() {
+  Cookies.set('mtgCard', JSON.stringify(window.mtgCard));
+  Cookies.set('befuddle', JSON.stringify(window.game));
+  Cookies.set('guesses', window.gameSesh.guesses);
+}
 
 //letter submtted by player
 function submitLetter(char) {
 
-  if (window.mtgCard.guesses.has(char)) //if letter already guessed, return
+  if (window.gameSesh.guesses.includes(char)) //if letter already guessed, return
     return;
-  window.mtgCard.guesses.add(char);
+  window.gameSesh.guesses += char;
 
   let found = false;
 
   //search in real card name and replace with correct letter
   let uChar = char.toUpperCase();
-  let s = window.mtgCard.cardData.name;
+  let s = window.mtgCard.name;
   let r = '';
   for (var i = 0; i < s.length; i++) {
     if (s.charAt(i) == char || s.charAt(i) == uChar) {
@@ -168,7 +194,7 @@ function submitLetter(char) {
       if (!window.mtgCard.hideBlanks)
         r += window.mtgCard.hiddenName.charAt(i);
       else {
-        if (window.mtgCard.guesses.has(s.toLowerCase().charAt(i)) || !isAlpha(s.charAt(i)))
+        if (window.gameSesh.guesses.includes(s.toLowerCase().charAt(i)) || !isAlpha(s.charAt(i)))
           r += s.charAt(i);
       }
     }
@@ -176,21 +202,21 @@ function submitLetter(char) {
 
 
   if (!found) { //letter is not in card name
-    window.mtgCard.wrongGuess += char;
-    //document.getElementById("wrongGuess").innerText = window.mtgCard.wrongGuess;
+    window.gameSesh.wrongGuess += char;
+    //document.getElementById("wrongGuess").innerText = window.gameSesh.wrongGuess;
     window.displayKeyboard[char].classList.add('incorrect');
 
-    if (window.mtgCard.lives != -1) {
-      window.mtgCard.lives--;
+    if (window.gameSesh.lives != -1) {
+      window.gameSesh.lives--;
       window.displayKeyboard[char].classList.add('redText');
 
       //set lives text on keyboard
       for (e of document.getElementsByClassName('incorrect')) {
-        e.innerText = window.mtgCard.lives;
+        e.innerText = window.gameSesh.lives;
       }
 
-      if (window.mtgCard.lives == 0) { //game lost
-        window.mtgCard.end = true;
+      if (window.gameSesh.lives == 0) { //game lost
+        window.game.end = true;
         document.getElementById('seeCard').style = '';
         if (window.game.mode == 'free') {
           gameLostFree();
@@ -206,8 +232,8 @@ function submitLetter(char) {
 
 
     //player win!
-    if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
-      window.mtgCard.end = true;
+    if (window.mtgCard.hiddenName == window.mtgCard.name) {
+      window.game.end = true;
       document.getElementById('seeCard').style = '';
 
       if (window.game.mode == 'free') {
@@ -217,11 +243,12 @@ function submitLetter(char) {
       }
     }
   }
+  saveCookies();
 }
 
 //handler for see card button
 function seeCardHandler() {
-  if (window.mtgCard.hiddenName == window.mtgCard.cardData.name) {
+  if (window.mtgCard.hiddenName == window.mtgCard.name) {
     if (window.game.mode == 'free') {
       gameWinFree();
     } else if (window.game.mode == 'daily') {
@@ -312,7 +339,7 @@ function gameLostDaily() {
 //handler for winning the game in daily mode
 function gameWinDaily() {
 
-  let wr = window.mtgCard.wrongGuess.length;
+  let wr = window.gameSesh.wrongGuess.length;
 
   $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
@@ -353,7 +380,7 @@ function gameWinDaily() {
 //handler for winning the game in free mode
 function gameWinFree() {
 
-  let wr = window.mtgCard.wrongGuess.length;
+  let wr = window.gameSesh.wrongGuess.length;
 
   $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
@@ -383,7 +410,10 @@ function gameWinFree() {
         btnClass: 'btn-blue',
         keys: ['enter'],
         action: function() {
-          requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+          if (window.cardList)
+            requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+          else
+            loadGame();
         }
       }
     }
@@ -432,12 +462,12 @@ function clipboardError(str) {
 //helper to get card html display for modals
 function getCardHtml() {
   let html;
-  if (window.mtgCard.cardData['layout'] == 'transform' || window.mtgCard.cardData['layout'] == 'modal_dfc') {
+  if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
     html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
-      '<img src=\"' + window.mtgCard.cardData['card_faces'][window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
-      '<img src=\"' + window.mtgCard.cardData['card_faces'][1 - window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
+      '<img src=\"' + window.mtgCard['card_faces'][window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
+      '<img src=\"' + window.mtgCard['card_faces'][1 - window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
   } else {
-    html = "<img src=\"" + window.mtgCard.cardData.image_uris.normal + "\" style=\"border-radius:5%;\">";
+    html = "<img src=\"" + window.mtgCard.image_uris.normal + "\" style=\"border-radius:5%;\">";
   }
   return html;
 }
@@ -449,7 +479,7 @@ function getWinTerms(ind) {
     'Mind Ground', 'Wildly Guessed', 'Yawgmoth\'s Wouldn\'t', 'Triskaidekaphobia!', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank',
     'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank'
   ];
-  if (window.mtgCard.lives == 1)
+  if (window.gameSesh.lives == 1)
     return 'Final Fortune';
   return terms[ind];
 }
@@ -641,27 +671,14 @@ function loadGame() {
     return;
   }
 
-  //setup the keyboard
-  let li = document.getElementById('keyboard').children;
-  for (var i = 0; i < li.length; i++) {
-    window.displayKeyboard[li[i].innerText.toLowerCase()] = li[i];
-    li[i].setAttribute('data-key', li[i].innerText);
-    li[i].addEventListener('click', function() {
-      submitLetter(this.getAttribute('data-key').toLowerCase());
-    });
+
+  //continue last game session
+  if (!window.game.end) {
+    console.log('Continued Game Session');
+    loadCard();
+    loadGuesses();
+    return; //don't load a new game
   }
-
-  //setup keyboard typing
-  document.onkeypress = function(e) {
-    e = e || window.event;
-    if (!window.mtgCard.end && e.keyCode >= 97 && e.keyCode <= 122) {
-      submitLetter(String.fromCharCode(e.keyCode));
-    }
-    if (!window.mtgCard.end && e.keyCode >= 65 && e.keyCode <= 90) {
-      submitLetter(String.fromCharCode(e.keyCode).toLowerCase());
-    }
-  };
-
 
   //Fetch different things based on different mode
   if (window.game.mode == 'daily') {
@@ -691,7 +708,7 @@ function loadGame() {
 //start script
 $(document).ready(function() {
 
-  console.log('https://scryfall.com/card/unh/30/cheatyface')
+  console.log('https://scryfall.com/card/unh/30/cheatyface');
 
   window.displayKeyboard = {};
   window.game = {};
@@ -705,13 +722,13 @@ $(document).ready(function() {
   window.game.free.lives = -1;
   window.game.free.manaState = 2;
   window.game.free.hideBlanks = false;
+  window.game.end = true;
 
-  //specific link to card
-  if (getParameterByName('cardId')) {
-    window.game.mode = 'free';
-    loadGame();
+  if (Cookies.get('befuddle') == null) { //first time user
+    Cookies.set('befuddle', JSON.stringify(window.game));
+    window.game.firstTime = true;
   } else {
-    mainMenuDisplay();
+    window.game = JSON.parse(Cookies.get('befuddle'));
   }
 
   //setup onclick for top nav buttons
@@ -724,10 +741,45 @@ $(document).ready(function() {
   document.getElementById('help-button').addEventListener('click', function() {
     helpModal();
   });
-
   document.getElementById('seeCard').addEventListener('click', function() {
     seeCardHandler();
   });
+
+  //setup the keyboard
+  let li = document.getElementById('keyboard').children;
+  for (var i = 0; i < li.length; i++) {
+    window.displayKeyboard[li[i].innerText.toLowerCase()] = li[i];
+    li[i].setAttribute('data-key', li[i].innerText);
+    li[i].addEventListener('click', function() {
+      if (!window.game.end)
+        submitLetter(this.getAttribute('data-key').toLowerCase());
+    });
+  }
+
+  //setup keyboard typing
+  document.onkeypress = function(e) {
+    e = e || window.event;
+    if (!window.game.end && e.keyCode >= 97 && e.keyCode <= 122) {
+      submitLetter(String.fromCharCode(e.keyCode));
+    }
+    if (!window.mtgCard.end && e.keyCode >= 65 && e.keyCode <= 90) {
+      submitLetter(String.fromCharCode(e.keyCode).toLowerCase());
+    }
+  };
+
+  //resume last game session
+  if (!window.game.end) {
+    loadGame();
+  } else {
+    //specific link to card
+    if (getParameterByName('cardId')) {
+      window.game.mode = 'free';
+      loadGame();
+    } else {
+      mainMenuDisplay();
+    }
+  }
+
 
 });
 
