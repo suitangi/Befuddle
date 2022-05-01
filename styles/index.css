@@ -242,7 +242,7 @@ body {
 }
 
 .gameSettings {
-  width: 80%;
+  width: 90%;
   height: 300px;
 }
 
@@ -255,12 +255,15 @@ body {
 .gameSettings .menuText {
   font-family: 'Beleren Bold';
   font-size: 20px;
-  line-height: 30px;
   user-select: none;
 }
 
 .gameSettings .slidecontainer {
   width: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+  margin-top: 4px;
+  margin-bottom: 10px;
 }
 
 .gameSettings .slider {
@@ -280,7 +283,7 @@ body {
 }
 
 #manaInput {
-  width: 25%;
+  width: max(22%, 40px);
 }
 
 .gameSettings .slider:hover {
@@ -295,6 +298,8 @@ body {
   border-radius: 50%;
   background: #d7d7d7;
   cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .gameSettings .slider::-moz-range-thumb {
@@ -303,6 +308,100 @@ body {
   border-radius: 50%;
   background: #d7d7d7;
   cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.switch {
+  --line: #0a0a0a;
+  --dot: #d7d7d7;
+  --circle: #d7d7d7;
+  --duration: 0.2s;
+  --text: #9ea0be;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.switch input {
+  display: none;
+}
+
+.switch input+div {
+  position: relative;
+  opacity: 0.7;
+  -webkit-transition: .5s;
+  transition: opacity .5s;
+}
+
+.switch:hover input+div {
+  opacity: 1;
+}
+
+.switch input+div:before, .switch input+div:after {
+  --s: 1;
+  content: '';
+  position: absolute;
+  height: 7px;
+  top: 10px;
+  width: 18px;
+  background: var(--line);
+  transform: scaleX(var(--s));
+  transition: transform var(--duration) ease;
+  border-radius: 7px;
+}
+
+.switch input+div:before {
+  --s: 0;
+  left: 2px;
+  transform-origin: 0 50%;
+  border-radius: 7px;
+}
+
+.switch input+div:after {
+  left: 18px;
+  transform-origin: 100% 50%;
+  border-radius: 7px;
+}
+
+.switch input+div span {
+  padding-left: 56px;
+  line-height: 24px;
+  color: var(--text);
+}
+
+.switch input+div span:before {
+  --x: 0;
+  --b: var(--circle);
+  --s: 3px;
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 15px;
+  height: 15px;
+  box-shadow: inset 0 0 0 var(--s) var(--b);
+  border-radius: 50%;
+  transform: translateX(var(--x));
+  transition: box-shadow var(--duration) ease, transform var(--duration) ease;
+}
+
+.switch input+div span:not(:empty) {
+  padding-left: 64px;
+}
+
+.switch input:checked+div:before {
+  --s: 1;
+}
+
+.switch input:checked+div:after {
+  --s: 0;
+}
+
+.switch input:checked+div span:before {
+  --x: 23px;
+  --s: 12px;
+  --b: var(--dot);
 }
 
 #seeCard:hover {

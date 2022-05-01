@@ -50,6 +50,11 @@ function loadCard(data) {
   window.mtgCard.guesses = new Set();
   window.mtgCard.cardData = data;
 
+  if (window.game.mode == 'free') {
+    window.mtgCard.hideBlanks = window.game.free.hideBlanks;
+  }
+
+
   //reset display keyboard
   let li = document.getElementById('keyboard').children;
   for (var i = 0; i < li.length; i++) {
@@ -131,16 +136,22 @@ function loadCard(data) {
   newImg.src = data['image_uris']['art_crop'];
 
   let str = data['name'];
-  window.mtgCard.hiddenName = hideName(str);
+
+  if (window.mtgCard.hideBlanks)
+    window.mtgCard.hiddenName = hideName(str, '');
+  else
+    window.mtgCard.hiddenName = hideName(str, '_');
+
   document.getElementById("cardName").innerText = window.mtgCard.hiddenName;
   document.getElementById('card').style = "";
 }
 
+
+
 //letter submtted by player
 function submitLetter(char) {
 
-  //if letter already guessed, return
-  if (window.mtgCard.guesses.has(char))
+  if (window.mtgCard.guesses.has(char)) //if letter already guessed, return
     return;
   window.mtgCard.guesses.add(char);
 
@@ -155,7 +166,12 @@ function submitLetter(char) {
       found = true;
       r += s.charAt(i);
     } else {
-      r += window.mtgCard.hiddenName.charAt(i);
+      if (!window.mtgCard.hideBlanks)
+        r += window.mtgCard.hiddenName.charAt(i);
+      else {
+        if (window.mtgCard.guesses.has(s.toLowerCase().charAt(i)) || !isAlpha(s.charAt(i)))
+          r+= s.charAt(i);
+      }
     }
   }
 
@@ -440,11 +456,11 @@ function getWinTerms(ind) {
 }
 
 //function to hide the name of the card
-function hideName(str) {
+function hideName(str, c) {
   let r = '';
   for (var i = 0; i < str.length; i++) {
     if (isAlpha(str.charAt(i)))
-      r += '_';
+      r += c;
     else
       r += str.charAt(i);
   }
@@ -510,11 +526,13 @@ function settingsModal() {
 
     gameSettingsHtml += '<div class="gameSettings">' +
       '<span class="menuText">Lives: <span id="livesdisplay">' + (window.game.free.lives == -1 ? 'Off' : window.game.free.lives) + '</span></span>' +
-      '<div class="slidecontainer"><input id="livesInput" type="range" min="0" max="25" value="' + window.game.free.lives + '" class="slider">' +
-      '<br><br><span class="menuText" id="manadisplay">' + manastates[window.game.free.manaState] + '</span>' +
-      '<div class="slidecontainer"><input id="manaInput" type="range" min="0" max="2" value="' + window.game.free.manaState + '" class="slider">' +
-      '<br><br><span class="smallText">Game changes won\'t be adjusted until next round.</span><br>' +
-      '</div></div>';
+      '<div class="slidecontainer"><input id="livesInput" type="range" min="0" max="25" value="' + window.game.free.lives + '" class="slider"></div>' +
+      '<br><span class="menuText" id="manadisplay">' + manastates[window.game.free.manaState] + '</span>' +
+      '<div class="slidecontainer"><input id="manaInput" type="range" min="0" max="2" value="' + window.game.free.manaState + '" class="slider"></div>' +
+      '<br><span class="menuText" id="hidedisplay">' + (window.game.free.hideBlanks? 'Hide':'Show') + ' Letter Blanks</span>' +
+      '<label class="switch"><input id="hideInput" type="checkbox" ' + (window.game.free.hideBlanks? 'checked':'') + '><div><span></span></div></label>' +
+      '<br><span class="smallText">Game changes won\'t be adjusted until next round.</span><br>' +
+      '</div>';
     $.dialog({
       title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
       content: gameSettingsHtml,
@@ -543,6 +561,12 @@ function settingsModal() {
           let manastates = ['Show Nothing', 'Show Only Colors', 'Show Mana Cost'];
           window.game.free.manaState = this.value;
           document.getElementById('manadisplay').innerText = manastates[this.value];
+        });
+
+        let hi = this.$content.find('#hideInput');
+        hi.on('input', function() {
+          window.game.free.hideBlanks = this.checked;
+          document.getElementById('hidedisplay').innerText = (window.game.free.hideBlanks? 'Hide':'Show') + ' Letter Blanks';
         });
       }
     });
@@ -670,6 +694,7 @@ $(document).ready(function() {
   window.game.free = {};
   window.game.free.lives = -1;
   window.game.free.manaState = 2;
+  window.game.free.hideBlanks = false;
 
   //specific link to card
   if (getParameterByName('cardId')) {
