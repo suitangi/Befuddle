@@ -76,14 +76,16 @@ function loadCard(data) {
     window.gameSesh.end = false;
     window.gameSesh.wrongGuess = '';
     window.gameSesh.guesses = '';
+    window.gameSesh.tlv = window.game[window.game.mode].lives;
 
     if (window.game.mode == 'free') {
-      window.gameSesh.hideBlanks = window.game.free.hideBlanks;
+      window.gameSesh.manastate = window.game.free.manaState;
     }
 
+    window.gameSesh.hideBlanks = window.game[window.game.mode].hideBlanks;
     window.gameSesh.card = window.mtgCard;
-  }
-  window.gameSesh.lives = window.game[window.game.mode].lives;
+  } // end if(data)
+  window.lives = window.game[window.game.mode].lives;
 
   //reset display keyboard
   let li = document.getElementById('keyboard').children;
@@ -111,9 +113,8 @@ function loadCard(data) {
 
   let html = '';
 
-  //get mana costs
-  if ((window.game.mode == 'free' && window.game.free.manaState == 2) ||
-    (window.game.mode == 'daily')) {
+  //show mana costs
+  if ((window.game.mode == 'free' && window.gameSesh.manastate == 2) || (window.game.mode == 'daily')) {
     if (window.mtgCard['mana_cost'] == '') {
       html = 'No mana cost';
     } else {
@@ -140,7 +141,8 @@ function loadCard(data) {
       }
     }
     html += '<br><br>';
-  } else if ((window.game.mode == 'free' && window.game.free.manaState == 1)) {
+  } //show colors
+  else if ((window.game.mode == 'free' && window.gameSesh.manastate == 1)) {
     html = 'Color' + (window.mtgCard['colors'].length < 2 ? '' : 's') + ': '
     if (window.mtgCard['colors'].length == 0) {
       html += '<img class="manaSymbol" src="' + window.mtgSymbols["C"] + '">';
@@ -150,8 +152,8 @@ function loadCard(data) {
       }
     }
     html += '<br><br>';
-  } else {
-    html = ''
+  } else { //show nothing
+    html = '';
   }
 
   document.getElementById('cardMana').innerHTML = html;
@@ -168,11 +170,11 @@ function loadCard(data) {
   let str = window.mtgCard['name'];
 
   if (window.gameSesh.hideBlanks)
-    window.mtgCard.hiddenName = hideName(str, '');
+    window.gameSesh.hiddenName = hideName(str, '');
   else
-    window.mtgCard.hiddenName = hideName(str, '_');
+    window.gameSesh.hiddenName = hideName(str, '_');
 
-  document.getElementById("cardName").innerText = window.mtgCard.hiddenName;
+  document.getElementById("cardName").innerText = window.gameSesh.hiddenName;
   document.getElementById('card').style = "";
 }
 
@@ -184,13 +186,6 @@ function loadGuesses() {
   for (var i = 0; i < g.length; i++) {
     submitLetter(g.charAt(i));
   }
-}
-
-//function to savecookies
-function saveCookies() {
-  console.log('cookies saved');
-  Cookies.set(window.game.mode, JSON.stringify(window.gameSesh));
-  Cookies.set('befuddle', JSON.stringify(window.game));
 }
 
 //letter submtted by player
@@ -212,7 +207,7 @@ function submitLetter(char) {
       r += s.charAt(i);
     } else {
       if (!window.gameSesh.hideBlanks)
-        r += window.mtgCard.hiddenName.charAt(i);
+        r += window.gameSesh.hiddenName.charAt(i);
       else {
         if (window.gameSesh.guesses.includes(s.toLowerCase().charAt(i)) || !isAlpha(s.charAt(i)))
           r += s.charAt(i);
@@ -226,16 +221,16 @@ function submitLetter(char) {
     //document.getElementById("wrongGuess").innerText = window.gameSesh.wrongGuess;
     window.displayKeyboard[char].classList.add('incorrect');
 
-    if (window.gameSesh.lives != -1) {
-      window.gameSesh.lives--;
+    if (window.lives != -1) {
+      window.lives--;
       window.displayKeyboard[char].classList.add('redText');
 
       //set lives text on keyboard
       for (e of document.getElementsByClassName('incorrect')) {
-        e.innerText = window.gameSesh.lives;
+        e.innerText = window.lives;
       }
 
-      if (window.gameSesh.lives == 0) { //game lost
+      if (window.lives == 0) { //game lost
         window.gameSesh.end = true;
         document.getElementById('seeCard').style = '';
         if (window.game.mode == 'free') {
@@ -247,12 +242,12 @@ function submitLetter(char) {
     }
   } else { //letter is in cardname
     window.displayKeyboard[char].classList.add('correct');
-    window.mtgCard.hiddenName = r;
-    document.getElementById("cardName").innerText = window.mtgCard.hiddenName;
+    window.gameSesh.hiddenName = r;
+    document.getElementById("cardName").innerText = window.gameSesh.hiddenName;
 
 
     //player win!
-    if (window.mtgCard.hiddenName == window.mtgCard.name) {
+    if (window.gameSesh.hiddenName == window.mtgCard.name) {
       window.gameSesh.end = true;
       document.getElementById('seeCard').style = '';
 
@@ -263,12 +258,14 @@ function submitLetter(char) {
       }
     }
   }
-  saveCookies();
+
+  //save game session data do cookie
+  Cookies.set(window.game.mode, JSON.stringify(window.gameSesh));
 }
 
 //handler for see card button
 function seeCardHandler() {
-  if (window.mtgCard.hiddenName == window.mtgCard.name) {
+  if (window.gameSesh.hiddenName == window.mtgCard.name) {
     if (window.game.mode == 'free') {
       gameWinFree();
     } else if (window.game.mode == 'daily') {
@@ -302,7 +299,9 @@ function gameLostFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function(linkButton) {
-          var str = 'Befuddle: X\nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
+          var str = 'Befuddle: \nX/' +
+            (window.gameSesh.tlv) + (window.gameSesh.hideBlanks ? '*': '') +
+            '\nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -346,7 +345,7 @@ function gameLostDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nX\nhttps://suitangi.github.io/Befuddle/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nX' + (window.gameSesh.hideBlanks ? '*': '') + '\nhttps://suitangi.github.io/Befuddle/';
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -387,7 +386,7 @@ function gameWinDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + '\nhttps://suitangi.github.io/Befuddle/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*': '') + '\nhttps://suitangi.github.io/Befuddle/';
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -420,7 +419,10 @@ function gameWinFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function(linkButton) {
-          var str = 'Befuddle: ' + wr + ' wrong guess' + (wr == 1 ? '' : 'es') + (window.gameSesh.hideBlanks ? '*' : '') + ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
+          var str = 'Befuddle: \n' +
+            wr + (window.gameSesh.tlv == -1? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
+            (window.gameSesh.hideBlanks ? '*' : '') +
+            ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -499,7 +501,7 @@ function getWinTerms(ind) {
     'Mind Ground', 'Wildly Guessed', 'Yawgmoth\'s Wouldn\'t', 'Triskaidekaphobia!', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank',
     'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank', 'Gone Blank'
   ];
-  if (window.gameSesh.lives == 1)
+  if (window.lives == 1)
     return 'Final Fortune';
   return terms[ind];
 }
@@ -574,9 +576,10 @@ function settingsModal() {
       backgroundDismiss: true,
       useBootstrap: false,
       onContentReady: function() {
-        let hi = this.$content.find('#hideInput');
+        let hi = this.$content.find('#hmInput');
         hi.on('input', function() {
           window.game.daily.hideBlanks = this.checked;
+          Cookies.set('befuddle', JSON.stringify(window.game)); //save game settings data to cookies
         });
       }
     });
@@ -610,23 +613,26 @@ function settingsModal() {
         lv.on('input', function() {
           if (this.value > 0) {
             document.getElementById('livesdisplay').innerText = this.value;
-            window.game.free.lives = this.value;
+            window.game.free.lives = parseInt(this.value);
           } else if (this.value == 0) {
             document.getElementById('livesdisplay').innerText = 'Off';
             window.game.free.lives = -1;
           }
+          Cookies.set('befuddle', JSON.stringify(window.game)); //save game settings data to cookies
         });
 
         let mi = this.$content.find('#manaInput');
         mi.on('input', function() {
           let manastates = ['Show Nothing', 'Show Colors', 'Show Mana Cost'];
-          window.game.free.manaState = this.value;
-          document.getElementById('manadisplay').innerText = manastates[this.value];
+          window.game.free.manaState = parseInt(this.value);
+          document.getElementById('manadisplay').innerText = manastates[parseInt(this.value)];
+          Cookies.set('befuddle', JSON.stringify(window.game)); //save game settings data to cookies
         });
 
         let hi = this.$content.find('#hideInput');
         hi.on('input', function() {
           window.game.free.hideBlanks = this.checked;
+          Cookies.set('befuddle', JSON.stringify(window.game)); //save game settings data to cookies
         });
       }
     });
@@ -669,6 +675,7 @@ function continueGameModal() {
         btnClass: 'btn-purple',
         action: function() {
           window.gameSesh.end = true;
+          Cookies.remove('free');
           loadGame();
         }
       },
@@ -705,7 +712,7 @@ function mainMenuDisplay() {
           if (Cookies.get(window.game.mode)) {
             window.gameSesh = JSON.parse(Cookies.get(window.game.mode));
             window.mtgCard = window.gameSesh.card;
-            if (window.gameSesh.end && window.mtgCard.hiddenName == window.mtgCard.name)
+            if (window.gameSesh.end && window.gameSesh.hiddenName == window.mtgCard.name)
               window.gameSesh.end = false;
           }
           loadGame();
@@ -722,7 +729,7 @@ function mainMenuDisplay() {
           if (!window.gameSesh.end)
             continueGameModal();
           else
-          loadGame();
+            loadGame();
         }
       }
     }
@@ -801,8 +808,9 @@ $(document).ready(function() {
 
   if (Cookies.get('befuddle') == null) { //first time user
     Cookies.set('befuddle', JSON.stringify(window.game));
-    window.game.firstTime = true;
+    window.firstTime = true;
   } else {
+    window.firstTime = false;
     window.game = JSON.parse(Cookies.get('befuddle'));
     if (checkNewDay()) {
       Cookies.remove('daily');
