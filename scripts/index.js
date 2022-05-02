@@ -40,7 +40,6 @@ function isAlpha(char) {
 //function to load the card data into memory
 function loadCard(data) {
 
-
   if (data) {
     //setup new mtg card object
     window.mtgCard = {};
@@ -181,12 +180,14 @@ function loadCard(data) {
 
 //function to laod guesses when reconnected to a game
 function loadGuesses() {
+  window.loadingGuesses = true;
   let g = window.gameSesh.guesses;
   window.gameSesh.wrongGuess = '';
   window.gameSesh.guesses = '';
   for (var i = 0; i < g.length; i++) {
     submitLetter(g.charAt(i));
   }
+  window.loadingGuesses = false;
 }
 
 //letter submtted by player
@@ -219,8 +220,18 @@ function submitLetter(char) {
 
   if (!found) { //letter is not in card name
     window.gameSesh.wrongGuess += char;
-    //document.getElementById("wrongGuess").innerText = window.gameSesh.wrongGuess;
     window.displayKeyboard[char].classList.add('incorrect');
+
+    //add to stat if not loadingGuesses
+    if (!window.loadingGuesses) {
+      if (!window.gameSesh.hideBlanks)
+        window.stats[window.game.mode].acc[1] ++;
+      else
+        window.stats[window.game.mode].acc[3] ++;
+      Cookies.set(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
+        expires: 365
+      });
+    }
 
     if (window.lives != -1) {
       window.lives--;
@@ -246,6 +257,16 @@ function submitLetter(char) {
     window.gameSesh.hiddenName = r;
     document.getElementById("cardName").innerText = window.gameSesh.hiddenName;
 
+    //add to stat if not loadingGuesses
+    if (!window.loadingGuesses) {
+      if (!window.gameSesh.hideBlanks)
+        window.stats[window.game.mode].acc[0] ++;
+      else
+        window.stats[window.game.mode].acc[2] ++;
+      Cookies.set(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
+        expires: 365
+      });
+    }
 
     //player win!
     if (window.gameSesh.hiddenName == window.mtgCard.name) {
@@ -261,7 +282,9 @@ function submitLetter(char) {
   }
 
   //save game session data do cookie
-  Cookies.set(window.game.mode, JSON.stringify(window.gameSesh));
+  Cookies.set(window.game.mode, JSON.stringify(window.gameSesh), {
+    expires: 365
+  });
 }
 
 //handler for see card button
@@ -283,6 +306,18 @@ function seeCardHandler() {
 
 //handler for game lost scenario in free mode
 function gameLostFree() {
+
+  if (window.gameSesh.tlv != -1) {
+    if (!window.gameSesh.hideBlanks) {
+      window.stats.free.wr[0][window.gameSesh.tlv - 1][1] ++;
+    } else {
+      window.stats.free.wr[1][window.gameSesh.tlv - 1][1] ++;
+    }
+    Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+      expires: 365
+    });
+  }
+
   $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">Totally Lost</span>",
     content: getCardHtml(),
@@ -303,7 +338,7 @@ function gameLostFree() {
           var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
             '\nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id +
-            (window.mtgCard.cf != -1? ('&cf=' + window.mtgCard.cf):'');
+            (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -322,6 +357,22 @@ function gameLostFree() {
 
 //handler for game lost scenario in free mode
 function gameLostDaily() {
+
+  //new daily stat, not just a refresh
+  let doy = (new Date()).getDOY();
+  if (window.stats.daily.doy != doy) {
+    window.stats.daily.doy = doy
+    window.stats.daily.streak = 0;
+    if (!window.gameSesh.hideBlanks) {
+      window.stats.daily.WL[1] ++;
+    } else {
+      window.stats.daily.WL[3] ++;
+    }
+    Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+      expires: 365
+    });
+  }
+
   $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">Totally Lost</span>",
     content: getCardHtml(),
@@ -361,6 +412,25 @@ function gameLostDaily() {
 function gameWinDaily() {
 
   let wr = window.gameSesh.wrongGuess.length;
+  let doy = (new Date()).getDOY();
+
+  //new daily stat, not just a refresh
+  if (window.stats.daily.doy != doy) {
+    window.stats.daily.doy = doy
+    window.stats.daily.streak ++;
+    if (window.stats.daily.streak > window.stats.daily.maxStk)
+      window.stats.daily.maxStk = window.stats.daily.streak;
+    if (!window.gameSesh.hideBlanks) {
+      window.stats.daily.score[0][wr] ++;
+      window.stats.daily.WL[0] ++;
+    } else {
+      window.stats.daily.score[1][wr] ++;
+      window.stats.daily.WL[2] ++;
+    }
+    Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+      expires: 365
+    });
+  }
 
   $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
@@ -403,6 +473,23 @@ function gameWinFree() {
 
   let wr = window.gameSesh.wrongGuess.length;
 
+  if (!window.gameSesh.hideBlanks) {
+    if (wr == 0)
+      window.stats.free.perf[0]++;
+    if (window.gameSesh.tlv != -1)
+      window.stats.free.wr[0][window.gameSesh.tlv - 1][0] ++;
+    window.stats.free.score[0][wr]++;
+  } else {
+    if (wr == 0)
+      window.stats.free.perf[1]++;
+    if (window.gameSesh.tlv != -1)
+      window.stats.free.wr[1][window.gameSesh.tlv - 1][0] ++;
+    window.stats.free.score[1][wr]++;
+  }
+  Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+    expires: 365
+  });
+
   $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
       (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
@@ -425,7 +512,7 @@ function gameWinFree() {
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
             ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id +
-            (window.mtgCard.cf != -1? ('&cf=' + window.mtgCard.cf):'');
+            (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -580,7 +667,9 @@ function settingsModal() {
         let hi = this.$content.find('#hmInput');
         hi.on('input', function() {
           window.game.daily.hideBlanks = this.checked;
-          Cookies.set('befuddle', JSON.stringify(window.game)); //save game settings data to cookies
+          Cookies.set('befuddle', JSON.stringify(window.game), {
+            expires: 365
+          }); //save game settings data to cookies
         });
       }
     });
@@ -619,7 +708,9 @@ function settingsModal() {
             document.getElementById('livesdisplay').innerText = 'Off';
             window.game.free.lives = -1;
           }
-          Cookies.set('befuddle', JSON.stringify(window.game)); //save game settings data to cookies
+          Cookies.set('befuddle', JSON.stringify(window.game), {
+            expires: 365
+          }); //save game settings data to cookies
         });
 
         let mi = this.$content.find('#manaInput');
@@ -627,13 +718,17 @@ function settingsModal() {
           let manastates = ['Show Nothing', 'Show Colors', 'Show Mana Cost'];
           window.game.free.manaState = parseInt(this.value);
           document.getElementById('manadisplay').innerText = manastates[parseInt(this.value)];
-          Cookies.set('befuddle', JSON.stringify(window.game)); //save game settings data to cookies
+          Cookies.set('befuddle', JSON.stringify(window.game), {
+            expires: 365
+          }); //save game settings data to cookies
         });
 
         let hi = this.$content.find('#hideInput');
         hi.on('input', function() {
           window.game.free.hideBlanks = this.checked;
-          Cookies.set('befuddle', JSON.stringify(window.game)); //save game settings data to cookies
+          Cookies.set('befuddle', JSON.stringify(window.game), {
+            expires: 365
+          }); //save game settings data to cookies
         });
       }
     });
@@ -807,6 +902,7 @@ $(document).ready(function() {
   console.log('https://scryfall.com/card/unh/30/cheatyface');
 
   window.displayKeyboard = {};
+  window.loadingGuesses = false;
   window.game = {};
   window.game.timestamp = (new Date()).getTime();
 
@@ -823,8 +919,49 @@ $(document).ready(function() {
   window.gameSesh = {};
   window.gameSesh.end = true;
 
+  window.stats = {};
+  window.stats.daily = {};
+  window.stats.daily.streak = 0;
+  window.stats.daily.maxStk = 0;
+  window.stats.daily.score = [
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0]
+  ];
+  window.stats.daily.WL = [0, 0, 0, 0];
+  window.stats.daily.acc = [0, 0, 0, 0];
+  window.stats.daily.doy = 0;
+
+  window.stats.free = {};
+  window.stats.free.perf = [0, 0];
+  window.stats.free.acc = [0, 0, 0, 0];
+  window.stats.free.wr = [
+    [],
+    []
+  ];
+  window.stats.free.score = [
+    [],
+    []
+  ];
+
+  for (var i = 0; i < 25; i++) {
+    window.stats.free.wr[0].push([0, 0]);
+    window.stats.free.wr[1].push([0, 0]);
+    window.stats.free.score[0].push(0);
+    window.stats.free.score[1].push(0);
+  }
+
+
+  //set up cookies
   if (Cookies.get('befuddle') == null) { //first time user
-    Cookies.set('befuddle', JSON.stringify(window.game));
+    Cookies.set('befuddle', JSON.stringify(window.game), {
+      expires: 365
+    });
+    Cookies.set('freeStats', JSON.stringify(window.stats.free), {
+      expires: 365
+    });
+    Cookies.set('dailyStats', JSON.stringify(window.stats.free), {
+      expires: 365
+    });
     window.firstTime = true;
   } else {
     window.firstTime = false;
@@ -833,7 +970,26 @@ $(document).ready(function() {
       Cookies.remove('daily');
     }
     window.game.timestamp = (new Date()).getTime();
-    Cookies.set('befuddle', JSON.stringify(window.game));
+    Cookies.set('befuddle', JSON.stringify(window.game)), {
+      expires: 365
+    };
+
+
+    //set free stats
+    if (Cookies.get('freeStats') == null)
+      Cookies.set('freeStats', JSON.stringify(window.stats.free), {
+        expires: 365
+      });
+    else
+      window.stats.free = JSON.parse(Cookies.get('freeStats'));
+
+    //set dailly stats
+    if (Cookies.get('dailyStats') == null)
+      Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+        expires: 365
+      });
+    else
+      window.stats.daily = JSON.parse(Cookies.get('dailyStats'));
   }
 
   //setup onclick for top nav buttons
