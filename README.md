@@ -5,6 +5,10 @@
 ### Misc/Bugs
 - CSS cleanup
 
+### Main Menu
+- Change modes
+- 
+
 ### Options menu:
 - Dark/Light Mode
 - Clear Cookies

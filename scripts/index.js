@@ -97,14 +97,15 @@ function loadCard(data) {
   }
 
   document.getElementById('seeCard').style = 'display:none;';
+  window.mtgCard.cf = -1;
 
   // select card face if MDFC or transform
   if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
-    if (getParameterByName('cardFace'))
-      window.mtgCard.cardFace = getParameterByName('cardFace');
+    if (getParameterByName('cf'))
+      window.mtgCard.cf = parseInt(getParameterByName('cf'));
     else
-      window.mtgCard.cardFace = Math.floor(Math.random() * window.mtgCard['card_faces'].length);
-    let cf = window.mtgCard['card_faces'][window.mtgCard.cardFace];
+      window.mtgCard.cf = Math.floor(Math.random() * window.mtgCard['card_faces'].length);
+    let cf = window.mtgCard['card_faces'][window.mtgCard.cf];
     window.mtgCard['mana_cost'] = cf['mana_cost'];
     window.mtgCard['colors'] = cf['colors'];
     window.mtgCard['image_uris'] = cf['image_uris'];
@@ -301,7 +302,8 @@ function gameLostFree() {
         action: function(linkButton) {
           var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            '\nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
+            '\nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id +
+            (window.mtgCard.cf != -1? ('&cf=' + window.mtgCard.cf):'');
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -422,7 +424,8 @@ function gameWinFree() {
           var str = 'Befuddle: \n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
+            ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id +
+            (window.mtgCard.cf != -1? ('&cf=' + window.mtgCard.cf):'');
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -486,8 +489,8 @@ function getCardHtml() {
   let html;
   if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
     html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
-      '<img src=\"' + window.mtgCard['card_faces'][window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
-      '<img src=\"' + window.mtgCard['card_faces'][1 - window.mtgCard.cardFace]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
+      '<img src=\"' + window.mtgCard['card_faces'][window.mtgCard.cf]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
+      '<img src=\"' + window.mtgCard['card_faces'][1 - window.mtgCard.cf]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
   } else {
     html = "<img src=\"" + window.mtgCard.image_uris.normal + "\" style=\"border-radius:5%;\">";
   }
@@ -659,8 +662,8 @@ function menuModal() {
     title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Befuddle</span>',
     content: '<span style=\"font-family: \'Beleren Bold\';\">Menu modal here: some buttons and some other ui</span>',
     theme: 'dark',
-    animation: 'top',
-    closeAnimation: 'top',
+    animation: 'left',
+    closeAnimation: 'left',
     animateFromElement: false,
     boxWidth: 'min(400px, 80%)',
     draggable: false,
