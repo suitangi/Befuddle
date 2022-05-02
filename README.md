@@ -3,21 +3,16 @@
 # Todo:
 
 ### Misc/Bugs
-- Better animations
-- Darkmode/ light mode
 - CSS cleanup
-- Daily hard mode
 
 ### Options menu:
-- Hide mana cost
-- Card color
-- Number of attempts
-- Hide Letter blanks
+- Dark/Light Mode
+- Clear Cookies
 
 ### Stats:
-- Keep track with cookies
 - Stat displays
 - Daily tracking
+- Design stat system for free play modes
 
 ### Credits:
 - Art Images: Scryfall

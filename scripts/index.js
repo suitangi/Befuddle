@@ -136,7 +136,7 @@ function loadCard(data) {
         else if (window.mtgCard.manaCost[i] == '//')
           html += ' // ';
         else {
-          html += '<img class="manaSymbol" src="' + window.mtgSymbols[window.mtgCard.manaCost[i]] + '">';
+          html += '<img class="manaSymbol" alt="' + window.mtgCard.manaCost[i] + '" src="' + window.mtgSymbols[window.mtgCard.manaCost[i]] + '">';
         }
       }
     }
@@ -148,7 +148,7 @@ function loadCard(data) {
       html += '<img class="manaSymbol" src="' + window.mtgSymbols["C"] + '">';
     } else {
       for (var i = 0; i < window.mtgCard['colors'].length; i++) {
-        html += '<img class="manaSymbol" src="' + window.mtgSymbols[window.mtgCard['colors'][i]] + '">';
+        html += '<img class="manaSymbol" alt="' + window.mtgCard['colors'][i] + '" src="' + window.mtgSymbols[window.mtgCard['colors'][i]] + '">';
       }
     }
     html += '<br><br>';
@@ -299,8 +299,8 @@ function gameLostFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function(linkButton) {
-          var str = 'Befuddle: \nX/' +
-            (window.gameSesh.tlv) + (window.gameSesh.hideBlanks ? '*': '') +
+          var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
+            (window.gameSesh.hideBlanks ? '*' : '') +
             '\nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
           clipboardHandler(linkButton, str);
           return false;
@@ -345,7 +345,7 @@ function gameLostDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nX' + (window.gameSesh.hideBlanks ? '*': '') + '\nhttps://suitangi.github.io/Befuddle/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nX' + (window.gameSesh.hideBlanks ? '*' : '') + '\nhttps://suitangi.github.io/Befuddle/';
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -386,7 +386,7 @@ function gameWinDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*': '') + '\nhttps://suitangi.github.io/Befuddle/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*' : '') + '\nhttps://suitangi.github.io/Befuddle/';
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -420,7 +420,7 @@ function gameWinFree() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           var str = 'Befuddle: \n' +
-            wr + (window.gameSesh.tlv == -1? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
+            wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
             ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id;
           clipboardHandler(linkButton, str);
@@ -553,8 +553,6 @@ function helpModal() {
 function settingsModal() {
 
   let gameSettingsHtml = '';
-
-
   if (window.game.mode == 'daily') {
 
     gameSettingsHtml += '<div class="gameSettings">' +
@@ -644,6 +642,22 @@ function statsModal() {
   $.dialog({
     title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Statistics</span>',
     content: '<span style=\"font-family: \'Beleren Bold\';\">Statistics Page\nStatistics Page\nStatistics Page\nStatistics Page\nStatistics Page\nStatistics Page\nStatistics Page\nStatistics Page\n</span>',
+    theme: 'dark',
+    animation: 'top',
+    closeAnimation: 'top',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    backgroundDismiss: true,
+    useBootstrap: false
+  });
+}
+
+//function to handle menu button
+function menuModal() {
+  $.dialog({
+    title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Befuddle</span>',
+    content: '<span style=\"font-family: \'Beleren Bold\';\">Menu modal here: some buttons and some other ui</span>',
     theme: 'dark',
     animation: 'top',
     closeAnimation: 'top',
@@ -822,6 +836,9 @@ $(document).ready(function() {
   //setup onclick for top nav buttons
   document.getElementById('stats-button').addEventListener('click', function() {
     statsModal();
+  });
+  document.getElementById('menu-button').addEventListener('click', function() {
+    menuModal();
   });
   document.getElementById('settings-button').addEventListener('click', function() {
     settingsModal();
