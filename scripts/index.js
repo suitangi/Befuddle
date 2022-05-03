@@ -225,9 +225,9 @@ function submitLetter(char) {
     //add to stat if not loadingGuesses
     if (!window.loadingGuesses) {
       if (!window.gameSesh.hideBlanks)
-        window.stats[window.game.mode].acc[1] ++;
+        window.stats[window.game.mode].acc[1]++;
       else
-        window.stats[window.game.mode].acc[3] ++;
+        window.stats[window.game.mode].acc[3]++;
       Cookies.set(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
         expires: 365
       });
@@ -260,9 +260,9 @@ function submitLetter(char) {
     //add to stat if not loadingGuesses
     if (!window.loadingGuesses) {
       if (!window.gameSesh.hideBlanks)
-        window.stats[window.game.mode].acc[0] ++;
+        window.stats[window.game.mode].acc[0]++;
       else
-        window.stats[window.game.mode].acc[2] ++;
+        window.stats[window.game.mode].acc[2]++;
       Cookies.set(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
         expires: 365
       });
@@ -309,9 +309,9 @@ function gameLostFree() {
 
   if (window.gameSesh.tlv != -1) {
     if (!window.gameSesh.hideBlanks) {
-      window.stats.free.wr[0][window.gameSesh.tlv - 1][1] ++;
+      window.stats.free.wr[0][window.gameSesh.tlv - 1][1]++;
     } else {
-      window.stats.free.wr[1][window.gameSesh.tlv - 1][1] ++;
+      window.stats.free.wr[1][window.gameSesh.tlv - 1][1]++;
     }
     Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
       expires: 365
@@ -364,9 +364,9 @@ function gameLostDaily() {
     window.stats.daily.doy = doy
     window.stats.daily.streak = 0;
     if (!window.gameSesh.hideBlanks) {
-      window.stats.daily.WL[1] ++;
+      window.stats.daily.WL[1]++;
     } else {
-      window.stats.daily.WL[3] ++;
+      window.stats.daily.WL[3]++;
     }
     Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
       expires: 365
@@ -417,15 +417,15 @@ function gameWinDaily() {
   //new daily stat, not just a refresh
   if (window.stats.daily.doy != doy) {
     window.stats.daily.doy = doy
-    window.stats.daily.streak ++;
+    window.stats.daily.streak++;
     if (window.stats.daily.streak > window.stats.daily.maxStk)
       window.stats.daily.maxStk = window.stats.daily.streak;
     if (!window.gameSesh.hideBlanks) {
-      window.stats.daily.score[0][wr] ++;
-      window.stats.daily.WL[0] ++;
+      window.stats.daily.score[0][wr]++;
+      window.stats.daily.WL[0]++;
     } else {
-      window.stats.daily.score[1][wr] ++;
-      window.stats.daily.WL[2] ++;
+      window.stats.daily.score[1][wr]++;
+      window.stats.daily.WL[2]++;
     }
     Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
       expires: 365
@@ -477,13 +477,13 @@ function gameWinFree() {
     if (wr == 0)
       window.stats.free.perf[0]++;
     if (window.gameSesh.tlv != -1)
-      window.stats.free.wr[0][window.gameSesh.tlv - 1][0] ++;
+      window.stats.free.wr[0][window.gameSesh.tlv - 1][0]++;
     window.stats.free.score[0][wr]++;
   } else {
     if (wr == 0)
       window.stats.free.perf[1]++;
     if (window.gameSesh.tlv != -1)
-      window.stats.free.wr[1][window.gameSesh.tlv - 1][0] ++;
+      window.stats.free.wr[1][window.gameSesh.tlv - 1][0]++;
     window.stats.free.score[1][wr]++;
   }
   Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
@@ -737,9 +737,19 @@ function settingsModal() {
 
 //function to handle status button
 function statsModal() {
+
+  let html = '';
+  if (window.game.mode == 'daily') {
+    html += '<span style=\"font-family: \'Beleren Bold\';\">Statistics Page</span>' +
+      '<canvas id="wrChart"></canvas>' +
+      '<canvas id="scoreChart"></canvas>'
+  } else if (window.game.mode == 'free') {
+
+  }
+
   $.dialog({
     title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Statistics</span>',
-    content: '<span style=\"font-family: \'Beleren Bold\';\">Statistics Page\nStatistics Page\nStatistics Page\nStatistics Page\nStatistics Page\nStatistics Page\nStatistics Page\nStatistics Page\n</span>',
+    content: html,
     theme: 'dark',
     animation: 'top',
     closeAnimation: 'top',
@@ -747,8 +757,42 @@ function statsModal() {
     boxWidth: 'min(400px, 80%)',
     draggable: false,
     backgroundDismiss: true,
-    useBootstrap: false
+    useBootstrap: false,
+    onContentReady: function() {
+      if (window.game.mode == 'daily') {
+        dailyChartsSetup();
+      } else if (window.game.mode == 'free') {
+
+      }
+    }
   });
+}
+
+function dailyChartsSetup() {
+  mspie(document.getElementById('wrChart').getContext('2d'), {
+    labels: ['Normal Win', 'Normal Loss', 'Hidden Win', 'Hidden Loss'],
+    datasets: [{
+      backgroundColor: ['#32B1DC', '#DC5C32'],
+      data: [window.stats.daily.WL[0], window.stats.daily.WL[1]]
+    }, {
+      backgroundColor: ['#18728F', '#8F3618'],
+      data: [window.stats.daily.WL[2], window.stats.daily.WL[3]]
+    }]
+  }, 'Daily Win/Loss');
+  vertBarChart(document.getElementById('scoreChart').getContext('2d'), {
+    labels: [0, 1, 2, 3, 4, 5, 6],
+    datasets: [{
+      label: 'Normal Mode',
+      data: window.stats.daily.score[0],
+      backgroundColor: '#32B1DC',
+      borderWidth: 1
+    }, {
+      label: 'Hidden Mode',
+      data: window.stats.daily.score[1],
+      backgroundColor: '#18728F',
+      borderWidth: 1
+    }]
+  }, 'Score Distribution')
 }
 
 //function to handle menu button
@@ -894,6 +938,149 @@ function checkNewDay() {
   d1 = new Date(window.game.timestamp);
   d2 = new Date();
   return d1.getDOY() != d2.getDOY();
+}
+
+//charting function for multi-series pie chart
+function mspie(ctx, data, title) {
+  return new Chart(ctx, {
+    type: 'pie',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            generateLabels: function(chart) {
+              // Get the default label list
+              const original = Chart.overrides.pie.plugins.legend.labels.generateLabels;
+              const labelsOriginal = original.call(this, chart);
+
+              // Build an array of colors used in the datasets of the chart
+              let datasetColors = chart.data.datasets.map(function(e) {
+                return e.backgroundColor;
+              });
+              datasetColors = datasetColors.flat();
+
+              // Modify the color and hide state of each label
+              labelsOriginal.forEach(label => {
+                // There are twice as many labels as there are datasets. This converts the label index into the corresponding dataset index
+                label.datasetIndex = (label.index - label.index % 2) / 2;
+
+                // The hidden state must match the dataset's hidden state
+                label.hidden = !chart.isDatasetVisible(label.datasetIndex);
+
+                // Change the color to match the dataset
+                label.fillStyle = datasetColors[label.index];
+              });
+
+              return labelsOriginal;
+            },
+            color: 'white',
+            font: {
+              family: 'Roboto Mono'
+            },
+          },
+          onClick: function(mouseEvent, legendItem, legend) {
+            // toggle the visibility of the dataset from what it currently is
+            legend.chart.getDatasetMeta(
+              legendItem.datasetIndex
+            ).hidden = legend.chart.isDatasetVisible(legendItem.datasetIndex);
+            legend.chart.update();
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const labelIndex = (context.datasetIndex * 2) + context.dataIndex;
+              return context.chart.data.labels[labelIndex] + ': ' + context.formattedValue;
+            }
+          },
+          titleFont: {
+            family: 'Roboto Mono'
+          },
+          bodyFont: {
+            family: 'Roboto Mono'
+          }
+        },
+        title: {
+          display: true,
+          color: 'white',
+          font: {
+            family: 'Beleren Bold',
+            size: 20
+          },
+          text: title
+        }
+      }
+    }
+  });
+}
+
+function vertBarChart(ctx, data, title) {
+  return new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: 'white',
+            stepSize: 1
+          },
+          grid: {
+            color: '#6D6D6D'
+          },
+          title: {
+            font: {
+              family: 'Beleren Bold'
+            }
+          }
+        },
+        x: {
+          ticks: {
+            color: 'white'
+          },
+          grid: {
+            display: false
+          },
+          title: {
+            font: {
+              family: 'Beleren Bold'
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: 'white',
+            font: {
+              family: 'Roboto Mono'
+            },
+          }
+        },
+        title: {
+          display: true,
+          color: 'white',
+          font: {
+            family: 'Beleren Bold',
+            size: 20
+          },
+          text: title
+        },
+        tooltip: {
+          titleFont: {
+            family: 'Roboto Mono'
+          },
+          bodyFont: {
+            family: 'Roboto Mono'
+          }
+        }
+      }
+    }
+  });
 }
 
 //start script

@@ -4,6 +4,7 @@
 
 ### Misc/Bugs
 - CSS cleanup
+- Show countdown to next daily befuddle
 
 ### Main Menu
 - Change modes
@@ -18,7 +19,7 @@
 #### Daily
 - Streak [Number]
 - Win rate by (Normal vs Hidden) [Pie]
-- Score by (Normal vs Hidden) [Verical bar with 2 data sets]
+- Score by (Normal vs Hidden) [Veritcal bar with 2 data sets]
 - Accuracy (right letter vs wrong) [pie, normal vs hidden]
 
 #### Free
