@@ -413,6 +413,12 @@ body {
   --b: var(--dot);
 }
 
+#dailyTimerDisplay {
+  font-family: 'Beleren Bold';
+  margin-top: 10px;
+  font-size: 20px;
+}
+
 .chartCanvas {
   margin-bottom: 40px;
 }
@@ -435,7 +441,7 @@ body {
 }
 
 #streakTable th {
-    width: 50%;
+  width: 50%;
 }
 
 #seeCard:hover {

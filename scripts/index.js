@@ -36,7 +36,6 @@ function isAlpha(char) {
   return c >= 97 && c <= 122;
 }
 
-
 //function to load the card data into memory
 function loadCard(data) {
 
@@ -313,7 +312,7 @@ function gameLostFree() {
     } else {
       window.stats.free.wr[1][window.gameSesh.tlv - 1][1]++;
     }
-    Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+    Cookies.set('freeStats', JSON.stringify(window.stats.free), {
       expires: 365
     });
   }
@@ -358,6 +357,11 @@ function gameLostFree() {
 //handler for game lost scenario in free mode
 function gameLostDaily() {
 
+  if (window.dailyModal != null) {
+    window.window.dailyModal.open();
+    return;
+  }
+
   //new daily stat, not just a refresh
   let doy = (new Date()).getDOY();
   if (window.stats.daily.doy != doy) {
@@ -373,9 +377,9 @@ function gameLostDaily() {
     });
   }
 
-  $.confirm({
+  window.dailyModal = $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">Totally Lost</span>",
-    content: getCardHtml(),
+    content: getCardHtml() + '<div id="dailyTimerDisplay"></div>',
     theme: 'dark',
     animation: 'top',
     closeAnimation: 'top',
@@ -407,9 +411,13 @@ function gameLostDaily() {
   });
 }
 
-
 //handler for winning the game in daily mode
 function gameWinDaily() {
+
+  if (window.dailyModal != null) {
+    window.window.dailyModal.open();
+    return;
+  }
 
   let wr = window.gameSesh.wrongGuess.length;
   let doy = (new Date()).getDOY();
@@ -432,10 +440,10 @@ function gameWinDaily() {
     });
   }
 
-  $.confirm({
+  window.dailyModal = $.confirm({
     title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
       (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
-    content: getCardHtml(),
+    content: getCardHtml() + '<div id="dailyTimerDisplay"></div>',
     theme: 'dark',
     animation: 'top',
     closeAnimation: 'top',
@@ -467,7 +475,6 @@ function gameWinDaily() {
   });
 }
 
-
 //handler for winning the game in free mode
 function gameWinFree() {
 
@@ -486,7 +493,7 @@ function gameWinFree() {
       window.stats.free.wr[1][window.gameSesh.tlv - 1][0]++;
     window.stats.free.score[1][wr]++;
   }
-  Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+  Cookies.set('freeStats', JSON.stringify(window.stats.free), {
     expires: 365
   });
 
@@ -551,7 +558,6 @@ function clipboardHandler(linkButton, str) {
   });
 }
 
-
 //function to display clipboard error
 function clipboardError(str) {
   $.dialog({
@@ -570,7 +576,6 @@ function clipboardError(str) {
   });
 }
 
-
 //helper to get card html display for modals
 function getCardHtml() {
   let html;
@@ -583,7 +588,6 @@ function getCardHtml() {
   }
   return html;
 }
-
 
 //function to get the terms for wrong guesses
 function getWinTerms(ind) {
@@ -778,6 +782,7 @@ function statsModal() {
   });
 }
 
+//function to setup the charts for free mode stats
 function freeChartsSetup() {
   let wr = [
       [],
@@ -849,6 +854,7 @@ function freeChartsSetup() {
   }, 'Letter Accruacy');
 }
 
+//function to setup the charts for daily mode stats
 function dailyChartsSetup() {
   mspie(document.getElementById('wrChart').getContext('2d'), {
     labels: ['Win (Normal)', 'Loss (Normal)', 'Win (Hidden)', 'Loss (Hidden)'],
@@ -914,7 +920,6 @@ function menuModal() {
   });
 }
 
-
 //function for the continue game? modal
 function continueGameModal() {
   $.confirm({
@@ -968,8 +973,8 @@ function mainMenuDisplay() {
         text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Daily Befuddle</span>',
         action: function() {
           window.game.mode = 'daily';
-          if (Cookies.get(window.game.mode)) {
-            window.gameSesh = JSON.parse(Cookies.get(window.game.mode));
+          if (Cookies.get('daily')) {
+            window.gameSesh = JSON.parse(Cookies.get('daily'));
             window.mtgCard = window.gameSesh.card;
             if (window.gameSesh.end && window.gameSesh.hiddenName == window.mtgCard.name)
               window.gameSesh.end = false;
@@ -981,8 +986,8 @@ function mainMenuDisplay() {
         text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Free Play</span>',
         action: function() {
           window.game.mode = 'free';
-          if (Cookies.get(window.game.mode)) {
-            window.gameSesh = JSON.parse(Cookies.get(window.game.mode));
+          if (Cookies.get('free')) {
+            window.gameSesh = JSON.parse(Cookies.get('free'));
             window.mtgCard = window.gameSesh.card;
           }
           if (!window.gameSesh.end)
@@ -1034,6 +1039,70 @@ function loadGame() {
           requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
       });
   }
+}
+
+//function to load the timer
+function loadTimer() {
+
+  let now = new Date();
+  let midnight = new Date;
+  midnight.setHours(24, 0, 0, 0);
+  let seconds = (now.getMinutes() * 60 + now.getSeconds()) % 300;
+  let timeTo = midnight - now;
+  let str, h, m, s;
+
+  function msToTime(s) {
+
+    function pad(n) {
+      return ('0' + n).slice(-2);
+    }
+
+    var ms = s % 1000;
+    s = (s - ms) / 1000;
+    var secs = s % 60;
+    s = (s - secs) / 60;
+    var mins = s % 60;
+    var hrs = (s - mins) / 60;
+
+    return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
+  }
+
+  function timerTick() {
+    if (seconds == 300) { //every 5 minutes, correct time again
+      now = new Date();
+      seconds = (now.getMinutes() * 60 + now.getSeconds()) % 300;
+      if (now > midnight) { //midnight, load new daily game
+        window.game.mode == 'daily';
+        if (window.dailyModal != null && window.dailyModal.isOpen()) {
+          window.dailyModal.close();
+          window.dailyModal = null;
+          Cookies.remove('daily');
+          window.game.end = true;
+          loadGame();
+        }
+        loadTimer();
+        return;
+      }
+      timeTo = midnight - now;
+      setTimeout(function(t) {
+        timeTo -= t;
+        timerTick();
+      }, 1000 - now.getMilliseconds(), 1000 - now.getMilliseconds());
+    } else {
+      setTimeout(function() {
+        timeTo -= 1000;
+        timerTick();
+      }, 1000);
+    }
+    if (window.dailyModal != null && window.dailyModal.isOpen()) {
+      document.getElementById('dailyTimerDisplay').innerText = 'Next Daily Befuddle │ ' + msToTime(timeTo);
+    }
+    seconds++;
+  }
+
+  setTimeout(function() {
+    timerTick();
+  }, 1000 - now.getMilliseconds());
 }
 
 //see if today is a new day locally
@@ -1120,6 +1189,7 @@ function mspie(ctx, data, title) {
   });
 }
 
+//charting function for vertical bar chart
 function vertBarChart(ctx, data, title) {
   return new Chart(ctx, {
     type: 'bar',
@@ -1191,6 +1261,7 @@ function vertBarChart(ctx, data, title) {
   });
 }
 
+//charting function for vertical line chart
 function lineChart(ctx, data, title) {
   return new Chart(ctx, {
     type: 'line',
@@ -1268,6 +1339,8 @@ $(document).ready(function() {
 
   window.displayKeyboard = {};
   window.loadingGuesses = false;
+  window.dailyModal = null;
+
   window.game = {};
   window.game.timestamp = (new Date()).getTime();
 
@@ -1315,6 +1388,7 @@ $(document).ready(function() {
     window.stats.free.score[1].push(0);
   }
 
+  loadTimer();
 
   //set up cookies
   if (Cookies.get('befuddle') == null) { //first time user
@@ -1396,6 +1470,8 @@ $(document).ready(function() {
     }
   };
 
+  //set game mode
+  window.game.mode = '';
 
   //specific link to card
   if (getParameterByName('cardId')) {
@@ -1409,7 +1485,7 @@ $(document).ready(function() {
 
 });
 
-//Stackoverflow it
+//Lets pollute the date prototype
 //Get leap year
 Date.prototype.isLeapYear = function() {
   var year = this.getFullYear();
