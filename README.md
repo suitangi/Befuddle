@@ -24,9 +24,9 @@
 
 #### Free
 - Number of perfects [normal vs hidden]
-- Accuracy (right letter vs wrong) [pie, normal vs hidden]
 - Win rate by lives [Vertical line-plot with 2 data sets (Normal vs Hidden)]
 - Score by (normal vs Hidden)[Vertical bar with 2 sets with slider for lives --  Off to 25 to Total]
+- Accuracy (right letter vs wrong) [pie, normal vs hidden]
 
 
 ### Credits:

@@ -740,11 +740,21 @@ function statsModal() {
 
   let html = '';
   if (window.game.mode == 'daily') {
-    html += '<span style=\"font-family: \'Beleren Bold\';\">Statistics Page</span>' +
-      '<canvas id="wrChart"></canvas>' +
-      '<canvas id="scoreChart"></canvas>'
+    html += '<div id="streakTitle">Streak</div>' +
+      '<div><table id="streakTable"><tbody><tr><th>Current</th><th>Max</th></tr><tr><td>' +
+      window.stats.daily.streak + '</td><td>' +
+      window.stats.daily.maxStk + '</td></tr></tbody></table></div>' +
+      '<canvas id="wrChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
+      '<canvas id="scoreChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
+      '<canvas id="accChart" class="chartCanvas" width="400px" height="300px"></canvas>';
   } else if (window.game.mode == 'free') {
-
+    html += '<div id="streakTitle">Perfect Games</div>' +
+      '<div><table id="streakTable"><tbody><tr><th>Normal Mode</th><th>Hidden Mode</th></tr><tr><td>' +
+      window.stats.free.perf[0] + '</td><td>' +
+      window.stats.free.perf[1] + '</td></tr></tbody></table></div>' +
+      '<canvas id="wrChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
+      '<canvas id="scoreChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
+      '<canvas id="accChart" class="chartCanvas" width="400px" height="300px"></canvas>';
   }
 
   $.dialog({
@@ -762,37 +772,130 @@ function statsModal() {
       if (window.game.mode == 'daily') {
         dailyChartsSetup();
       } else if (window.game.mode == 'free') {
-
+        freeChartsSetup();
       }
     }
   });
 }
 
+function freeChartsSetup() {
+  let wr = [
+      [],
+      []
+    ],
+    w, l, la = [],
+    la2 = [];
+  for (var i = 0; i < 25; i++) {
+    for (var k = 0; k < 2; k++) {
+      w = window.stats.free.wr[k][i][0];
+      l = window.stats.free.wr[k][i][1];
+      if (w == l)
+        wr[k].push(.5);
+      else {
+        wr[k].push(w / (w + l));
+      }
+    } //end k loop
+    la.push(i);
+    la2.push(i + 1);
+  } //end i loop
+
+  lineChart(document.getElementById('wrChart'), {
+    labels: la2,
+    datasets: [{
+      label: 'Normal',
+      data: wr[0],
+      backgroundColor: '#C1D8FF',
+      borderColor: '#C1D8FF'
+    }, {
+      label: 'Hidden',
+      data: wr[1],
+      backgroundColor: '#5379BA',
+      borderColor: '#5379BA'
+    }]
+  }, 'Win Rate vs Lives')
+
+  vertBarChart(document.getElementById('scoreChart').getContext('2d'), {
+    labels: la,
+    datasets: [{
+      label: 'Normal',
+      data: window.stats.free.score[0],
+      backgroundColor: '#C1D8FF',
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 1,
+      stack: 'Stack 0'
+    }, {
+      label: 'Hidden',
+      data: window.stats.free.score[1],
+      backgroundColor: '#5379BA',
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 1,
+      stack: 'Stack 0'
+    }]
+  }, 'Score Distribution');
+
+  mspie(document.getElementById('accChart').getContext('2d'), {
+    labels: ['Correct (Normal)', 'Incorrect (Normal)', 'Correct (Hidden)', 'Incorrect (Hidden)'],
+    datasets: [{
+      backgroundColor: ['#C1D8FF', '#FFC1B7'],
+      data: [window.stats.free.acc[0], window.stats.free.acc[1]],
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 2
+    }, {
+      backgroundColor: ['#5379BA', '#A35347'],
+      data: [window.stats.free.acc[2], window.stats.free.acc[3]],
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 2
+    }]
+  }, 'Letter Accruacy');
+}
+
 function dailyChartsSetup() {
   mspie(document.getElementById('wrChart').getContext('2d'), {
-    labels: ['Normal Win', 'Normal Loss', 'Hidden Win', 'Hidden Loss'],
+    labels: ['Win (Normal)', 'Loss (Normal)', 'Win (Hidden)', 'Loss (Hidden)'],
     datasets: [{
-      backgroundColor: ['#32B1DC', '#DC5C32'],
-      data: [window.stats.daily.WL[0], window.stats.daily.WL[1]]
+      backgroundColor: ['#C1D8FF', '#FFC1B7'],
+      data: [window.stats.daily.WL[0], window.stats.daily.WL[1]],
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 2
     }, {
-      backgroundColor: ['#18728F', '#8F3618'],
-      data: [window.stats.daily.WL[2], window.stats.daily.WL[3]]
+      backgroundColor: ['#5379BA', '#A35347'],
+      data: [window.stats.daily.WL[2], window.stats.daily.WL[3]],
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 2
     }]
   }, 'Daily Win/Loss');
   vertBarChart(document.getElementById('scoreChart').getContext('2d'), {
     labels: [0, 1, 2, 3, 4, 5, 6],
     datasets: [{
-      label: 'Normal Mode',
+      label: 'Normal',
       data: window.stats.daily.score[0],
-      backgroundColor: '#32B1DC',
-      borderWidth: 1
+      backgroundColor: '#C1D8FF',
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 1,
+      stack: 'Stack 0'
     }, {
-      label: 'Hidden Mode',
+      label: 'Hidden',
       data: window.stats.daily.score[1],
-      backgroundColor: '#18728F',
-      borderWidth: 1
+      backgroundColor: '#5379BA',
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 1,
+      stack: 'Stack 0'
     }]
-  }, 'Score Distribution')
+  }, 'Score Distribution');
+  mspie(document.getElementById('accChart').getContext('2d'), {
+    labels: ['Correct (Normal)', 'Incorrect (Normal)', 'Correct (Hidden)', 'Incorrect (Hidden)'],
+    datasets: [{
+      backgroundColor: ['#C1D8FF', '#FFC1B7'],
+      data: [window.stats.daily.acc[0], window.stats.daily.acc[1]],
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 2
+    }, {
+      backgroundColor: ['#5379BA', '#A35347'],
+      data: [window.stats.daily.acc[2], window.stats.daily.acc[3]],
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 2
+    }]
+  }, 'Letter Accruacy');
 }
 
 //function to handle menu button
@@ -949,7 +1052,7 @@ function mspie(ctx, data, title) {
       responsive: true,
       plugins: {
         legend: {
-          position: 'right',
+          position: 'bottom',
           labels: {
             generateLabels: function(chart) {
               // Get the default label list
@@ -1030,6 +1133,79 @@ function vertBarChart(ctx, data, title) {
             stepSize: 1
           },
           grid: {
+            borderColor: 'white',
+            color: '#6D6D6D'
+          },
+          title: {
+            font: {
+              family: 'Beleren Bold'
+            }
+          },
+          stacked: true
+        },
+        x: {
+          ticks: {
+            color: 'white'
+          },
+          grid: {
+            borderColor: 'white',
+            display: false
+          },
+          title: {
+            font: {
+              family: 'Beleren Bold'
+            }
+          },
+          stacked: true
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: 'white',
+            font: {
+              family: 'Roboto Mono'
+            },
+          }
+        },
+        title: {
+          display: true,
+          color: 'white',
+          font: {
+            family: 'Beleren Bold',
+            size: 20
+          },
+          text: title
+        },
+        tooltip: {
+          titleFont: {
+            family: 'Roboto Mono'
+          },
+          bodyFont: {
+            family: 'Roboto Mono'
+          }
+        }
+      }
+    }
+  });
+}
+
+function lineChart(ctx, data, title) {
+  return new Chart(ctx, {
+    type: 'line',
+    data: data,
+    options: {
+      scales: {
+        y: {
+          min: 0,
+          max: 1,
+          ticks: {
+            color: 'white',
+            stepSize: 1
+          },
+          grid: {
+            borderColor: 'white',
             color: '#6D6D6D'
           },
           title: {
@@ -1043,6 +1219,7 @@ function vertBarChart(ctx, data, title) {
             color: 'white'
           },
           grid: {
+            borderColor: 'white',
             display: false
           },
           title: {
@@ -1054,6 +1231,7 @@ function vertBarChart(ctx, data, title) {
       },
       plugins: {
         legend: {
+          position: 'bottom',
           labels: {
             color: 'white',
             font: {
