@@ -982,8 +982,8 @@ function menuModal() {
   let menuD = $.dialog({
     title: '',
     content: '<div class="modalTitle" style="text-align: center;font-size: 30px;">Befuddle</div>' +
-      '<br><button id="returnButton" class="menuButton">Return to Main Menu</button>' +
-      (window.gameSesh.end? '':'<br><button id="guButton" class="menuButton">Show Befuddle Answer</button>') +
+      '<br><button id="returnButton" class="menuButton">Select Game Mode</button>' +
+      (window.gameSesh.end? '':'<br><button id="guButton" class="menuButton">Show Answer</button>') +
       '<br><button id="clearButton" class="menuButton">Clear Data</button>' +
       '<br><br><div class="hr"></div>' +
       '<div class="modalText" id="credits">Credits <span id="creditExpand" class="material-symbols-outlined"> expand_more </span></div>' +

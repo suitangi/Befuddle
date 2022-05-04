@@ -438,6 +438,7 @@ body {
   border-radius: 9px;
   position: relative;
   left: 50%;
+  width: 90%
   transition: background .5s;
   transform: translate(-50%, 0);
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
