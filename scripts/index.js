@@ -619,7 +619,7 @@ function helpModal() {
   if (window.game.mode == 'daily') {
     $.dialog({
       title: '<span class=\"modalTitle\">How to Play</span>',
-      content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en">Magic: The Gathering</a> Card from the art and mana cost, Hangman style. You have 7 lives, meaning after guessing 7 wrong letters, the game is over.<br><br>' +
+      content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en" target="_blank">Magic: The Gathering</a> Card from the art and mana cost, Hangman style. You have 7 lives, meaning after guessing 7 wrong letters, the game is over.<br><br>' +
         'After each guess, the keys will show you if the letter was incorrect, as well as the number of lives you have left.<br><br></span><div class="hr"></div>' +
         '<span class=\"helpText\">A new Befuddle will be available each day!',
       theme: 'dark',
@@ -634,7 +634,7 @@ function helpModal() {
   } else if (window.game.mode == 'free') {
     $.dialog({
       title: '<span class=\"modalTitle\">How to Play</span>',
-      content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en">Magic: The Gathering</a> Card, Hangman style. Each card is randomly picked from a list of 30,000+ cards. You can adjust the number of lives and the mana cost display in the options menu.<br><br>' +
+      content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en" target="_blank">Magic: The Gathering</a> Card, Hangman style. Each card is randomly picked from a list of 30,000+ cards. You can adjust the number of lives and the mana cost display in the options menu.<br><br>' +
         'After each guess, the keyboard keys will show you if the letter was incorrect, as well as the number of lives you have left.<br><br></span><div class="hr"></div>' +
         '<span class=\"helpText\">This is Free Play mode, play to your heart\'s content!',
       theme: 'dark',
@@ -987,13 +987,13 @@ function menuModal() {
       '<br><button id="clearButton" class="menuButton">Clear Data</button>' +
       '<br><br><div class="hr"></div>' +
       '<div class="modalText" id="credits">Credits <span id="creditExpand" class="material-symbols-outlined"> expand_more </span></div>' +
-      '<div id="creditText"class="expandiv collapsediv">• Card Data: <a href="https://scryfall.com/">Scryfall</a>' +
-      '<br>• Card Images: <a href="https://scryfall.com/">Scryfall</a>' +
-      '<br>• Font: <a href="https://company.wizards.com/en">Wizards of the Coast</a><br><br></div>' +
+      '<div id="creditText"class="expandiv collapsediv">• Card Data: <a href="https://scryfall.com/" target="_blank">Scryfall</a>' +
+      '<br>• Card Images: <a href="https://scryfall.com/" target="_blank">Scryfall</a>' +
+      '<br>• Font: <a href="https://company.wizards.com/en" target="_blank">Wizards of the Coast</a><br><br></div>' +
       '<div class="hr"></div><div class=\"modalText\" id="disclaimer">Disclaimer  <span id="disclaimerExpand" class="material-symbols-outlined"> expand_more </span></div>' +
       '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
       '<div class="hr"></div>' +
-      '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by <a href="https://github.com/suitangi">Suitangi</a></div>',
+      '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by <a href="https://github.com/suitangi" target="_blank">Suitangi</a></div>',
     theme: 'dark',
     animation: 'left',
     closeAnimation: 'left',
