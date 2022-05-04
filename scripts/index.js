@@ -101,6 +101,8 @@ function loadCard(data) {
   if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
     if (getParameterByName('cf'))
       window.mtgCard.cf = parseInt(getParameterByName('cf'));
+    else if (window.game.mode = 'daily')
+      window.mtgCard.cf = 0;
     else
       window.mtgCard.cf = Math.floor(Math.random() * window.mtgCard['card_faces'].length);
     let cf = window.mtgCard['card_faces'][window.mtgCard.cf];
@@ -318,7 +320,7 @@ function gameLostFree() {
   }
 
   $.confirm({
-    title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">Totally Lost</span>",
+    title: "<span class=\"modalTitle\">Totally Lost</span>",
     content: getCardHtml(),
     theme: 'dark',
     animation: 'top',
@@ -378,7 +380,7 @@ function gameLostDaily() {
   }
 
   window.dailyModal = $.confirm({
-    title: "<span style=\"font-family: 'Beleren Bold';font-size:25px;\">Totally Lost</span>",
+    title: "<span class=\"modalTitle\">Totally Lost</span>",
     content: getCardHtml() + '<div id="dailyTimerDisplay"></div>',
     theme: 'dark',
     animation: 'top',
@@ -441,7 +443,7 @@ function gameWinDaily() {
   }
 
   window.dailyModal = $.confirm({
-    title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
+    title: "<span class=\"modalText\">" + getWinTerms(wr) +
       (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
     content: getCardHtml() + '<div id="dailyTimerDisplay"></div>',
     theme: 'dark',
@@ -498,7 +500,7 @@ function gameWinFree() {
   });
 
   $.confirm({
-    title: "<span style=\"font-family: 'Beleren Bold';\">" + getWinTerms(wr) +
+    title: "<span class=\"modalText\">" + getWinTerms(wr) +
       (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
     content: getCardHtml(),
     theme: 'dark',
@@ -543,7 +545,7 @@ function gameWinFree() {
 function clipboardHandler(linkButton, str) {
   navigator.clipboard.writeText(str).then(function() {
     linkButton.addClass('displayButton');
-    linkButton.setText('Copied!');
+    linkButton.setText('Copied');
     linkButton.addClass('btn-dark');
     linkButton.removeClass('btn-green');
     setTimeout(function(lb) {
@@ -561,8 +563,8 @@ function clipboardHandler(linkButton, str) {
 //function to display clipboard error
 function clipboardError(str) {
   $.dialog({
-    title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Error: Clipboard Access Denied</span>',
-    content: '<span style=\"font-family: \'Beleren Bold\';\">You can manually copy the text below:<br><br><div class=\"copyText\">' + str + '</div></span>',
+    title: '<span class=\"modalTitle\">Error: Clipboard Access Denied</span>',
+    content: '<span class=\"modalText\">You can manually copy the text below:<br><br><div class=\"copyText\">' + str + '</div></span>',
     type: 'red',
     theme: 'dark',
     animation: 'top',
@@ -616,8 +618,10 @@ function hideName(str, c) {
 function helpModal() {
   if (window.game.mode == 'daily') {
     $.dialog({
-      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">How to Play</span>',
-      content: '<span style=\"font-family: \'Beleren Bold\';\">This is the help page for the daily game</span>',
+      title: '<span class=\"modalTitle\">How to Play</span>',
+      content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en">Magic: The Gathering</a> Card from the art and mana cost, Hangman style. You have 7 lives, meaning after guessing 7 wrong letters, the game is over.<br><br>' +
+        'After each guess, the keys will show you if the letter was incorrect, as well as the number of lives you have left.<br><br></span><div class="hr"></div>' +
+        '<span class=\"helpText\">A new Befuddle will be available each day!',
       theme: 'dark',
       animation: 'top',
       closeAnimation: 'top',
@@ -629,8 +633,10 @@ function helpModal() {
     });
   } else if (window.game.mode == 'free') {
     $.dialog({
-      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">How to Play</span>',
-      content: '<span style=\"font-family: \'Beleren Bold\';\">This is the help page for the free play game</span>',
+      title: '<span class=\"modalTitle\">How to Play</span>',
+      content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en">Magic: The Gathering</a> Card, Hangman style. Each card is randomly picked from a list of 30,000+ cards. You can adjust the number of lives and the mana cost display in the options menu.<br><br>' +
+        'After each guess, the keyboard keys will show you if the letter was incorrect, as well as the number of lives you have left.<br><br></span><div class="hr"></div>' +
+        '<span class=\"helpText\">This is Free Play mode, play to your heart\'s content!',
       theme: 'dark',
       animation: 'top',
       closeAnimation: 'top',
@@ -657,7 +663,7 @@ function settingsModal() {
       '</div>';
 
     $.dialog({
-      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
+      title: '<span class=\"modalTitle\">Options</span>',
       content: gameSettingsHtml,
       theme: 'dark',
       animation: 'top',
@@ -692,7 +698,7 @@ function settingsModal() {
       '<br><br><div class="hr"></div><span class="smallText">Game changes won\'t be adjusted until next card.</span><br>' +
       '</div>';
     $.dialog({
-      title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Options</span>',
+      title: '<span class=\"modalTitle\">Options</span>',
       content: gameSettingsHtml,
       theme: 'dark',
       animation: 'top',
@@ -762,7 +768,7 @@ function statsModal() {
   }
 
   $.dialog({
-    title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Statistics</span>',
+    title: '<span class=\"modalTitle\">Statistics</span>',
     content: html,
     theme: 'dark',
     animation: 'top',
@@ -851,7 +857,7 @@ function freeChartsSetup() {
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 2
     }]
-  }, 'Letter Accruacy');
+  }, 'Letter Accuracy');
 }
 
 //function to setup the charts for daily mode stats
@@ -901,14 +907,93 @@ function dailyChartsSetup() {
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 2
     }]
-  }, 'Letter Accruacy');
+  }, 'Letter Accuracy');
 }
 
 //function to handle menu button
 function menuModal() {
-  $.dialog({
-    title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Befuddle</span>',
-    content: '<span style=\"font-family: \'Beleren Bold\';\">Menu modal here: some buttons and some other ui</span>',
+
+  function giveupConfirm() {
+    $.confirm({
+      title: '<span class=\"modalTitle\">Show Answer</span>',
+      content: '<span class=\"helpText\">Are you sure you want to abandon this Befuddle?</span>',
+      theme: 'dark red',
+      animation: 'top',
+      closeAnimation: 'top',
+      animateFromElement: false,
+      boxWidth: 'min(300px, 60%)',
+      draggable: false,
+      backgroundDismiss: false,
+      useBootstrap: false,
+      buttons: {
+        show: {
+          text: 'Show Answer',
+          btnClass: 'btn-red',
+          action: function() {
+            window.gameSesh.end = true;
+            document.getElementById('seeCard').style = '';
+            if (window.game.mode == 'daily')
+              gameLostDaily();
+            else if (window.game.mode == 'free')
+              gameLostFree();
+            menuD.close();
+          }
+        },
+        cancel: {
+          text: 'Cancel',
+          btnClass: 'btn-default'
+        }
+      }
+    });
+  }
+
+  function clearConfirm() {
+    $.confirm({
+      title: '<span class=\"modalTitle\">Clear Data</span>',
+      content: '<span class=\"helpText\">This will clear all cookies, delete all statisticss and all unfinished Befuddles. Are you sure?</span>',
+      theme: 'dark red',
+      animation: 'top',
+      closeAnimation: 'top',
+      animateFromElement: false,
+      boxWidth: 'min(300px, 60%)',
+      draggable: false,
+      backgroundDismiss: false,
+      useBootstrap: false,
+      buttons: {
+        show: {
+          text: 'Clear Data',
+          btnClass: 'btn-red',
+          action: function() {
+            Cookies.remove('befuddle');
+            Cookies.remove('daily');
+            Cookies.remove('free');
+            Cookies.remove('dailyStats');
+            Cookies.remove('freeStats');
+          }
+        },
+        cancel: {
+          text: 'Cancel',
+          btnClass: 'btn-default'
+        }
+      }
+    });
+  }
+
+  let menuD = $.dialog({
+    title: '',
+    content: '<div class="modalTitle" style="text-align: center;font-size: 30px;">Befuddle</div>' +
+      '<br><button id="returnButton" class="menuButton">Return to Main Menu</button>' +
+      (window.gameSesh.end? '':'<br><button id="guButton" class="menuButton">Show Befuddle Answer</button>') +
+      '<br><button id="clearButton" class="menuButton">Clear Data</button>' +
+      '<br><br><div class="hr"></div>' +
+      '<div class="modalText" id="credits">Credits <span id="creditExpand" class="material-symbols-outlined"> expand_more </span></div>' +
+      '<div id="creditText"class="expandiv collapsediv">• Card Data: <a href="https://scryfall.com/">Scryfall</a>' +
+      '<br>• Card Images: <a href="https://scryfall.com/">Scryfall</a>' +
+      '<br>• Font: <a href="https://company.wizards.com/en">Wizards of the Coast</a><br><br></div>' +
+      '<div class="hr"></div><div class=\"modalText\" id="disclaimer">Disclaimer  <span id="disclaimerExpand" class="material-symbols-outlined"> expand_more </span></div>' +
+      '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
+      '<div class="hr"></div>' +
+      '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by Suitangi</div>',
     theme: 'dark',
     animation: 'left',
     closeAnimation: 'left',
@@ -916,15 +1001,50 @@ function menuModal() {
     boxWidth: 'min(400px, 80%)',
     draggable: false,
     backgroundDismiss: true,
-    useBootstrap: false
+    useBootstrap: false,
+    onContentReady: function() {
+      document.getElementById('credits').addEventListener('click', function() {
+        let s = document.getElementById('creditText');
+        if (!s.classList.contains('collapsediv')) {
+          s.classList.add('collapsediv');
+          document.getElementById('creditExpand').innerText = 'expand_more';
+        } else {
+          s.classList.remove('collapsediv');
+          document.getElementById('creditExpand').innerText = 'expand_less';
+        }
+      });
+      document.getElementById('disclaimer').addEventListener('click', function() {
+        let s = document.getElementById('disclaimerText');
+        if (!s.classList.contains('collapsediv')) {
+          s.classList.add('collapsediv');
+          document.getElementById('disclaimerExpand').innerText = 'expand_more';
+        } else {
+          s.classList.remove('collapsediv');
+          document.getElementById('disclaimerExpand').innerText = 'expand_less';
+        }
+      });
+      document.getElementById('clearButton').addEventListener('click', function() {
+        clearConfirm();
+      });
+      document.getElementById('returnButton').addEventListener('click', function() {
+        window.gameSesh.end = true;
+        menuD.close();
+        mainMenuDisplay();
+      });
+      if (!window.gameSesh.end) {
+        document.getElementById('guButton').addEventListener('click', function() {
+          giveupConfirm();
+        });
+      }
+    }
   });
 }
 
 //function for the continue game? modal
 function continueGameModal() {
   $.confirm({
-    title: '<span style=\"font-family: \'Beleren Bold\';font-size:25px;\">Continue?</span>',
-    content: '<span style=\"font-family: \'Beleren Bold\';\">Previous game data found, would you like to continue?</span>',
+    title: '<span class=\"modalTitle\">Continue?</span>',
+    content: '<span class=\"modalText\">Previous game data found, would you like to continue?</span>',
     theme: 'dark',
     animation: 'top',
     closeAnimation: 'top',
@@ -957,8 +1077,8 @@ function continueGameModal() {
 //function to display initial main menu
 function mainMenuDisplay() {
   $.confirm({
-    title: '<span style=\"font-family: \'Beleren Bold\';font-size:30px;line-height: 30px;\">Welcome to Befuddle</span>',
-    content: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Select your game mode:</span>',
+    title: '<span id=\"mainMenuTitle\">Welcome to Befuddle</span>',
+    content: '<span class=\"mainMenuText\">Select your game mode:</span>',
     theme: 'supervan',
     animation: 'opacity',
     closeAnimation: 'top',
@@ -970,7 +1090,7 @@ function mainMenuDisplay() {
     useBootstrap: false,
     buttons: {
       daily: {
-        text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Daily Befuddle</span>',
+        text: '<span class=\"mainMenuText\">Daily Befuddle</span>',
         action: function() {
           window.game.mode = 'daily';
           if (Cookies.get('daily')) {
@@ -983,7 +1103,7 @@ function mainMenuDisplay() {
         }
       },
       free: {
-        text: '<span style=\"font-family: \'Beleren Bold\';user-select:none;\">Free Play</span>',
+        text: '<span class=\"mainMenuText\">Free Play</span>',
         action: function() {
           window.game.mode = 'free';
           if (Cookies.get('free')) {
@@ -1018,26 +1138,43 @@ function loadGame() {
 
   //Fetch different things based on different mode
   if (window.game.mode == 'daily') {
-    //fetch card list then request
-    fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/dailyList.json')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById("cardImage").style = "opacity:0; transition: opacity 0s;";
-        document.getElementById("imageLoading").style = "";
-        let d = new Date();
-        loadCard(data[d.getDOY()]);
-      });
+
+    function dailyCard(data) {
+      document.getElementById("cardImage").style = "opacity:0; transition: opacity 0s;";
+      document.getElementById("imageLoading").style = "";
+      let d = new Date();
+      loadCard(data[d.getDOY()]);
+    }
+
+    if (window.dailyList == null) { //fetch first if null
+      fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/dailyList.json')
+        .then(response => response.json())
+        .then(data => {
+          window.dailyList = data;
+          dailyCard(data);
+        });
+    } else { //no need to re-fetch
+      dailyCard(window.dailyList);
+    }
   } else if (window.game.mode == 'free') {
-    //fetch card list then request
-    fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/cardList.json')
-      .then(response => response.json())
-      .then(data => {
-        window.cardList = data;
-        if (getParameterByName('cardId'))
-          requestCard(getParameterByName('cardId'));
-        else
-          requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
-      });
+
+    function freeCard(data) {
+      if (getParameterByName('cardId'))
+        requestCard(getParameterByName('cardId'));
+      else
+        requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+    }
+
+    if (window.cardList == null) { //fetch card list then request
+      fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/cardList.json')
+        .then(response => response.json())
+        .then(data => {
+          window.cardList = data;
+          freeCard(data);
+        });
+    } else { //no need to re-fetch
+      freeCard(window.cardList);
+    }
   }
 }
 
