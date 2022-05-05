@@ -1007,20 +1007,20 @@ function menuModal() {
         let s = document.getElementById('creditText');
         if (!s.classList.contains('collapsediv')) {
           s.classList.add('collapsediv');
-          document.getElementById('creditExpand').innerText = 'expand_more';
+          document.getElementById('creditExpand').classList.remove('rotato');
         } else {
           s.classList.remove('collapsediv');
-          document.getElementById('creditExpand').innerText = 'expand_less';
+          document.getElementById('creditExpand').classList.add('rotato');
         }
       });
       document.getElementById('disclaimer').addEventListener('click', function() {
         let s = document.getElementById('disclaimerText');
         if (!s.classList.contains('collapsediv')) {
           s.classList.add('collapsediv');
-          document.getElementById('disclaimerExpand').innerText = 'expand_more';
+          document.getElementById('disclaimerExpand').classList.remove('rotato');
         } else {
           s.classList.remove('collapsediv');
-          document.getElementById('disclaimerExpand').innerText = 'expand_less';
+          document.getElementById('disclaimerExpand').classList.add('rotato');
         }
       });
       document.getElementById('clearButton').addEventListener('click', function() {

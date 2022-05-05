@@ -520,6 +520,10 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.rotato {
+  transform: rotate(-180deg);
+}
+
 #creditText {
   font-family: 'Roboto Mono';
   font-size: 13px;
@@ -528,6 +532,8 @@ body {
 #creditExpand {
   font-size: 18px;
   position: relative;
+  transition: transform 0.5s;
+  transition-timing-function: ease-out;
   top: 3px;
 }
 
@@ -549,6 +555,8 @@ body {
 #disclaimerExpand {
   font-size: 18px;
   position: relative;
+  transition: transform 0.5s;
+  transition-timing-function: ease-out;
   top: 3px;
 }
 
