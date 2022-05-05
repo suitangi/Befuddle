@@ -101,7 +101,7 @@ function loadCard(data) {
   if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
     if (getParameterByName('cf'))
       window.mtgCard.cf = parseInt(getParameterByName('cf'));
-    else if (window.game.mode = 'daily')
+    else if (window.game.mode == 'daily')
       window.mtgCard.cf = 0;
     else
       window.mtgCard.cf = Math.floor(Math.random() * window.mtgCard['card_faces'].length);
@@ -177,6 +177,13 @@ function loadCard(data) {
 
   document.getElementById("cardName").innerText = window.gameSesh.hiddenName;
   document.getElementById('card').style = "";
+
+  //save loaded game if daily
+  if (window.game.mode == 'daily') {
+    Cookies.set('daily', JSON.stringify(window.gameSesh), {
+      expires: 365
+    });
+  }
 }
 
 //function to laod guesses when reconnected to a game
@@ -282,7 +289,7 @@ function submitLetter(char) {
     }
   }
 
-  //save game session data do cookie
+  //save game session data to respective mode cookie
   Cookies.set(window.game.mode, JSON.stringify(window.gameSesh), {
     expires: 365
   });
@@ -657,7 +664,7 @@ function settingsModal() {
 
     gameSettingsHtml += '<div class="gameSettings">' +
       '<br><span class="menuText" id="hmdisplay">Hidden mode</span>' +
-      '<label class="switch"><input id="hmInput" type="checkbox" ' + (window.game.free.hideBlanks ? 'checked' : '') + '><div><span></span></div></label>' +
+      '<label class="switch"><input id="hmInput" type="checkbox" ' + (window.game.daily.hideBlanks ? 'checked' : '') + '><div><span></span></div></label>' +
       '<span class="smallText">Hidden mode hides the letter blanks.</span>' +
       '<br><br><div class="hr"></div><span class="smallText">Changes won\'t apply until the next game you play.</span><br>' +
       '</div>';
@@ -1096,7 +1103,7 @@ function mainMenuDisplay() {
           if (Cookies.get('daily')) {
             window.gameSesh = JSON.parse(Cookies.get('daily'));
             window.mtgCard = window.gameSesh.card;
-            if (window.gameSesh.end && window.gameSesh.hiddenName == window.mtgCard.name)
+            if (window.gameSesh.end)
               window.gameSesh.end = false;
           }
           loadGame();
@@ -1134,6 +1141,12 @@ function loadGame() {
     loadCard();
     loadGuesses();
     return; //don't load a new game
+  } else {
+
+    //pull up tutorial
+    if (window.firstTime) {
+      helpModal();
+    }
   }
 
   //Fetch different things based on different mode
