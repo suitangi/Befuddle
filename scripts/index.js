@@ -1226,6 +1226,7 @@ function loadTimer() {
         if (window.dailyModal != null && window.dailyModal.isOpen()) {
           window.dailyModal.close();
           window.dailyModal = null;
+          window.game.timestamp = now.getTime();
           Cookies.remove('daily');
           window.game.end = true;
           loadGame();

@@ -5,6 +5,8 @@
 ### Misc/Bugs
 - CSS cleanup
 - Script cleanup, especially the loads of strings
+- A2H integration (needs service worker)
+- Domain name
 
 ### Main Menu
 - Kofi (?)
