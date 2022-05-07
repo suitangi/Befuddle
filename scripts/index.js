@@ -447,6 +447,15 @@ function gameWinDaily() {
     Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
       expires: 365
     });
+
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      zIndex: 900719925,
+      colors: ['#eee']
+    });
+
   }
 
   window.dailyModal = $.confirm({
@@ -501,6 +510,15 @@ function gameWinFree() {
     if (window.gameSesh.tlv != -1)
       window.stats.free.wr[1][window.gameSesh.tlv - 1][0]++;
     window.stats.free.score[1][wr]++;
+  }
+  if (wr == 0) { //confetti if perfect game
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      zIndex: 900719925,
+      colors: ['#eee']
+    });
   }
   Cookies.set('freeStats', JSON.stringify(window.stats.free), {
     expires: 365
