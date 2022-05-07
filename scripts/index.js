@@ -345,7 +345,7 @@ function gameLostFree() {
         action: function(linkButton) {
           var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            '\nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id +
+            '\nhttps://befuddle.xyz/?cardId=' + window.mtgCard.id +
             (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
@@ -411,7 +411,7 @@ function gameLostDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nX' + (window.gameSesh.hideBlanks ? '*' : '') + '\nhttps://suitangi.github.io/Befuddle/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nX' + (window.gameSesh.hideBlanks ? '*' : '') + '\nhttps://befuddle.xyz/';
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -484,7 +484,7 @@ function gameWinDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*' : '') + '\nhttps://suitangi.github.io/Befuddle/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*' : '') + '\nhttps://befuddle.xyz/';
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -545,7 +545,7 @@ function gameWinFree() {
           var str = 'Befuddle: \n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            ' \nhttps://suitangi.github.io/Befuddle/?cardId=' + window.mtgCard.id +
+            ' \nhttps://befuddle.xyz/?cardId=' + window.mtgCard.id +
             (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
@@ -1018,7 +1018,7 @@ function menuModal() {
       '<div class="hr"></div><div class=\"modalText\" id="disclaimer">Disclaimer  <span id="disclaimerExpand" class="material-symbols-outlined"> expand_more </span></div>' +
       '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
       '<div class="hr"></div>' +
-      '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by <a href="https://github.com/suitangi" target="_blank">Suitangi</a></div>',
+      '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by <a href="https://ko-fi.com/suitangi" target="_blank">Suitangi</a></div>',
     theme: 'dark',
     animation: 'left',
     closeAnimation: 'left',
@@ -1178,7 +1178,7 @@ function loadGame() {
     }
 
     if (window.dailyList == null) { //fetch first if null
-      fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/dailyList.json')
+      fetch('./dailyList.json')
         .then(response => response.json())
         .then(data => {
           window.dailyList = data;
@@ -1197,7 +1197,7 @@ function loadGame() {
     }
 
     if (window.cardList == null) { //fetch card list then request
-      fetch('https://raw.githubusercontent.com/suitangi/Befuddle/main/cardList.json')
+      fetch('./cardList.json')
         .then(response => response.json())
         .then(data => {
           window.cardList = data;
@@ -1504,7 +1504,7 @@ function lineChart(ctx, data, title) {
 //start script
 $(document).ready(function() {
 
-  console.log('https://scryfall.com/card/unh/30/cheatyface');
+  console.log('https://tinyurl.com/specialcardforbefuddle');
 
   window.displayKeyboard = {};
   window.loadingGuesses = false;
