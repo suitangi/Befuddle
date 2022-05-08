@@ -35,6 +35,74 @@
   src: url(https://fonts.gstatic.com/s/sandbox/materialsymbolsoutlined/v7/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsI.woff2) format('woff2');
 }
 
+@media([prefers-color-scheme]: light) {
+  :root {
+    --bg: #cccccc;
+    --bgShadeDarker: #f1f1f1;
+    --text: #000000;
+    --supervanBG: rgb(227 227 227 / 95%);
+    --titleColor: #303030;
+    --keyColor: #000000;
+    --keyBG: #ffffff;
+    --keyPressedColor: #898989;
+    --keyPressedBG: #b9b9b9;
+    --keyHoverColor: #5a5a5a;
+    --keyHoverBG: #f1f1f1;
+    --UIMain: #a5a5a5;
+    --UIinteract: #464646;
+  }
+}
+
+@media([prefers-color-scheme]: dark) {
+  :root {
+    --bg: #333333;
+    --bgShadeDarker: #222;
+    --text: #ffffff;
+    --supervanBG: rgba(30, 30, 30, .95);
+    --titleColor: #ddd;
+    --keyColor: #bbb;
+    --keyBG: #151515;
+    --keyPressedColor: #444;
+    --keyPressedBG: #292929;
+    --keyHoverColor: #ccc;
+    --keyHoverBG: #252525;
+    --UIMain: #0a0a0a;
+    --UIinteract: #d7d7d7;
+  }
+}
+
+[color-scheme="light"] {
+  --bg: #cccccc;
+  --bgShadeDarker: #f1f1f1;
+  --text: #000000;
+  --supervanBG: rgb(227 227 227 / 95%);
+  --titleColor: #303030;
+  --keyColor: #000000;
+  --keyBG: #ffffff;
+  --keyPressedColor: #898989;
+  --keyPressedBG: #b9b9b9;
+  --keyHoverColor: #5a5a5a;
+  --keyHoverBG: #f1f1f1;
+  --UIMain: #a5a5a5;
+  --UIinteract: #464646;
+}
+
+[color-scheme="dark"] {
+  --bg: #333333;
+  --bgShadeDarker: #222;
+  --text: #ffffff;
+  --supervanBG: rgba(30, 30, 30, .95);
+  --titleColor: #ddd;
+  --keyColor: #bbb;
+  --keyBG: #151515;
+  --keyPressedColor: #444;
+  --keyPressedBG: #292929;
+  --keyHoverColor: #ccc;
+  --keyHoverBG: #252525;
+  --UIMain: #0a0a0a;
+  --UIinteract: #d7d7d7;
+}
+
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
@@ -52,7 +120,7 @@
 }
 
 body {
-  background-color: #333333;
+  background-color: var(--bg);
 }
 
 #top-nav {
@@ -60,9 +128,10 @@ body {
   width: 100%;
   top: 0%;
   left: 0%;
-  background-color: #222;
+  background-color: var(--bgShadeDarker);
   height: 50px;
   height: min(50px, 15vw);
+  z-index: 10;
 }
 
 #title {
@@ -71,7 +140,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #ddd;
+  color: var(--titleColor);
   font-size: min(30px, 10vw);
   user-select: none;
 }
@@ -111,7 +180,7 @@ body {
 
 #top-nav .nav-buttons {
   cursor: pointer;
-  color: #ccc;
+  color: var(--keyHoverColor);
   position: absolute;
   user-select: none;
   transition: color .5s;
@@ -121,7 +190,7 @@ body {
 
 #top-nav .nav-buttons:hover {
   cursor: pointer;
-  color: #ffffff;
+  color: var(--text);
   position: absolute;
   user-select: none;
 }
@@ -148,7 +217,7 @@ body {
 
 #cardName {
   font-size: min(35px, 8vw);
-  color: white;
+  color: var(--text);
   letter-spacing: 4px;
   word-spacing: 5px;
   font-family: 'Beleren Bold';
@@ -159,16 +228,9 @@ body {
 #cardMana {
   font-size: 30px;
   font-size: min(30px, 8vw);
-  color: white;
+  color: var(--text);
   letter-spacing: 4px;
   word-spacing: 5px;
-  font-family: 'Beleren Bold';
-}
-
-#wrongGuess {
-  font-size: 25px;
-  color: white;
-  letter-spacing: 1px;
   font-family: 'Beleren Bold';
 }
 
@@ -196,8 +258,8 @@ body {
   position: relative;
   top: 1px;
   left: 1px;
-  background: #292929 !important;
-  color: #444 !important;
+  background: var(--keyPressedBG) !important;
+  color: var(--keyPressedColor) !important;
   border-color: rgba(193, 47, 47, 0);
   border-width: 1px;
   border-style: solid;
@@ -207,8 +269,8 @@ body {
   position: relative;
   top: 1px;
   left: 1px;
-  background: #292929 !important;
-  color: #444 !important;
+  background: var(--keyPressedBG) !important;
+  color: var(--keyPressedColor) !important;
   border-color: rgba(193, 47, 47, 100);
   border-width: 1px;
   border-style: solid;
@@ -225,8 +287,8 @@ body {
   height: 50px;
   line-height: 50px;
   text-align: center;
-  background: #151515;
-  color: #bbb;
+  background: var(--keyBG);
+  color: var(--keyColor);
   border-color: rgba(135, 46, 46, 0);
   border-width: 1px;
   border-style: solid;
@@ -265,8 +327,8 @@ body {
   position: relative;
   top: 1px;
   left: 1px;
-  color: #ccc;
-  background: #252525;
+  color: var(--keyHoverColor);
+  background: var(--keyHoverBG);
   cursor: pointer;
 }
 
@@ -279,8 +341,8 @@ body {
   height: 50px;
   line-height: 50px;
   text-align: center;
-  background: #151515;
-  color: #bbb;
+  background: var(--keyBG);
+  color: var(--keyColor);
   border-color: rgba(200, 200, 200, 1);
   border-width: 1px;
   border-style: solid;
@@ -325,7 +387,7 @@ body {
   height: 7px;
   cursor: pointer;
   border-radius: 5px;
-  background: #0a0a0a;
+  background: var(--UIMain);
   outline: none;
   opacity: 0.7;
   -webkit-transition: .5s;
@@ -358,7 +420,7 @@ body {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  background: #d7d7d7;
+  background: var(--UIinteract);
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
@@ -368,18 +430,17 @@ body {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  background: #d7d7d7;
+  background: var(--UIinteract);
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
 }
 
 .switch {
-  --line: #0a0a0a;
-  --dot: #d7d7d7;
-  --circle: #d7d7d7;
+  --line: var(--UIMain);
+  --dot: var(--UIinteract);
+  --circle: var(--UIinteract);
   --duration: 0.2s;
-  --text: #9ea0be;
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
@@ -409,7 +470,7 @@ body {
   width: 18px;
   background: var(--line);
   transform: scaleX(var(--s));
-  transition: transform var(--duration) ease;
+  transition: transform 0.15s ease;
   border-radius: 7px;
 }
 
@@ -478,9 +539,9 @@ body {
 }
 
 .menuButton {
-  background: #333333;
+  background: var(--bg);
   border: none;
-  color: white;
+  color: var(--text);
   padding: 12px 31px;
   text-align: center;
   text-decoration: none;
@@ -500,7 +561,7 @@ body {
 }
 
 .menuButton:hover {
-  background: #222;
+  background: var(--bgShadeDarker);
 }
 
 .expandiv {
@@ -603,7 +664,7 @@ a:hover {
 }
 
 #streakTable {
-  color: white;
+  color: var(--text);
   font-family: 'Beleren Bold';
   width: 100%;
   text-align: center;
@@ -619,8 +680,8 @@ a:hover {
   position: relative;
   top: 1px;
   left: 1px;
-  color: #ccc;
-  background: #252525;
+  color: var(--keyHoverColor);
+  background: var(--keyHoverBG);
   cursor: pointer;
 }
 
@@ -652,8 +713,8 @@ a:hover {
   margin: 8px;
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
+  border: 6px solid var(--text);
+  border-color: var(--text) transparent var(--text) transparent;
   animation: lds-dual-ring 1.2s linear infinite;
 }
 
@@ -663,7 +724,7 @@ a:hover {
   right: 0%;
   -moz-border-radius: 5% 50% 5% 25%;
   -webkit-border-radius: 5% 50% 5% 25%;
-  color: white;
+  color: #ffffff;
   background: cyan;
   font-size: min(35px, 8.75vw) !important;
   user-select: none;
@@ -675,7 +736,7 @@ a:hover {
   right: 0%;
   -moz-border-radius: 5% 50% 5% 25%;
   -webkit-border-radius: 5% 50% 5% 25%;
-  color: white;
+  color: #ffffff;
   background: magenta;
   font-size: min(35px, 8.75vw) !important;
   user-select: none;
@@ -736,12 +797,20 @@ a:hover {
 }
 
 .jconfirm.jconfirm-supervan .jconfirm-bg {
-  background-color: rgba(30, 30, 30, .95) !important;
+  background-color: var(--supervanBG) !important;
+}
+
+.jconfirm.jconfirm-supervan .jconfirm-box div.jconfirm-title-c {
+  color: var(--text) !important;
+}
+
+.jconfirm.jconfirm-supervan .jconfirm-box div.jconfirm-content {
+  color: var(--text) !important;
 }
 
 .copyText {
   word-break: break-word;
-  background: #333;
+  background: var(--bg);
   padding: 6px;
   font-size: 12px;
   -moz-border-radius: 5px;

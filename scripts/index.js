@@ -329,7 +329,7 @@ function gameLostFree() {
   $.confirm({
     title: "<span class=\"modalTitle\">Totally Lost</span>",
     content: getCardHtml(),
-    theme: 'dark',
+    theme: window.game.theme,
     animation: 'top',
     closeAnimation: 'top',
     animateFromElement: false,
@@ -389,7 +389,7 @@ function gameLostDaily() {
   window.dailyModal = $.confirm({
     title: "<span class=\"modalTitle\">Totally Lost</span>",
     content: getCardHtml() + '<div id="dailyTimerDisplay"></div>',
-    theme: 'dark',
+    theme: window.game.theme,
     animation: 'top',
     closeAnimation: 'top',
     animateFromElement: false,
@@ -451,9 +451,11 @@ function gameWinDaily() {
     confetti({
       particleCount: 100,
       spread: 70,
-      origin: { y: 0.6 },
+      origin: {
+        y: 0.6
+      },
       zIndex: 900719925,
-      colors: ['#eee']
+      colors: window.game.theme == 'dark' ? ['#eee'] : ['#333']
     });
 
   }
@@ -462,7 +464,7 @@ function gameWinDaily() {
     title: "<span class=\"modalText\">" + getWinTerms(wr) +
       (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
     content: getCardHtml() + '<div id="dailyTimerDisplay"></div>',
-    theme: 'dark',
+    theme: window.game.theme,
     animation: 'top',
     closeAnimation: 'top',
     animateFromElement: false,
@@ -515,9 +517,11 @@ function gameWinFree() {
     confetti({
       particleCount: 100,
       spread: 70,
-      origin: { y: 0.6 },
+      origin: {
+        y: 0.6
+      },
       zIndex: 900719925,
-      colors: ['#eee']
+      colors: window.game.theme == 'dark' ? ['#eee'] : ['#333']
     });
   }
   Cookies.set('freeStats', JSON.stringify(window.stats.free), {
@@ -528,7 +532,7 @@ function gameWinFree() {
     title: "<span class=\"modalText\">" + getWinTerms(wr) +
       (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
     content: getCardHtml(),
-    theme: 'dark',
+    theme: window.game.theme,
     animation: 'top',
     closeAnimation: 'top',
     animateFromElement: false,
@@ -591,7 +595,7 @@ function clipboardError(str) {
     title: '<span class=\"modalTitle\">Error: Clipboard Access Denied</span>',
     content: '<span class=\"modalText\">You can manually copy the text below:<br><br><div class=\"copyText\">' + str + '</div></span>',
     type: 'red',
-    theme: 'dark',
+    theme: window.game.theme,
     animation: 'top',
     closeAnimation: 'top',
     animateFromElement: false,
@@ -647,7 +651,7 @@ function helpModal() {
       content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en" target="_blank">Magic: The Gathering</a> Card from the art and mana cost, Hangman style. You have 7 lives, meaning after guessing 7 wrong letters, the game is over.<br><br>' +
         'After each guess, the keys will show you if the letter was incorrect, as well as the number of lives you have left.<br><br></span><div class="hr"></div>' +
         '<span class=\"helpText\">A new Befuddle will be available each day!',
-      theme: 'dark',
+      theme: window.game.theme,
       animation: 'top',
       closeAnimation: 'top',
       animateFromElement: false,
@@ -662,7 +666,7 @@ function helpModal() {
       content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en" target="_blank">Magic: The Gathering</a> Card, Hangman style. Each card is randomly picked from a list of 30,000+ cards. You can adjust the number of lives and the mana cost display in the options menu.<br><br>' +
         'After each guess, the keyboard keys will show you if the letter was incorrect, as well as the number of lives you have left.<br><br></span><div class="hr"></div>' +
         '<span class=\"helpText\">This is Free Play mode, play to your heart\'s content!',
-      theme: 'dark',
+      theme: window.game.theme,
       animation: 'top',
       closeAnimation: 'top',
       animateFromElement: false,
@@ -681,16 +685,19 @@ function settingsModal() {
   if (window.game.mode == 'daily') {
 
     gameSettingsHtml += '<div class="gameSettings">' +
+      '<div class="gameSettings"><br><br><span class="menuText" id="themedisplay">Dark Mode</span>' +
+      '<label class="switch"><input id="darkInput" type="checkbox" ' + (window.game.theme === 'dark' ? 'checked' : '') + '><div><span></span></div></label>' +
+      '<br><div class="hr"></div>' +
       '<br><span class="menuText" id="hmdisplay">Hidden mode</span>' +
       '<label class="switch"><input id="hmInput" type="checkbox" ' + (window.game.daily.hideBlanks ? 'checked' : '') + '><div><span></span></div></label>' +
       '<span class="smallText">Hidden mode hides the letter blanks.</span>' +
       '<br><br><div class="hr"></div><span class="smallText">Changes won\'t apply until the next game you play.</span><br>' +
       '</div>';
 
-    $.dialog({
+    window.setModal = $.dialog({
       title: '<span class=\"modalTitle\">Options</span>',
       content: gameSettingsHtml,
-      theme: 'dark',
+      theme: window.game.theme,
       animation: 'top',
       closeAnimation: 'top',
       animateFromElement: false,
@@ -706,6 +713,17 @@ function settingsModal() {
             expires: 365
           }); //save game settings data to cookies
         });
+
+        let di = this.$content.find('#darkInput');
+        di.on('input', function() {
+          window.game.theme = (this.checked ? 'dark' : 'light');
+          window.setModal.$body.prevObject.removeClass('jconfirm-dark')
+          window.setModal.setTheme(window.game.theme);
+          setTheme();
+          Cookies.set('befuddle', JSON.stringify(window.game), {
+            expires: 365
+          }); //save game settings data to cookies
+        });
       }
     });
   } else if (window.game.mode == 'free') {
@@ -713,6 +731,9 @@ function settingsModal() {
     let manastates = ['Show Nothing', 'Show Colors', 'Show Mana Cost'];
 
     gameSettingsHtml += '<div class="gameSettings">' +
+      '<div class="gameSettings"><br><br><span class="menuText" id="themedisplay">Dark Mode</span>' +
+      '<label class="switch"><input id="darkInput" type="checkbox" ' + (window.game.theme === 'dark' ? 'checked' : '') + '><div><span></span></div></label>' +
+      '<br><div class="hr"></div>' +
       '<br><span class="menuText">Lives: <span id="livesdisplay">' + (window.game.free.lives == -1 ? 'Off' : window.game.free.lives) + '</span></span>' +
       '<div class="slidecontainer"><input id="livesInput" type="range" min="0" max="25" value="' + window.game.free.lives + '" class="slider"></div>' +
       '<br><span class="menuText" id="manadisplay">' + manastates[window.game.free.manaState] + '</span>' +
@@ -722,10 +743,10 @@ function settingsModal() {
       '<span class="smallText">Hidden mode hides the letter blanks.</span>' +
       '<br><br><div class="hr"></div><span class="smallText">Game changes won\'t be adjusted until next card.</span><br>' +
       '</div>';
-    $.dialog({
+    window.setModal = $.dialog({
       title: '<span class=\"modalTitle\">Options</span>',
       content: gameSettingsHtml,
-      theme: 'dark',
+      theme: window.game.theme,
       animation: 'top',
       closeAnimation: 'top',
       animateFromElement: false,
@@ -765,6 +786,17 @@ function settingsModal() {
             expires: 365
           }); //save game settings data to cookies
         });
+
+        let di = this.$content.find('#darkInput');
+        di.on('input', function() {
+          window.game.theme = (this.checked ? 'dark' : 'light');
+          window.setModal.$body.prevObject.removeClass('jconfirm-dark')
+          window.setModal.setTheme(window.game.theme);
+          setTheme();
+          Cookies.set('befuddle', JSON.stringify(window.game), {
+            expires: 365
+          }); //save game settings data to cookies
+        });
       }
     });
   }
@@ -795,7 +827,7 @@ function statsModal() {
   $.dialog({
     title: '<span class=\"modalTitle\">Statistics</span>',
     content: html,
-    theme: 'dark',
+    theme: window.game.theme,
     animation: 'top',
     closeAnimation: 'top',
     animateFromElement: false,
@@ -840,13 +872,13 @@ function freeChartsSetup() {
     datasets: [{
       label: 'Normal',
       data: wr[0],
-      backgroundColor: '#C1D8FF',
-      borderColor: '#C1D8FF'
+      backgroundColor: '#346888',
+      borderColor: '#346888'
     }, {
       label: 'Hidden',
       data: wr[1],
-      backgroundColor: '#5379BA',
-      borderColor: '#5379BA'
+      backgroundColor: '#9dc6e0',
+      borderColor: '#9dc6e0'
     }]
   }, 'Win Rate vs Lives')
 
@@ -855,14 +887,14 @@ function freeChartsSetup() {
     datasets: [{
       label: 'Normal',
       data: window.stats.free.score[0],
-      backgroundColor: '#C1D8FF',
+      backgroundColor: '#346888',
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 1,
       stack: 'Stack 0'
     }, {
       label: 'Hidden',
       data: window.stats.free.score[1],
-      backgroundColor: '#5379BA',
+      backgroundColor: '#9dc6e0',
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 1,
       stack: 'Stack 0'
@@ -872,12 +904,12 @@ function freeChartsSetup() {
   mspie(document.getElementById('accChart').getContext('2d'), {
     labels: ['Correct (Normal)', 'Incorrect (Normal)', 'Correct (Hidden)', 'Incorrect (Hidden)'],
     datasets: [{
-      backgroundColor: ['#C1D8FF', '#FFC1B7'],
+      backgroundColor: ['#346888', '#a35347'],
       data: [window.stats.free.acc[0], window.stats.free.acc[1]],
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 2
     }, {
-      backgroundColor: ['#5379BA', '#A35347'],
+      backgroundColor: ['#9dc6e0', '#edbcb0'],
       data: [window.stats.free.acc[2], window.stats.free.acc[3]],
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 2
@@ -890,12 +922,12 @@ function dailyChartsSetup() {
   mspie(document.getElementById('wrChart').getContext('2d'), {
     labels: ['Win (Normal)', 'Loss (Normal)', 'Win (Hidden)', 'Loss (Hidden)'],
     datasets: [{
-      backgroundColor: ['#C1D8FF', '#FFC1B7'],
+      backgroundColor: ['#346888', '#a35347'],
       data: [window.stats.daily.WL[0], window.stats.daily.WL[1]],
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 2
     }, {
-      backgroundColor: ['#5379BA', '#A35347'],
+      backgroundColor: ['#9dc6e0', '#edbcb0'],
       data: [window.stats.daily.WL[2], window.stats.daily.WL[3]],
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 2
@@ -906,14 +938,14 @@ function dailyChartsSetup() {
     datasets: [{
       label: 'Normal',
       data: window.stats.daily.score[0],
-      backgroundColor: '#C1D8FF',
+      backgroundColor: '#346888',
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 1,
       stack: 'Stack 0'
     }, {
       label: 'Hidden',
       data: window.stats.daily.score[1],
-      backgroundColor: '#5379BA',
+      backgroundColor: '#9dc6e0',
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 1,
       stack: 'Stack 0'
@@ -922,12 +954,12 @@ function dailyChartsSetup() {
   mspie(document.getElementById('accChart').getContext('2d'), {
     labels: ['Correct (Normal)', 'Incorrect (Normal)', 'Correct (Hidden)', 'Incorrect (Hidden)'],
     datasets: [{
-      backgroundColor: ['#C1D8FF', '#FFC1B7'],
+      backgroundColor: ['#346888', '#a35347'],
       data: [window.stats.daily.acc[0], window.stats.daily.acc[1]],
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 2
     }, {
-      backgroundColor: ['#5379BA', '#A35347'],
+      backgroundColor: ['#9dc6e0', '#edbcb0'],
       data: [window.stats.daily.acc[2], window.stats.daily.acc[3]],
       borderColor: 'rgba(0, 0, 0, 0)',
       borderWidth: 2
@@ -1008,7 +1040,7 @@ function menuModal() {
     title: '',
     content: '<div class="modalTitle" style="text-align: center;font-size: 30px;">Befuddle</div>' +
       '<br><button id="returnButton" class="menuButton">Select Game Mode</button>' +
-      (window.gameSesh.end? '':'<br><button id="guButton" class="menuButton">Show Answer</button>') +
+      (window.gameSesh.end ? '' : '<br><button id="guButton" class="menuButton">Show Answer</button>') +
       '<br><button id="clearButton" class="menuButton">Clear Data</button>' +
       '<br><br><div class="hr"></div>' +
       '<div class="modalText" id="credits">Credits <span id="creditExpand" class="material-symbols-outlined"> expand_more </span></div>' +
@@ -1016,10 +1048,11 @@ function menuModal() {
       '<br>• Card Images: <a href="https://scryfall.com/" target="_blank">Scryfall</a>' +
       '<br>• Font: <a href="https://company.wizards.com/en" target="_blank">Wizards of the Coast</a><br><br></div>' +
       '<div class="hr"></div><div class=\"modalText\" id="disclaimer">Disclaimer  <span id="disclaimerExpand" class="material-symbols-outlined"> expand_more </span></div>' +
-      '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
+      '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank">Wizards of the Coast Fan Content Policy</a>.' +
+      'The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
       '<div class="hr"></div>' +
       '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by <a href="https://ko-fi.com/suitangi" target="_blank">Suitangi</a></div>',
-    theme: 'dark',
+    theme: window.game.theme,
     animation: 'left',
     closeAnimation: 'left',
     animateFromElement: false,
@@ -1070,7 +1103,7 @@ function continueGameModal() {
   $.confirm({
     title: '<span class=\"modalTitle\">Continue?</span>',
     content: '<span class=\"modalText\">Previous game data found, would you like to continue?</span>',
-    theme: 'dark',
+    theme: window.game.theme,
     animation: 'top',
     closeAnimation: 'top',
     animateFromElement: false,
@@ -1317,7 +1350,7 @@ function mspie(ctx, data, title) {
 
               return labelsOriginal;
             },
-            color: 'white',
+            color: window.game.theme == 'dark' ? 'white' : 'black',
             font: {
               family: 'Roboto Mono'
             },
@@ -1346,7 +1379,7 @@ function mspie(ctx, data, title) {
         },
         title: {
           display: true,
-          color: 'white',
+          color: window.game.theme == 'dark' ? 'white' : 'black',
           font: {
             family: 'Beleren Bold',
             size: 20
@@ -1368,11 +1401,11 @@ function vertBarChart(ctx, data, title) {
         y: {
           beginAtZero: true,
           ticks: {
-            color: 'white',
+            color: window.game.theme == 'dark' ? 'white' : 'black',
             stepSize: 1
           },
           grid: {
-            borderColor: 'white',
+            borderColor: window.game.theme == 'dark' ? 'white' : 'black',
             color: '#6D6D6D'
           },
           title: {
@@ -1384,10 +1417,10 @@ function vertBarChart(ctx, data, title) {
         },
         x: {
           ticks: {
-            color: 'white'
+            color: window.game.theme == 'dark' ? 'white' : 'black'
           },
           grid: {
-            borderColor: 'white',
+            borderColor: window.game.theme == 'dark' ? 'white' : 'black',
             display: false
           },
           title: {
@@ -1402,7 +1435,7 @@ function vertBarChart(ctx, data, title) {
         legend: {
           position: 'bottom',
           labels: {
-            color: 'white',
+            color: window.game.theme == 'dark' ? 'white' : 'black',
             font: {
               family: 'Roboto Mono'
             },
@@ -1410,7 +1443,7 @@ function vertBarChart(ctx, data, title) {
         },
         title: {
           display: true,
-          color: 'white',
+          color: window.game.theme == 'dark' ? 'white' : 'black',
           font: {
             family: 'Beleren Bold',
             size: 20
@@ -1441,11 +1474,11 @@ function lineChart(ctx, data, title) {
           min: 0,
           max: 1,
           ticks: {
-            color: 'white',
+            color: window.game.theme == 'dark' ? 'white' : 'black',
             stepSize: 1
           },
           grid: {
-            borderColor: 'white',
+            borderColor: window.game.theme == 'dark' ? 'white' : 'black',
             color: '#6D6D6D'
           },
           title: {
@@ -1456,10 +1489,10 @@ function lineChart(ctx, data, title) {
         },
         x: {
           ticks: {
-            color: 'white'
+            color: window.game.theme == 'dark' ? 'white' : 'black'
           },
           grid: {
-            borderColor: 'white',
+            borderColor: window.game.theme == 'dark' ? 'white' : 'black',
             display: false
           },
           title: {
@@ -1473,7 +1506,7 @@ function lineChart(ctx, data, title) {
         legend: {
           position: 'bottom',
           labels: {
-            color: 'white',
+            color: window.game.theme == 'dark' ? 'white' : 'black',
             font: {
               family: 'Roboto Mono'
             },
@@ -1481,7 +1514,7 @@ function lineChart(ctx, data, title) {
         },
         title: {
           display: true,
-          color: 'white',
+          color: window.game.theme == 'dark' ? 'white' : 'black',
           font: {
             family: 'Beleren Bold',
             size: 20
@@ -1501,6 +1534,14 @@ function lineChart(ctx, data, title) {
   });
 }
 
+//sets the theme for the site
+function setTheme() {
+  let theme = window.game.theme;
+
+  const root = document.querySelector(':root');
+  root.setAttribute('color-scheme', `${theme}`);
+}
+
 //start script
 $(document).ready(function() {
 
@@ -1512,6 +1553,7 @@ $(document).ready(function() {
 
   window.game = {};
   window.game.timestamp = (new Date()).getTime();
+  window.game.theme = 'light'; //dark mode default
 
   window.game.daily = {};
   window.game.daily.lives = 7;
@@ -1570,7 +1612,11 @@ $(document).ready(function() {
     Cookies.set('dailyStats', JSON.stringify(window.stats.free), {
       expires: 365
     });
+
+    //get browser preferred theme
+    window.game.theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     window.firstTime = true;
+    setTheme();
   } else {
     window.firstTime = false;
     window.game = JSON.parse(Cookies.get('befuddle'));
@@ -1598,6 +1644,7 @@ $(document).ready(function() {
       });
     else
       window.stats.daily = JSON.parse(Cookies.get('dailyStats'));
+    setTheme();
   }
 
   //setup onclick for top nav buttons

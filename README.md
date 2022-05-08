@@ -1,19 +1,17 @@
 # Befuddle!
 
+Site status:
+[![pages-build-deployment](https://github.com/suitangi/Befuddle/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/pages/pages-build-deployment)
+
 # Todo:
 
 ### Misc/Bugs
-- CSS cleanup
 - Script cleanup, especially the loads of strings
 - A2H integration (needs service worker)
 - Mobile keyboard vibration
 - Easter eggs
 
-### Main Menu
-- Kofi (?)
-
 ### Options menu:
-- Implement Dark/Light Mode
 - Discord Spoilers for guesses
 
 # Stretch:
