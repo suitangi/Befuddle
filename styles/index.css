@@ -37,11 +37,11 @@
 
 @media([prefers-color-scheme]: light) {
   :root {
-    --bg: #cccccc;
-    --bgShadeDarker: #f1f1f1;
+    --bg: #dddddd;
+    --bgShadeDarker: #888888;
     --text: #000000;
     --supervanBG: rgb(227 227 227 / 95%);
-    --titleColor: #303030;
+    --titleColor: #eeeeee;
     --keyColor: #000000;
     --keyBG: #ffffff;
     --keyPressedColor: #898989;
@@ -50,6 +50,11 @@
     --keyHoverBG: #f1f1f1;
     --UIMain: #a5a5a5;
     --UIinteract: #464646;
+    --seeCardBorder: rgba(0, 0, 0, 1);
+    --topNavButtonColor: #dbdbdb;
+    --topNavButtonHoverColor: #ffffff;
+    --mainMenuButtonBG: #e9e9e9;
+    --mainMenuButtonHoverBG: #cbcbcb;
   }
 }
 
@@ -68,15 +73,20 @@
     --keyHoverBG: #252525;
     --UIMain: #0a0a0a;
     --UIinteract: #d7d7d7;
+    --seeCardBorder: rgba(200, 200, 200, 1);
+    --topNavButtonColor: #ccc;
+    --topNavButtonHoverColor: #ffffff;
+    --mainMenuButtonBG: #333333;
+    --mainMenuButtonHoverBG: #222;
   }
 }
 
 [color-scheme="light"] {
-  --bg: #cccccc;
-  --bgShadeDarker: #f1f1f1;
+  --bg: #dddddd;
+  --bgShadeDarker: #888888;
   --text: #000000;
   --supervanBG: rgb(227 227 227 / 95%);
-  --titleColor: #303030;
+  --titleColor: #eeeeee;
   --keyColor: #000000;
   --keyBG: #ffffff;
   --keyPressedColor: #898989;
@@ -85,6 +95,11 @@
   --keyHoverBG: #f1f1f1;
   --UIMain: #a5a5a5;
   --UIinteract: #464646;
+  --seeCardBorder: rgba(0, 0, 0, 1);
+  --topNavButtonColor: #dbdbdb;
+  --topNavButtonHoverColor: #ffffff;
+  --mainMenuButtonBG: #e9e9e9;
+  --mainMenuButtonHoverBG: #cbcbcb;
 }
 
 [color-scheme="dark"] {
@@ -101,6 +116,11 @@
   --keyHoverBG: #252525;
   --UIMain: #0a0a0a;
   --UIinteract: #d7d7d7;
+  --seeCardBorder: rgba(200, 200, 200, 1);
+  --topNavButtonColor: #ccc;
+  --topNavButtonHoverColor: #ffffff;
+  --mainMenuButtonBG: #333333;
+  --mainMenuButtonHoverBG: #222;
 }
 
 .material-symbols-outlined {
@@ -180,7 +200,7 @@ body {
 
 #top-nav .nav-buttons {
   cursor: pointer;
-  color: var(--keyHoverColor);
+  color: var(--topNavButtonColor);
   position: absolute;
   user-select: none;
   transition: color .5s;
@@ -190,7 +210,7 @@ body {
 
 #top-nav .nav-buttons:hover {
   cursor: pointer;
-  color: var(--text);
+  color: var(--topNavButtonHoverColor);
   position: absolute;
   user-select: none;
 }
@@ -343,7 +363,7 @@ body {
   text-align: center;
   background: var(--keyBG);
   color: var(--keyColor);
-  border-color: rgba(200, 200, 200, 1);
+  border-color: var(--seeCardBorder);
   border-width: 1px;
   border-style: solid;
   -moz-border-radius: 6px;
