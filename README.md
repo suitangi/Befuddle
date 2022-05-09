@@ -1,23 +1,25 @@
-# Befuddle!
+# Befuddle
+A Magic: The Gathering card art letter guessing game similar to Hangman. With daily new puzzles and a free play mode.
 
-Site status:
+## https://befuddle.xyz/
+
 [![pages-build-deployment](https://github.com/suitangi/Befuddle/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/pages/pages-build-deployment)
 
 # Todo:
 
 ### Misc/Bugs
-- Script cleanup, especially the loads of strings
-- A2H integration (needs service worker)
-- Mobile keyboard vibration
-- Easter eggs
+
+-   Script cleanup, especially the loads of strings
+-   A2H integration (needs service worker)
+-   Easter eggs
 
 ### Options menu:
-- Discord Spoilers for guesses
+-   Mobile keyboard vibration
+-   Discord Spoilers for guesses
 
 # Stretch:
-- Localization; currently only English available
-- Discord integration and bot
-
+-   Discord integration and bot
 
 # Special Thanks
+
 For beta testing and for helping conceptualize the idea, the one an only [G-Jayakar](https://github.com/G-Jayakar).

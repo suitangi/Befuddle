@@ -717,7 +717,8 @@ function settingsModal() {
         let di = this.$content.find('#darkInput');
         di.on('input', function() {
           window.game.theme = (this.checked ? 'dark' : 'light');
-          window.setModal.$body.prevObject.removeClass('jconfirm-dark')
+          window.setModal.$body.prevObject.removeClass('jconfirm-dark');
+          window.dailyModal.$body.prevObject.removeClass('jconfirm-dark');
           window.setModal.setTheme(window.game.theme);
           setTheme();
           Cookies.set('befuddle', JSON.stringify(window.game), {
@@ -790,7 +791,8 @@ function settingsModal() {
         let di = this.$content.find('#darkInput');
         di.on('input', function() {
           window.game.theme = (this.checked ? 'dark' : 'light');
-          window.setModal.$body.prevObject.removeClass('jconfirm-dark')
+          window.setModal.$body.prevObject.removeClass('jconfirm-dark');
+          window.dailyModal.$body.prevObject.removeClass('jconfirm-dark');
           window.setModal.setTheme(window.game.theme);
           setTheme();
           Cookies.set('befuddle', JSON.stringify(window.game), {
