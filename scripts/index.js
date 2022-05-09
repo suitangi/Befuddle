@@ -447,7 +447,8 @@ function gameWinDaily() {
     Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
       expires: 365
     });
-
+    if (window.game.vibra)
+      navigator.vibrate([200]);
     confetti({
       particleCount: 100,
       spread: 70,
@@ -514,6 +515,8 @@ function gameWinFree() {
     window.stats.free.score[1][wr]++;
   }
   if (wr == 0) { //confetti if perfect game
+    if (window.game.vibra)
+      navigator.vibrate([200]);
     confetti({
       particleCount: 100,
       spread: 70,
@@ -687,6 +690,8 @@ function settingsModal() {
     gameSettingsHtml += '<div class="gameSettings">' +
       '<div class="gameSettings"><br><br><span class="menuText" id="themedisplay">Dark Mode</span>' +
       '<label class="switch"><input id="darkInput" type="checkbox" ' + (window.game.theme === 'dark' ? 'checked' : '') + '><div><span></span></div></label>' +
+      '<div class="gameSettings"><br><br><span class="menuText">Vibration</span>' +
+      '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>' +
       '<br><div class="hr"></div>' +
       '<br><span class="menuText" id="hmdisplay">Hidden mode</span>' +
       '<label class="switch"><input id="hmInput" type="checkbox" ' + (window.game.daily.hideBlanks ? 'checked' : '') + '><div><span></span></div></label>' +
@@ -717,11 +722,15 @@ function settingsModal() {
         let di = this.$content.find('#darkInput');
         di.on('input', function() {
           window.game.theme = (this.checked ? 'dark' : 'light');
-          window.setModal.$body.prevObject.removeClass('jconfirm-dark');
-          window.dailyModal.$body.prevObject.removeClass('jconfirm-dark');
-          window.setModal.setTheme(window.game.theme);
-          window.dailyModal.setTheme(window.game.theme);
           setTheme();
+          Cookies.set('befuddle', JSON.stringify(window.game), {
+            expires: 365
+          }); //save game settings data to cookies
+        });
+
+        let vi = this.$content.find('#vibraInput');
+        vi.on('input', function() {
+          window.game.vibra = this.checked;
           Cookies.set('befuddle', JSON.stringify(window.game), {
             expires: 365
           }); //save game settings data to cookies
@@ -735,6 +744,8 @@ function settingsModal() {
     gameSettingsHtml += '<div class="gameSettings">' +
       '<div class="gameSettings"><br><br><span class="menuText" id="themedisplay">Dark Mode</span>' +
       '<label class="switch"><input id="darkInput" type="checkbox" ' + (window.game.theme === 'dark' ? 'checked' : '') + '><div><span></span></div></label>' +
+      '<div class="gameSettings"><br><br><span class="menuText">Vibration</span>' +
+      '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>' +
       '<br><div class="hr"></div>' +
       '<br><span class="menuText">Lives: <span id="livesdisplay">' + (window.game.free.lives == -1 ? 'Off' : window.game.free.lives) + '</span></span>' +
       '<div class="slidecontainer"><input id="livesInput" type="range" min="0" max="25" value="' + window.game.free.lives + '" class="slider"></div>' +
@@ -792,11 +803,15 @@ function settingsModal() {
         let di = this.$content.find('#darkInput');
         di.on('input', function() {
           window.game.theme = (this.checked ? 'dark' : 'light');
-          window.setModal.$body.prevObject.removeClass('jconfirm-dark');
-          window.dailyModal.$body.prevObject.removeClass('jconfirm-dark');
-          window.setModal.setTheme(window.game.theme);
-          window.dailyModal.setTheme(window.game.theme);
           setTheme();
+          Cookies.set('befuddle', JSON.stringify(window.game), {
+            expires: 365
+          }); //save game settings data to cookies
+        });
+
+        let vi = this.$content.find('#vibraInput');
+        vi.on('input', function() {
+          window.game.vibra = this.checked;
           Cookies.set('befuddle', JSON.stringify(window.game), {
             expires: 365
           }); //save game settings data to cookies
@@ -1542,6 +1557,15 @@ function lineChart(ctx, data, title) {
 function setTheme() {
   let theme = window.game.theme;
 
+  if (window.setModal) {
+    window.setModal.$body.prevObject.removeClass('jconfirm-dark');
+    window.setModal.setTheme(window.game.theme);
+  }
+  if (window.dailyModal) {
+    window.dailyModal.$body.prevObject.removeClass('jconfirm-dark');
+    window.dailyModal.setTheme(window.game.theme);
+  }
+
   const root = document.querySelector(':root');
   root.setAttribute('color-scheme', `${theme}`);
 }
@@ -1557,7 +1581,8 @@ $(document).ready(function() {
 
   window.game = {};
   window.game.timestamp = (new Date()).getTime();
-  window.game.theme = 'light'; //dark mode default
+  window.game.theme = 'dark'; //dark mode default
+  window.game.vibra = true;
 
   window.game.daily = {};
   window.game.daily.lives = 7;
@@ -1674,8 +1699,11 @@ $(document).ready(function() {
     window.displayKeyboard[li[i].innerText.toLowerCase()] = li[i];
     li[i].setAttribute('data-key', li[i].innerText);
     li[i].addEventListener('click', function() {
-      if (!window.gameSesh.end)
+      if (!window.gameSesh.end) {
+        if (window.game.vibra)
+          navigator.vibrate(50);
         submitLetter(this.getAttribute('data-key').toLowerCase());
+      }
     });
   }
 
