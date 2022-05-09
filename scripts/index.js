@@ -720,6 +720,7 @@ function settingsModal() {
           window.setModal.$body.prevObject.removeClass('jconfirm-dark');
           window.dailyModal.$body.prevObject.removeClass('jconfirm-dark');
           window.setModal.setTheme(window.game.theme);
+          window.dailyModal.setTheme(window.game.theme);
           setTheme();
           Cookies.set('befuddle', JSON.stringify(window.game), {
             expires: 365
@@ -794,6 +795,7 @@ function settingsModal() {
           window.setModal.$body.prevObject.removeClass('jconfirm-dark');
           window.dailyModal.$body.prevObject.removeClass('jconfirm-dark');
           window.setModal.setTheme(window.game.theme);
+          window.dailyModal.setTheme(window.game.theme);
           setTheme();
           Cookies.set('befuddle', JSON.stringify(window.game), {
             expires: 365
