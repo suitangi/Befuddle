@@ -14,7 +14,6 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 -   Easter eggs
 
 ### Options menu:
--   Mobile keyboard vibration
 -   Discord Spoilers for guesses
 
 # Stretch:

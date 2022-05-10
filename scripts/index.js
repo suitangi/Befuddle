@@ -230,6 +230,10 @@ function submitLetter(char) {
     window.gameSesh.wrongGuess += char;
     window.displayKeyboard[char].classList.add('incorrect');
 
+    //medium buzz
+    if (window.game.vibra)
+      navigator.vibrate(45);
+
     //add to stat if not loadingGuesses
     if (!window.loadingGuesses) {
       if (!window.gameSesh.hideBlanks)
@@ -264,6 +268,10 @@ function submitLetter(char) {
     window.displayKeyboard[char].classList.add('correct');
     window.gameSesh.hiddenName = r;
     document.getElementById("cardName").innerText = window.gameSesh.hiddenName;
+
+    //short buzz
+    if (window.game.vibra)
+      navigator.vibrate(15);
 
     //add to stat if not loadingGuesses
     if (!window.loadingGuesses) {
@@ -448,7 +456,7 @@ function gameWinDaily() {
       expires: 365
     });
     if (window.game.vibra)
-      navigator.vibrate([200]);
+      navigator.vibrate([400]);
     confetti({
       particleCount: 100,
       spread: 70,
@@ -516,7 +524,7 @@ function gameWinFree() {
   }
   if (wr == 0) { //confetti if perfect game
     if (window.game.vibra)
-      navigator.vibrate([200]);
+      navigator.vibrate([400]);
     confetti({
       particleCount: 100,
       spread: 70,
@@ -1700,8 +1708,6 @@ $(document).ready(function() {
     li[i].setAttribute('data-key', li[i].innerText);
     li[i].addEventListener('click', function() {
       if (!window.gameSesh.end) {
-        if (window.game.vibra)
-          navigator.vibrate(50);
         submitLetter(this.getAttribute('data-key').toLowerCase());
       }
     });
