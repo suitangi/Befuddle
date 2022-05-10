@@ -10,7 +10,6 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 ### Misc/Bugs
 
 -   Script cleanup, especially the loads of strings
--   A2H integration (needs service worker)
 -   Easter eggs
 
 ### Options menu:
@@ -20,5 +19,4 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 -   Discord integration and bot
 
 # Special Thanks
-
 For beta testing and for helping conceptualize the idea, the one an only [G-Jayakar](https://github.com/G-Jayakar).

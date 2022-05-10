@@ -232,7 +232,7 @@ function submitLetter(char) {
 
     //medium buzz
     if (window.game.vibra)
-      navigator.vibrate(45);
+      navigator.vibrate(55);
 
     //add to stat if not loadingGuesses
     if (!window.loadingGuesses) {
@@ -483,7 +483,23 @@ function gameWinDaily() {
     typeAnimated: true,
     closeIcon: true,
     buttons: {
-      close: {
+      free: {
+        text: "Free Play",
+        btnClass: 'btn-purple',
+        action: function(linkButton) {
+          window.gameSesh.end = true;
+          window.game.mode = 'free';
+          if (Cookies.get('free')) {
+            window.gameSesh = JSON.parse(Cookies.get('free'));
+            window.mtgCard = window.gameSesh.card;
+          }
+          if (!window.gameSesh.end)
+            continueGameModal();
+          else
+            loadGame();
+        }
+      },
+      stats: {
         text: "Stats",
         btnClass: 'btn-blue',
         action: function() {
@@ -1075,7 +1091,7 @@ function menuModal() {
       '<br>• Card Images: <a href="https://scryfall.com/" target="_blank">Scryfall</a>' +
       '<br>• Font: <a href="https://company.wizards.com/en" target="_blank">Wizards of the Coast</a><br><br></div>' +
       '<div class="hr"></div><div class=\"modalText\" id="disclaimer">Disclaimer  <span id="disclaimerExpand" class="material-symbols-outlined"> expand_more </span></div>' +
-      '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank">Wizards of the Coast Fan Content Policy</a>.' +
+      '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank">Wizards of the Coast Fan Content Policy</a>. ' +
       'The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
       '<div class="hr"></div>' +
       '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by <a href="https://ko-fi.com/suitangi" target="_blank">Suitangi</a></div>',
@@ -1161,9 +1177,9 @@ function continueGameModal() {
 
 //function to display initial main menu
 function mainMenuDisplay() {
-  $.confirm({
+  mainMenuModal = $.confirm({
     title: '<span id=\"mainMenuTitle\">Welcome to Befuddle</span>',
-    content: '<span class=\"mainMenuText\">Select your game mode:</span>',
+    content: '<span class=\"mainMenuText\">Select your game mode</span>',
     theme: 'supervan',
     animation: 'opacity',
     closeAnimation: 'top',
@@ -1173,6 +1189,19 @@ function mainMenuDisplay() {
     backgroundDismiss: false,
     backgroundDismissAnimation: 'none',
     useBootstrap: false,
+    onContentReady: function() {
+      this.buttons.daily.el.hover(function() {
+        mainMenuModal.setContent('<span class=\"mainMenuText\">Challenge the daily Befuddle</span>');
+      }, function () {
+        mainMenuModal.setContent('<span class=\"mainMenuText\">Select your game mode</span>');
+      });
+
+      this.buttons.free.el.hover(function() {
+        mainMenuModal.setContent('<span class=\"mainMenuText\">Play endlessly on free mode</span>');
+      }, function () {
+        mainMenuModal.setContent('<span class=\"mainMenuText\">Select your game mode</span>');
+      });
+    },
     buttons: {
       daily: {
         text: '<span class=\"mainMenuText\">Daily Befuddle</span>',
@@ -1661,6 +1690,10 @@ $(document).ready(function() {
       Cookies.remove('daily');
     }
     window.game.timestamp = (new Date()).getTime();
+
+    if (window.game.theme == '')
+      window.game.theme = 'light';
+
     Cookies.set('befuddle', JSON.stringify(window.game)), {
       expires: 365
     };
