@@ -867,8 +867,8 @@ function statsModal() {
       '<div><table id="streakTable"><tbody><tr><th>Normal Mode</th><th>Hidden Mode</th></tr><tr><td>' +
       window.stats.free.perf[0] + '</td><td>' +
       window.stats.free.perf[1] + '</td></tr></tbody></table></div>' +
-      '<canvas id="wrChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
-      (wrvl()? '<canvas id="scoreChart" class="chartCanvas" width="400px" height="300px"></canvas>': '') +
+      (wrvl() ? '<canvas id="wrChart" class="chartCanvas" width="400px" height="300px"></canvas>' : '') +
+      '<canvas id="scoreChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
       '<canvas id="accChart" class="chartCanvas" width="400px" height="300px"></canvas>';
   }
 
@@ -898,8 +898,8 @@ function wrvl() {
   for (var i = 0; i < 25; i++) {
     if (window.stats.free.wr[0][i][0] + window.stats.free.wr[0][i][1] +
       window.stats.free.wr[1][i][0] + window.stats.free.wr[1][i][1] != 0) {
-        return true;
-      }
+      return true;
+    }
   }
   return false;
 }
