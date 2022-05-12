@@ -1268,6 +1268,9 @@ function loadGame() {
       document.getElementById("imageLoading").style = "";
       let d = new Date();
       window.game.daily.timestamp = d.getTime();
+      Cookies.set('befuddle', JSON.stringify(window.game), {
+        expires: 365
+      });
       loadCard(data[d.getDOY()]);
     }
 
