@@ -374,7 +374,7 @@ function gameLostFree() {
 //handler for game lost scenario in free mode
 function gameLostDaily() {
 
-  if (window.dailyModal != null) {
+  if (window.dailyModal !== null) {
     window.window.dailyModal.open();
     return;
   }
@@ -431,7 +431,7 @@ function gameLostDaily() {
 //handler for winning the game in daily mode
 function gameWinDaily() {
 
-  if (window.dailyModal != null) {
+  if (window.dailyModal !== null) {
     window.window.dailyModal.open();
     return;
   }
@@ -443,6 +443,8 @@ function gameWinDaily() {
   if (window.stats.daily.doy != doy) {
     window.stats.daily.doy = doy
     window.stats.daily.streak++;
+
+    //streak data
     if (window.stats.daily.streak > window.stats.daily.maxStk)
       window.stats.daily.maxStk = window.stats.daily.streak;
     if (!window.gameSesh.hideBlanks) {
@@ -455,6 +457,8 @@ function gameWinDaily() {
     Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
       expires: 365
     });
+
+    //vibrate if on
     if (window.game.vibra)
       navigator.vibrate([400]);
     confetti({
@@ -1192,13 +1196,13 @@ function mainMenuDisplay() {
     onContentReady: function() {
       this.buttons.daily.el.hover(function() {
         mainMenuModal.setContent('<span class=\"mainMenuText\">Challenge the daily Befuddle</span>');
-      }, function () {
+      }, function() {
         mainMenuModal.setContent('<span class=\"mainMenuText\">Select your game mode</span>');
       });
 
       this.buttons.free.el.hover(function() {
         mainMenuModal.setContent('<span class=\"mainMenuText\">Play endlessly on free mode</span>');
-      }, function () {
+      }, function() {
         mainMenuModal.setContent('<span class=\"mainMenuText\">Select your game mode</span>');
       });
     },
@@ -1263,6 +1267,7 @@ function loadGame() {
       document.getElementById("cardImage").style = "opacity:0; transition: opacity 0s;";
       document.getElementById("imageLoading").style = "";
       let d = new Date();
+      window.game.daily.timestamp = d.getTime();
       loadCard(data[d.getDOY()]);
     }
 
@@ -1329,14 +1334,14 @@ function loadTimer() {
       now = new Date();
       seconds = (now.getMinutes() * 60 + now.getSeconds()) % 300;
       if (now > midnight) { //midnight, load new daily game
-        window.game.mode == 'daily';
-        if (window.dailyModal != null && window.dailyModal.isOpen()) {
+        if (window.game.mode == 'daily' && window.dailyModal != null && window.dailyModal.isOpen()) {
           window.dailyModal.close();
           window.dailyModal = null;
-          window.game.timestamp = now.getTime();
           Cookies.remove('daily');
-          window.game.end = true;
+          window.gameSesh.end = true;
           loadGame();
+        } else {
+          Cookies.remove('daily');
         }
         loadTimer();
         return;
@@ -1365,7 +1370,7 @@ function loadTimer() {
 
 //see if today is a new day locally
 function checkNewDay() {
-  d1 = new Date(window.game.timestamp);
+  d1 = new Date(window.game.daily.timestamp);
   d2 = new Date();
   return d1.getDOY() != d2.getDOY();
 }
@@ -1617,7 +1622,7 @@ $(document).ready(function() {
   window.dailyModal = null;
 
   window.game = {};
-  window.game.timestamp = (new Date()).getTime();
+  window.game.daily.timestamp = 0;
   window.game.theme = 'dark'; //dark mode default
   window.game.vibra = true;
 
@@ -1689,7 +1694,6 @@ $(document).ready(function() {
     if (checkNewDay()) {
       Cookies.remove('daily');
     }
-    window.game.timestamp = (new Date()).getTime();
 
     if (window.game.theme == '')
       window.game.theme = 'light';
