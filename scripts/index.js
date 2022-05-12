@@ -1228,7 +1228,9 @@ function mainMenuDisplay() {
           if (Cookies.get('daily')) {
             window.gameSesh = JSON.parse(Cookies.get('daily'));
             window.mtgCard = window.gameSesh.card;
-            if (window.gameSesh.end && checkNewDay())
+            if (checkNewDay())
+              window.gameSesh.end = true;
+            if (window.gameSesh.end)
               window.gameSesh.end = false;
           }
           loadGame();
