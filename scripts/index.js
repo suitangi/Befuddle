@@ -1624,11 +1624,11 @@ $(document).ready(function() {
   window.dailyModal = null;
 
   window.game = {};
-  window.game.daily.timestamp = 0;
   window.game.theme = 'dark'; //dark mode default
   window.game.vibra = true;
 
   window.game.daily = {};
+  window.game.daily.timestamp = 0;
   window.game.daily.lives = 7;
   window.game.daily.hideBlanks = false;
 
