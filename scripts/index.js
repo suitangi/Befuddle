@@ -862,12 +862,13 @@ function statsModal() {
       '<canvas id="scoreChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
       '<canvas id="accChart" class="chartCanvas" width="400px" height="300px"></canvas>';
   } else if (window.game.mode == 'free') {
+
     html += '<div id="streakTitle">Perfect Games</div>' +
       '<div><table id="streakTable"><tbody><tr><th>Normal Mode</th><th>Hidden Mode</th></tr><tr><td>' +
       window.stats.free.perf[0] + '</td><td>' +
       window.stats.free.perf[1] + '</td></tr></tbody></table></div>' +
       '<canvas id="wrChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
-      '<canvas id="scoreChart" class="chartCanvas" width="400px" height="300px"></canvas>' +
+      (wrvl()? '<canvas id="scoreChart" class="chartCanvas" width="400px" height="300px"></canvas>': '') +
       '<canvas id="accChart" class="chartCanvas" width="400px" height="300px"></canvas>';
   }
 
@@ -892,6 +893,17 @@ function statsModal() {
   });
 }
 
+//small helper to determine if win rate vs lives in free mode is worth displaying
+function wrvl() {
+  for (var i = 0; i < 25; i++) {
+    if (window.stats.free.wr[0][i][0] + window.stats.free.wr[0][i][1] +
+      window.stats.free.wr[1][i][0] + window.stats.free.wr[1][i][1] != 0) {
+        return true;
+      }
+  }
+  return false;
+}
+
 //function to setup the charts for free mode stats
 function freeChartsSetup() {
   let wr = [
@@ -914,20 +926,22 @@ function freeChartsSetup() {
     la2.push(i + 1);
   } //end i loop
 
-  lineChart(document.getElementById('wrChart'), {
-    labels: la2,
-    datasets: [{
-      label: 'Normal',
-      data: wr[0],
-      backgroundColor: '#346888',
-      borderColor: '#346888'
-    }, {
-      label: 'Hidden',
-      data: wr[1],
-      backgroundColor: '#9dc6e0',
-      borderColor: '#9dc6e0'
-    }]
-  }, 'Win Rate vs Lives')
+  if (wrvl()) { //check if wrvl is worth displaying
+    lineChart(document.getElementById('wrChart'), {
+      labels: la2,
+      datasets: [{
+        label: 'Normal',
+        data: wr[0],
+        backgroundColor: '#346888',
+        borderColor: '#346888'
+      }, {
+        label: 'Hidden',
+        data: wr[1],
+        backgroundColor: '#9dc6e0',
+        borderColor: '#9dc6e0'
+      }]
+    }, 'Win Rate vs Lives')
+  }
 
   vertBarChart(document.getElementById('scoreChart').getContext('2d'), {
     labels: la,
@@ -1214,7 +1228,7 @@ function mainMenuDisplay() {
           if (Cookies.get('daily')) {
             window.gameSesh = JSON.parse(Cookies.get('daily'));
             window.mtgCard = window.gameSesh.card;
-            if (window.gameSesh.end)
+            if (window.gameSesh.end && checkNewDay())
               window.gameSesh.end = false;
           }
           loadGame();
@@ -1337,9 +1351,11 @@ function loadTimer() {
       now = new Date();
       seconds = (now.getMinutes() * 60 + now.getSeconds()) % 300;
       if (now > midnight) { //midnight, load new daily game
-        if (window.game.mode == 'daily' && window.dailyModal != null && window.dailyModal.isOpen()) {
-          window.dailyModal.close();
-          window.dailyModal = null;
+        if (window.game.mode == 'daily') {
+          if (window.dailyModal !== null && window.dailyModal.isOpen()) {
+            window.dailyModal.close();
+            window.dailyModal = null;
+          }
           Cookies.remove('daily');
           window.gameSesh.end = true;
           loadGame();
@@ -1360,7 +1376,7 @@ function loadTimer() {
         timerTick();
       }, 1000);
     }
-    if (window.dailyModal != null && window.dailyModal.isOpen()) {
+    if (window.dailyModal !== null && window.dailyModal.isOpen()) {
       document.getElementById('dailyTimerDisplay').innerText = 'Next Daily Befuddle │ ' + msToTime(timeTo);
     }
     seconds++;
