@@ -1370,6 +1370,8 @@ function loadTimer() {
 
 //see if today is a new day locally
 function checkNewDay() {
+  if (window.game.daily.timestamp == undefined)
+    window.game.daily.timestamp = 0;
   d1 = new Date(window.game.daily.timestamp);
   d2 = new Date();
   return d1.getDOY() != d2.getDOY();
