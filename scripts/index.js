@@ -375,7 +375,7 @@ function gameLostFree() {
 function gameLostDaily() {
 
   if (window.dailyModal !== null) {
-    window.window.dailyModal.open();
+    window.dailyModal.open();
     return;
   }
 
@@ -407,7 +407,23 @@ function gameLostDaily() {
     typeAnimated: true,
     closeIcon: true,
     buttons: {
-      close: {
+      free: {
+        text: "Free Play",
+        btnClass: 'btn-purple',
+        action: function(linkButton) {
+          window.gameSesh.end = true;
+          window.game.mode = 'free';
+          if (Cookies.get('free')) {
+            window.gameSesh = JSON.parse(Cookies.get('free'));
+            window.mtgCard = window.gameSesh.card;
+          }
+          if (!window.gameSesh.end)
+            continueGameModal();
+          else
+            loadGame();
+        }
+      },
+      stats: {
         text: "Stats",
         btnClass: 'btn-blue',
         action: function() {
@@ -432,7 +448,7 @@ function gameLostDaily() {
 function gameWinDaily() {
 
   if (window.dailyModal !== null) {
-    window.window.dailyModal.open();
+    window.dailyModal.open();
     return;
   }
 
