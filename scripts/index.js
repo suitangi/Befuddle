@@ -1711,15 +1711,20 @@ $(document).ready(function() {
 
   loadTimer();
 
-  //set up cookies
-  if (Cookies.get('befuddle') == null) { //first time user
-    Cookies.set('befuddle', JSON.stringify(window.game), {
-      expires: 365
-    });
+  if (Cookies.get('freeStats') == null) { //set up stats
     Cookies.set('freeStats', JSON.stringify(window.stats.free), {
       expires: 365
     });
-    Cookies.set('dailyStats', JSON.stringify(window.stats.free), {
+  }
+  if (Cookies.get('dailyStats') == null) { //set up stats
+    Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+      expires: 365
+    });
+  }
+
+  //set up cookies
+  if (Cookies.get('befuddle') == null) { //first time user
+    Cookies.set('befuddle', JSON.stringify(window.game), {
       expires: 365
     });
 
