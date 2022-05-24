@@ -27,7 +27,23 @@ function requestCard(id) {
   document.getElementById("imageLoading").style = "";
   fetch('https://api.scryfall.com/cards/' + id)
     .then(response => response.json())
-    .then(data => loadCard(data));
+    .then(data => loadCard(data))
+    .catch(error => {
+      $.dialog({
+        title: '<span class=\"modalTitle\">Error</span>',
+        content: '<span class=\"modalText\">Couldn\'t load card image and information. Check your connection and/or Scryfall API status.</span>',
+        type: 'red',
+        theme: window.game.theme,
+        animation: 'top',
+        closeAnimation: 'top',
+        animateFromElement: false,
+        boxWidth: 'min(400px, 80%)',
+        draggable: false,
+        useBootstrap: false,
+        typeAnimated: true,
+        backgroundDismiss: true
+      });
+    });
 }
 
 //helper to see if char is an English letter
@@ -121,7 +137,7 @@ function loadCard(data) {
     } else {
       window.mtgCard.manaCost = [];
       if (window.mtgCard['layout'] == 'split' || window.mtgCard['layout'] == 'adventure' || window.mtgCard['layout'] == 'flip') {
-        let tmp = window.mtgCard['mana_cost'].split(' // '); //for the double faced/ 2 in 1 cards
+        let tmp = window.mtgCard['mana_cost'].split(' // '); //for the double faced and split cards
         for (var i = 0; i < tmp.length; i++) {
           if (i > 0)
             window.mtgCard.manaCost.push('//');
@@ -1312,6 +1328,9 @@ function loadGame() {
         .then(data => {
           window.dailyList = data;
           dailyCard(data);
+        })
+        .catch(function() {
+          console.error('Could not fetch daily card list');
         });
     } else { //no need to re-fetch
       dailyCard(window.dailyList);
@@ -1331,6 +1350,9 @@ function loadGame() {
         .then(data => {
           window.cardList = data;
           freeCard(data);
+        })
+        .catch(function() {
+          console.error('Could not fetch card list');
         });
     } else { //no need to re-fetch
       freeCard(window.cardList);
