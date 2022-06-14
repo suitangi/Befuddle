@@ -975,6 +975,8 @@ function freeChartsSetup() {
     }, 'Win Rate vs Lives')
   }
 
+
+  //vertical bar chart setup
   vertBarChart(document.getElementById('scoreChart').getContext('2d'), {
     labels: la,
     datasets: [{
@@ -994,6 +996,7 @@ function freeChartsSetup() {
     }]
   }, 'Score Distribution');
 
+  //pi chart setup
   mspie(document.getElementById('accChart').getContext('2d'), {
     labels: ['Correct (Normal)', 'Incorrect (Normal)', 'Correct (Hidden)', 'Incorrect (Hidden)'],
     datasets: [{
@@ -1430,8 +1433,9 @@ function loadTimer() {
 //see if today is a new day locally
 function checkNewDay() {
   if (window.game.daily.timestamp == undefined)
-    window.game.daily.timestamp = 0;
-  d1 = new Date(window.game.daily.timestamp);
+    d1 = -1;
+  else
+    d1 = new Date(window.game.daily.timestamp);
   d2 = new Date();
   return d1.getDOY() != d2.getDOY();
 }
@@ -1687,7 +1691,6 @@ $(document).ready(function() {
   window.game.vibra = true;
 
   window.game.daily = {};
-  window.game.daily.timestamp = 0;
   window.game.daily.lives = 7;
   window.game.daily.hideBlanks = false;
 
