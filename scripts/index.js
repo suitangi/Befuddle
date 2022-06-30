@@ -94,7 +94,8 @@ function loadCard(data) {
 
     if (window.game.mode == 'daily') {
       let dday = new Date();
-      window.gameSesh.doy = dday.getDOY();
+      window.gameSesh.doy = dday.getYear() * 1000 + dday.getDOY();
+      window.gameSesh.giveUp = false;
     }
 
     if (window.game.mode == 'free') {
@@ -392,7 +393,7 @@ function gameLostFree() {
   });
 }
 
-//handler for game lost scenario in free mode
+//handler for game lost scenario in daily mode
 function gameLostDaily() {
 
   if (window.dailyModal !== null) {
@@ -1090,10 +1091,15 @@ function menuModal() {
           action: function() {
             window.gameSesh.end = true;
             document.getElementById('seeCard').style = '';
-            if (window.game.mode == 'daily')
+            if (window.game.mode == 'daily') {
+              window.gameSesh.giveUp = true;
               gameLostDaily();
-            else if (window.game.mode == 'free')
+            } else if (window.game.mode == 'free')
               gameLostFree();
+            }
+            Cookies.set(window.game.mode, JSON.stringify(window.gameSesh), {
+              expires: 365
+            });
             menuD.close();
           }
         },
@@ -1270,7 +1276,7 @@ function mainMenuDisplay() {
             window.mtgCard = window.gameSesh.card;
             // if (checkNewDay())
             //   window.gameSesh.end = true;
-            if (window.gameSesh.end)
+            if (window.gameSesh.end) //seems counterintuitive, but is for reshowing the daily result
               window.gameSesh.end = false;
           }
           loadGame();
@@ -1307,6 +1313,16 @@ function loadGame() {
     console.log('Continued Game Session');
     loadCard();
     loadGuesses();
+
+    //person gaveup, show losing screen
+    if (window.game.mode == 'daily' && window.gameSesh.giveUp) {
+      window.gameSesh.end = true;
+      document.getElementById('seeCard').style = '';
+      gameLostDaily();
+      Cookies.set('daily', JSON.stringify(window.gameSesh), {
+        expires: 365
+      });
+    }
     return; //don't load a new game
   } else {
 
@@ -1755,7 +1771,7 @@ $(document).ready(function() {
   if (Cookies.get('daily')) { //check for new day in daily
     let tmp = JSON.parse(Cookies.get('daily'));
     let dday = new Date();
-    if (tmp.doy == undefined || dday.getDOY() != tmp.doy)
+    if (tmp.doy == undefined || (dday.getYear() * 1000 + dday.getDOY()) != tmp.doy)
       Cookies.remove('daily');
   }
 
