@@ -1096,7 +1096,7 @@ function menuModal() {
               gameLostDaily();
             } else if (window.game.mode == 'free')
               gameLostFree();
-            }
+            
             Cookies.set(window.game.mode, JSON.stringify(window.gameSesh), {
               expires: 365
             });
