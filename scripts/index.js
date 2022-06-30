@@ -1330,7 +1330,7 @@ function loadGame() {
       loadCard(data[d.getDOY()]);
     }
 
-    if (window.dailyList === null) { //fetch first if null
+    if (window.dailyList == null) { //fetch first if null
       fetch('./dailyList.json')
         .then(response => response.json())
         .then(data => {
