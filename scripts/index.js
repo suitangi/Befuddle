@@ -92,6 +92,11 @@ function loadCard(data) {
     window.gameSesh.guesses = '';
     window.gameSesh.tlv = window.game[window.game.mode].lives;
 
+    if (window.game.mode == 'daily') {
+      let dday = new Date();
+      window.gameSesh.doy = dday.getDOY();
+    }
+
     if (window.game.mode == 'free') {
       window.gameSesh.manastate = window.game.free.manaState;
     }
@@ -1263,10 +1268,10 @@ function mainMenuDisplay() {
           if (Cookies.get('daily')) {
             window.gameSesh = JSON.parse(Cookies.get('daily'));
             window.mtgCard = window.gameSesh.card;
-            if (checkNewDay())
-              window.gameSesh.end = true;
-            if (window.gameSesh.end)
-              window.gameSesh.end = false;
+            // if (checkNewDay())
+            //   window.gameSesh.end = true;
+            // if (window.gameSesh.end)
+            //   window.gameSesh.end = false;
           }
           loadGame();
         }
@@ -1318,14 +1323,14 @@ function loadGame() {
       document.getElementById("cardImage").style = "opacity:0; transition: opacity 0s;";
       document.getElementById("imageLoading").style = "";
       let d = new Date();
-      window.game.daily.timestamp = d.getTime();
+      // window.game.daily.timestamp = d.getTime();
       Cookies.set('befuddle', JSON.stringify(window.game), {
         expires: 365
       });
       loadCard(data[d.getDOY()]);
     }
 
-    if (window.dailyList == null) { //fetch first if null
+    if (window.dailyList === null) { //fetch first if null
       fetch('./dailyList.json')
         .then(response => response.json())
         .then(data => {
@@ -1430,15 +1435,15 @@ function loadTimer() {
   }, 1000 - now.getMilliseconds());
 }
 
-//see if today is a new day locally
-function checkNewDay() {
-  if (window.game.daily.timestamp == undefined)
-    d1 = -1;
-  else
-    d1 = new Date(window.game.daily.timestamp);
-  d2 = new Date();
-  return d1.getDOY() != d2.getDOY();
-}
+//see if today is a new day locally //legacy code
+// function checkNewDay() {
+//   if (window.game.daily.timestamp == undefined)
+//     d1 = -1;
+//   else
+//     d1 = new Date(window.game.daily.timestamp);
+//   d2 = new Date();
+//   return d1.getDOY() != d2.getDOY();
+// }
 
 //charting function for multi-series pie chart
 function mspie(ctx, data, title) {
@@ -1747,6 +1752,13 @@ $(document).ready(function() {
     });
   }
 
+  if (Cookies.get('daily')) { //check for new day in daily
+    let tmp = JSON.parse(Cookies.get('daily'));
+    let dday = new Date();
+    if (tmp.doy == undefined || dday.getDOY() != tmp.doy)
+      Cookies.remove('daily');
+  }
+
   //set up cookies
   if (Cookies.get('befuddle') == null) { //first time user
     Cookies.set('befuddle', JSON.stringify(window.game), {
@@ -1760,9 +1772,6 @@ $(document).ready(function() {
   } else {
     window.firstTime = false;
     window.game = JSON.parse(Cookies.get('befuddle'));
-    if (checkNewDay()) {
-      Cookies.remove('daily');
-    }
 
     if (window.game.theme == '')
       window.game.theme = 'light';
