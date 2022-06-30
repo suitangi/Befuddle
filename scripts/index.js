@@ -1270,8 +1270,8 @@ function mainMenuDisplay() {
             window.mtgCard = window.gameSesh.card;
             // if (checkNewDay())
             //   window.gameSesh.end = true;
-            // if (window.gameSesh.end)
-            //   window.gameSesh.end = false;
+            if (window.gameSesh.end)
+              window.gameSesh.end = false;
           }
           loadGame();
         }
