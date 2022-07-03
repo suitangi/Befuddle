@@ -462,7 +462,7 @@ function gameLostDaily() {
           let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") +
             '\n' + 'X' + (window.gameSesh.hideBlanks ? '*' : '') +
             '\n' +
-            +'\n' + window.location.href;
+            '\n' + window.location.href;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -558,7 +558,9 @@ function gameWinDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*' : '') + '\n' + window.location.herf;
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") +
+            '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*' : '') +
+            '\n' + window.location.herf;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -623,7 +625,7 @@ function gameWinFree() {
           var str = 'Befuddle: \n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            ' \n' + window.location.href + '/?cardId=' + window.mtgCard.id +
+            '\n' + window.location.href + '/?cardId=' + window.mtgCard.id +
             (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
