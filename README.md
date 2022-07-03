@@ -8,7 +8,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 # Todo:
 
 ### Misc/Bugs
--   Show answer saving bug in daily mode
+-   Better daily share copy pasta/discord spoilers mode
 -   Script cleanup, especially the loads of strings
 -   Easter eggs
 
