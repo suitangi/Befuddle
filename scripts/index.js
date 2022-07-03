@@ -1,3 +1,5 @@
+const canVibrate = window.navigator.vibrate;
+
 //Helper: Get Query
 function getParameterByName(name, url) {
   if (!url) url = window.location.href;
@@ -253,7 +255,7 @@ function submitLetter(char) {
     window.displayKeyboard[char].classList.add('incorrect');
 
     //medium buzz
-    if (window.game.vibra)
+    if (window.game.vibra && canVibrate)
       navigator.vibrate(55);
 
     //add to stat if not loadingGuesses
@@ -292,7 +294,7 @@ function submitLetter(char) {
     document.getElementById("cardName").innerText = window.gameSesh.hiddenName;
 
     //short buzz
-    if (window.game.vibra)
+    if (window.game.vibra && canVibrate)
       navigator.vibrate(15);
 
     //add to stat if not loadingGuesses
@@ -375,7 +377,7 @@ function gameLostFree() {
         action: function(linkButton) {
           var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            '\nhttps://befuddle.xyz/?cardId=' + window.mtgCard.id +
+            '\n' + window.location.href + '/?cardId=' + window.mtgCard.id +
             (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
@@ -457,7 +459,10 @@ function gameLostDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\nX' + (window.gameSesh.hideBlanks ? '*' : '') + '\nhttps://befuddle.xyz/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") +
+            '\n' + 'X' + (window.gameSesh.hideBlanks ? '*' : '') +
+            '\n' +
+            +'\n' + window.location.href;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -497,7 +502,7 @@ function gameWinDaily() {
     });
 
     //vibrate if on
-    if (window.game.vibra)
+    if (window.game.vibra && canVibrate)
       navigator.vibrate([400]);
     confetti({
       particleCount: 100,
@@ -553,7 +558,7 @@ function gameWinDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*' : '') + '\nhttps://befuddle.xyz/';
+          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") + '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*' : '') + '\n' + window.location.herf;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -581,7 +586,7 @@ function gameWinFree() {
     window.stats.free.score[1][wr]++;
   }
   if (wr == 0) { //confetti if perfect game
-    if (window.game.vibra)
+    if (window.game.vibra && canVibrate)
       navigator.vibrate([400]);
     confetti({
       particleCount: 100,
@@ -618,7 +623,7 @@ function gameWinFree() {
           var str = 'Befuddle: \n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            ' \nhttps://befuddle.xyz/?cardId=' + window.mtgCard.id +
+            ' \n' + window.location.href + '/?cardId=' + window.mtgCard.id +
             (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
@@ -756,8 +761,10 @@ function settingsModal() {
     gameSettingsHtml += '<div class="gameSettings">' +
       '<div class="gameSettings"><br><br><span class="menuText" id="themedisplay">Dark Mode</span>' +
       '<label class="switch"><input id="darkInput" type="checkbox" ' + (window.game.theme === 'dark' ? 'checked' : '') + '><div><span></span></div></label>' +
-      '<div class="gameSettings"><br><br><span class="menuText">Vibration</span>' +
-      '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>' +
+      canVibrate ? (
+        '<div class="gameSettings"><br><br><span class="menuText">Vibration</span>' +
+        '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>'
+      ) : '' +
       '<br><div class="hr"></div>' +
       '<br><span class="menuText" id="hmdisplay">Hidden mode</span>' +
       '<label class="switch"><input id="hmInput" type="checkbox" ' + (window.game.daily.hideBlanks ? 'checked' : '') + '><div><span></span></div></label>' +
@@ -794,13 +801,15 @@ function settingsModal() {
           }); //save game settings data to cookies
         });
 
-        let vi = this.$content.find('#vibraInput');
-        vi.on('input', function() {
-          window.game.vibra = this.checked;
-          Cookies.set('befuddle', JSON.stringify(window.game), {
-            expires: 365
-          }); //save game settings data to cookies
-        });
+        if (canVibrate) {
+          let vi = this.$content.find('#vibraInput');
+          vi.on('input', function() {
+            window.game.vibra = this.checked;
+            Cookies.set('befuddle', JSON.stringify(window.game), {
+              expires: 365
+            }); //save game settings data to cookies
+          });
+        }
       }
     });
   } else if (window.game.mode == 'free') {
@@ -810,8 +819,10 @@ function settingsModal() {
     gameSettingsHtml += '<div class="gameSettings">' +
       '<div class="gameSettings"><br><br><span class="menuText" id="themedisplay">Dark Mode</span>' +
       '<label class="switch"><input id="darkInput" type="checkbox" ' + (window.game.theme === 'dark' ? 'checked' : '') + '><div><span></span></div></label>' +
-      '<div class="gameSettings"><br><br><span class="menuText">Vibration</span>' +
-      '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>' +
+      canVibrate ? (
+        '<div class="gameSettings"><br><br><span class="menuText">Vibration</span>' +
+        '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>' +
+      ) : '' +
       '<br><div class="hr"></div>' +
       '<br><span class="menuText">Lives: <span id="livesdisplay">' + (window.game.free.lives == -1 ? 'Off' : window.game.free.lives) + '</span></span>' +
       '<div class="slidecontainer"><input id="livesInput" type="range" min="0" max="25" value="' + window.game.free.lives + '" class="slider"></div>' +
@@ -874,14 +885,15 @@ function settingsModal() {
             expires: 365
           }); //save game settings data to cookies
         });
-
-        let vi = this.$content.find('#vibraInput');
-        vi.on('input', function() {
-          window.game.vibra = this.checked;
-          Cookies.set('befuddle', JSON.stringify(window.game), {
-            expires: 365
-          }); //save game settings data to cookies
-        });
+        if (canVibrate) {
+          let vi = this.$content.find('#vibraInput');
+          vi.on('input', function() {
+            window.game.vibra = this.checked;
+            Cookies.set('befuddle', JSON.stringify(window.game), {
+              expires: 365
+            }); //save game settings data to cookies
+          });
+        }
       }
     });
   }
@@ -1096,7 +1108,7 @@ function menuModal() {
               gameLostDaily();
             } else if (window.game.mode == 'free')
               gameLostFree();
-            
+
             Cookies.set(window.game.mode, JSON.stringify(window.gameSesh), {
               expires: 365
             });
