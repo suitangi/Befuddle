@@ -761,10 +761,10 @@ function settingsModal() {
     gameSettingsHtml += '<div class="gameSettings">' +
       '<div class="gameSettings"><br><br><span class="menuText" id="themedisplay">Dark Mode</span>' +
       '<label class="switch"><input id="darkInput" type="checkbox" ' + (window.game.theme === 'dark' ? 'checked' : '') + '><div><span></span></div></label>' +
-      canVibrate ? (
+      (canVibrate ? (
         '<div class="gameSettings"><br><br><span class="menuText">Vibration</span>' +
         '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>'
-      ) : '' +
+      ) : '') +
       '<br><div class="hr"></div>' +
       '<br><span class="menuText" id="hmdisplay">Hidden mode</span>' +
       '<label class="switch"><input id="hmInput" type="checkbox" ' + (window.game.daily.hideBlanks ? 'checked' : '') + '><div><span></span></div></label>' +
@@ -819,10 +819,10 @@ function settingsModal() {
     gameSettingsHtml += '<div class="gameSettings">' +
       '<div class="gameSettings"><br><br><span class="menuText" id="themedisplay">Dark Mode</span>' +
       '<label class="switch"><input id="darkInput" type="checkbox" ' + (window.game.theme === 'dark' ? 'checked' : '') + '><div><span></span></div></label>' +
-      canVibrate ? (
+      (canVibrate ? (
         '<div class="gameSettings"><br><br><span class="menuText">Vibration</span>' +
-        '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>' +
-      ) : '' +
+        '<label class="switch"><input id="vibraInput" type="checkbox" ' + (window.game.vibra ? 'checked' : '') + '><div><span></span></div></label>'
+      ) : '') +
       '<br><div class="hr"></div>' +
       '<br><span class="menuText">Lives: <span id="livesdisplay">' + (window.game.free.lives == -1 ? 'Off' : window.game.free.lives) + '</span></span>' +
       '<div class="slidecontainer"><input id="livesInput" type="range" min="0" max="25" value="' + window.game.free.lives + '" class="slider"></div>' +
