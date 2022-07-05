@@ -461,7 +461,6 @@ function gameLostDaily() {
           let d = new Date();
           let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") +
             '\n' + 'X' + (window.gameSesh.hideBlanks ? '*' : '') +
-            '\n' +
             '\n' + window.location.href;
           clipboardHandler(linkButton, str);
           return false;
@@ -1172,7 +1171,9 @@ function menuModal() {
       '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank">Wizards of the Coast Fan Content Policy</a>. ' +
       'The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
       '<div class="hr"></div>' +
-      '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by <a href="https://ko-fi.com/suitangi" target="_blank">Suitangi</a></div>',
+      '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by Suitangi' +
+      '<br><a><span id="rab">Report a Bug</span></a>' +
+      '<br><a><span id="bmad">Buy me a Drink</span></a></div>',
     theme: window.game.theme,
     animation: 'left',
     closeAnimation: 'left',
@@ -1210,12 +1211,139 @@ function menuModal() {
         menuD.close();
         mainMenuDisplay();
       });
+      document.getElementById('rab').addEventListener('click', function() {
+        reportBug();
+      });
+      document.getElementById('bmad').addEventListener('click', function() {
+        buyDrink();
+      });
       if (!window.gameSesh.end) {
         document.getElementById('guButton').addEventListener('click', function() {
           giveupConfirm();
         });
       }
     }
+  });
+}
+
+//function to get browser info
+function getBrowserInfo() {
+  let nVer = navigator.appVersion;
+  let nAgt = navigator.userAgent;
+  let browserName = navigator.appName;
+  let fullVersion = '' + parseFloat(navigator.appVersion);
+  let majorVersion = parseInt(navigator.appVersion, 10);
+  let nameOffset, verOffset, ix;
+  let osName = "Unknown OS";
+
+  // In Opera, the true version is after "Opera" or after "Version"
+  if ((verOffset = nAgt.indexOf("Opera")) != -1) {
+    browserName = "Opera";
+    fullVersion = nAgt.substring(verOffset + 6);
+    if ((verOffset = nAgt.indexOf("Version")) != -1)
+      fullVersion = nAgt.substring(verOffset + 8);
+  }
+  // In MSIE, the true version is after "MSIE" in userAgent
+  else if ((verOffset = nAgt.indexOf("MSIE")) != -1) {
+    browserName = "Microsoft Internet Explorer";
+    fullVersion = nAgt.substring(verOffset + 5);
+  }
+  // In Chrome, the true version is after "Chrome"
+  else if ((verOffset = nAgt.indexOf("Chrome")) != -1) {
+    browserName = "Chrome";
+    fullVersion = nAgt.substring(verOffset + 7);
+  }
+  // In Safari, the true version is after "Safari" or after "Version"
+  else if ((verOffset = nAgt.indexOf("Safari")) != -1) {
+    browserName = "Safari";
+    fullVersion = nAgt.substring(verOffset + 7);
+    if ((verOffset = nAgt.indexOf("Version")) != -1)
+      fullVersion = nAgt.substring(verOffset + 8);
+  }
+  // In Firefox, the true version is after "Firefox"
+  else if ((verOffset = nAgt.indexOf("Firefox")) != -1) {
+    browserName = "Firefox";
+    fullVersion = nAgt.substring(verOffset + 8);
+  }
+  // In most other browsers, "name/version" is at the end of userAgent
+  else if ((nameOffset = nAgt.lastIndexOf(' ') + 1) <
+    (verOffset = nAgt.lastIndexOf('/'))) {
+    browserName = nAgt.substring(nameOffset, verOffset);
+    fullVersion = nAgt.substring(verOffset + 1);
+    if (browserName.toLowerCase() == browserName.toUpperCase()) {
+      browserName = navigator.appName;
+    }
+  }
+  // trim the fullVersion string at semicolon/space if present
+  if ((ix = fullVersion.indexOf(";")) != -1)
+    fullVersion = fullVersion.substring(0, ix);
+  if ((ix = fullVersion.indexOf(" ")) != -1)
+    fullVersion = fullVersion.substring(0, ix);
+
+  majorVersion = parseInt('' + fullVersion, 10);
+  if (isNaN(majorVersion)) {
+    fullVersion = '' + parseFloat(navigator.appVersion);
+    majorVersion = parseInt(navigator.appVersion, 10);
+  }
+
+  if (navigator.appVersion.indexOf("Win") != -1) osName = "Windows";
+  if (navigator.appVersion.indexOf("Mac") != -1) osName = "MacOS";
+  if (navigator.appVersion.indexOf("X11") != -1) osName = "UNIX";
+  if (navigator.appVersion.indexOf("Linux") != -1) osName = "Linux";
+
+  let result = {
+    'Browser name': browserName,
+    'Full version': fullVersion,
+    'Major version': majorVersion,
+    'navigator.appName': navigator.appName,
+    'navigator.userAgent': navigator.userAgent,
+    'OS': osName
+  }
+  return result;
+}
+
+
+//function to report bug
+function reportBug() {
+
+  let s = '{';
+  s += 'browser_info: ' + JSON.stringify(getBrowserInfo()) + ',';
+  s += 'current_game: ' + JSON.stringify(window.gameSesh) + ',';
+  s += 'game_settings: ' + Cookies.get('befuddle') + ',';
+  s += 'dailySaved: ' + Cookies.get('daily') + ',';
+  s += 'freeSaved: ' + Cookies.get('free') + ',';
+  s += '}'
+  s = encodeURI(s);
+
+    $.dialog({
+      title: '',
+      content: '<br><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfofhsXMv1iW188eXql2h5KwPr08dE4j93EwA3-hd9lNxr5OA/viewform?embedded=true?usp=pp_url&entry.1735799869=' + s + '" width="100%" height="600px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>',
+      theme: 'light',
+      animation: 'bottom',
+      closeAnimation: 'bottom',
+      animateFromElement: false,
+      boxWidth: 'min(400px, 95%)',
+      draggable: false,
+      backgroundDismiss: false,
+      useBootstrap: false,
+      onContentReady: function() {}
+    });
+}
+
+//function to buy drink
+function buyDrink() {
+  $.dialog({
+    title: '',
+    content: '<br><iframe id="kofiframe" src="https://ko-fi.com/suitangi/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true" style="border:none;padding:4px;" height="712" title="suitangi"></iframe>',
+    theme: 'light',
+    animation: 'bottom',
+    closeAnimation: 'bottom',
+    animateFromElement: false,
+    boxWidth: 'min(320px, 85%)',
+    draggable: false,
+    backgroundDismiss: true,
+    useBootstrap: false,
+    onContentReady: function() {}
   });
 }
 
