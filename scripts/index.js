@@ -1171,7 +1171,7 @@ function menuModal() {
       '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank">Wizards of the Coast Fan Content Policy</a>. ' +
       'The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
       '<div class="hr"></div>' +
-      '<div class="helpText" style="text-align: center;">Developed with <span class="material-symbols-outlined" style="font-size: 11px;font-variation-settings: \'FILL\' 1;color: #64baf7;"> favorite </span> by Suitangi' +
+      '<div class="helpText" style="text-align: center;line-height:1.8;">Developed with <span id="easterEggHeart" class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;"> favorite </span> by Suitangi' +
       '<br><a><span id="rab">Report a Bug</span></a>' +
       '<br><a><span id="bmad">Buy me a Drink</span></a></div>',
     theme: window.game.theme,
@@ -1217,6 +1217,9 @@ function menuModal() {
       });
       document.getElementById('bmad').addEventListener('click', function() {
         buyDrink();
+      });
+      document.getElementById('easterEggHeart').addEventListener('click', function() {
+        easterEgg();
       });
       if (!window.gameSesh.end) {
         document.getElementById('guButton').addEventListener('click', function() {
@@ -1303,18 +1306,26 @@ function getBrowserInfo() {
   return result;
 }
 
+//functino for easter egg
+function easterEgg() {
+  $.dialog({
+    title: '<div class="modalTitle" style="text-align: center;">Easter Egg!</div>',
+    content: '<div id="easteggDiv">Special thanks to my Beta testers pkmnfn and killersax!<div>',
+    theme: window.game.theme,
+    animation: 'bottom',
+    closeAnimation: 'bottom',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 80%)',
+    draggable: false,
+    backgroundDismiss: true,
+    useBootstrap: false,
+    onContentReady: function() {}
+  });
+}
+
 
 //function to report bug
 function reportBug() {
-
-  // let s = '{';
-  // s += 'browser_info: ' + JSON.stringify(getBrowserInfo()) + ',';
-  // s += 'current_game: ' + JSON.stringify(window.gameSesh) + ',';
-  // s += 'game_settings: ' + Cookies.get('befuddle') + ',';
-  // s += 'dailySaved: ' + Cookies.get('daily') + ',';
-  // s += 'freeSaved: ' + Cookies.get('free');
-  // s += '}'
-  // s = encodeURI(s);
 
   let mainHtml, formHtml;
   mainHtml = '<div class="modalTitle" style="text-align: center;">Report a Bug</div><br>' +
@@ -1346,7 +1357,7 @@ function reportBug() {
     animation: 'bottom',
     closeAnimation: 'bottom',
     animateFromElement: false,
-    boxWidth: 'min(400px, 95%)',
+    boxWidth: 'min(400px, 80%)',
     draggable: false,
     backgroundDismiss: false,
     useBootstrap: false,

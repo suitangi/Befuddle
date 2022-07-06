@@ -746,7 +746,6 @@ body {
 .helpText {
   font-family: 'Roboto Mono';
   font-size: 13px;
-  line-height: 1.5;
 }
 
 a {
@@ -940,6 +939,16 @@ a:hover {
   -webkit-border-radius: 5px;
   user-select: all;
   font-family: 'Roboto Mono', monospace;
+}
+
+#easterEggHeart {
+  cursor: pointer;
+  font-size: 11px;
+  color: #64baf7;
+}
+
+#easteggDiv {
+  font-family: 'Roberto Mono', monospace;
 }
 
 @keyframes lds-dual-ring {
