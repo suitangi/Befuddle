@@ -9,14 +9,14 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 ### Misc/Bugs
 -   Better daily share copy pasta/discord spoilers mode
--   Script cleanup, especially the loads of strings
 -   Easter eggs
 
 ### Options menu:
 -   Discord Spoilers for guesses
 
 # Stretch:
--   Discord integration and bot
+-   Discord bot integration
+-   Global stats
 
 # Special Thanks
 For beta testing and for helping conceptualize the idea, the one an only [G-Jayakar](https://github.com/G-Jayakar).

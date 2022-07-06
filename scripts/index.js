@@ -1311,23 +1311,23 @@ function reportBug() {
   s += 'current_game: ' + JSON.stringify(window.gameSesh) + ',';
   s += 'game_settings: ' + Cookies.get('befuddle') + ',';
   s += 'dailySaved: ' + Cookies.get('daily') + ',';
-  s += 'freeSaved: ' + Cookies.get('free') + ',';
+  s += 'freeSaved: ' + Cookies.get('free');
   s += '}'
   s = encodeURI(s);
 
-    $.dialog({
-      title: '',
-      content: '<br><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfofhsXMv1iW188eXql2h5KwPr08dE4j93EwA3-hd9lNxr5OA/viewform?embedded=true?usp=pp_url&entry.1735799869=' + s + '" width="100%" height="600px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>',
-      theme: 'light',
-      animation: 'bottom',
-      closeAnimation: 'bottom',
-      animateFromElement: false,
-      boxWidth: 'min(400px, 95%)',
-      draggable: false,
-      backgroundDismiss: false,
-      useBootstrap: false,
-      onContentReady: function() {}
-    });
+  $.dialog({
+    title: '',
+    content: '<br><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfofhsXMv1iW188eXql2h5KwPr08dE4j93EwA3-hd9lNxr5OA/viewform?embedded=true?usp=pp_url&entry.1735799869=' + s + '" width="100%" height="600px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>',
+    theme: 'light',
+    animation: 'bottom',
+    closeAnimation: 'bottom',
+    animateFromElement: false,
+    boxWidth: 'min(400px, 95%)',
+    draggable: false,
+    backgroundDismiss: false,
+    useBootstrap: false,
+    onContentReady: function() {}
+  });
 }
 
 //function to buy drink
