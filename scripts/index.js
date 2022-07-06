@@ -1382,10 +1382,9 @@ function reportBug() {
       document.getElementById('fBugButton').addEventListener('click', function() {
         document.getElementById('bTypeInput').value = "Feedback";
         document.getElementById('mainBug').style="display:none;";
-        document.getElementById('bugTextArea').placeholder = "What feedback do you have?";
+        document.getElementById('bugTextArea').placeholder = "All feedback and comments are welcome!";
         document.getElementById('textBug').style="";
       });
-
       document.getElementById('artCardButt').addEventListener('click', function() {
         document.getElementById('bTextInput').value = 'Art: Wrong card';
         document.getElementById('artBug').style="display:none;";
