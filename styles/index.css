@@ -54,6 +54,7 @@
     --topNavButtonHoverColor: #ffffff;
     --mainMenuButtonBG: #e9e9e9;
     --mainMenuButtonHoverBG: #cbcbcb;
+    --placeholderColor: #9a9a9a;
   }
 }
 
@@ -77,6 +78,7 @@
     --topNavButtonHoverColor: #ffffff;
     --mainMenuButtonBG: #333333;
     --mainMenuButtonHoverBG: #222;
+    --placeholderColor: #999;
   }
 }
 
@@ -99,6 +101,7 @@
   --topNavButtonHoverColor: #ffffff;
   --mainMenuButtonBG: #e9e9e9;
   --mainMenuButtonHoverBG: #cbcbcb;
+  --placeholderColor: #9a9a9a;
 }
 
 [color-scheme="dark"] {
@@ -120,6 +123,7 @@
   --topNavButtonHoverColor: #ffffff;
   --mainMenuButtonBG: #333333;
   --mainMenuButtonHoverBG: #222;
+  --placeholderColor: #999;
 }
 
 .material-symbols-outlined {
@@ -550,6 +554,93 @@ body {
   font-family: 'Beleren Bold';
   font-size: 30px;
   user-select: none;
+}
+
+#bugTextArea {
+  resize: none;
+  height: 120px;
+  background: var(--bg);
+  color: var(--text);
+  border: none;
+  font-size: 15px;
+  font-family: 'Roboto Mono';
+  width: 90%;
+  padding: 5px 10px;
+  border-radius: 5px;
+  position: relative;
+  left: 50%;
+  transform: translate(-50%, 0px);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+#bugTextArea:focus {
+  outline: none !important;
+  border: none;
+}
+
+#bugTextArea::-webkit-input-placeholder {
+  color: var(--placeholderColor);
+}
+
+#bugTextArea:-moz-placeholder {
+  /* Firefox 18- */
+  color: var(--placeholderColor);
+}
+
+#bugTextArea::-moz-placeholder {
+  /* Firefox 19+ */
+  color: var(--placeholderColor);
+}
+
+#bugTextArea:-ms-input-placeholder {
+  color: var(--placeholderColor);
+}
+
+#bugTextArea::placeholder {
+  color: var(--placeholderColor);
+}
+
+#tyBugText {
+  text-align: center;
+  font-size: 13px;
+  font-family: 'Roboto Mono';
+}
+
+#bugCloseButt {
+  font-family: 'Beleren Bold';
+  font-size: 17px;
+}
+
+#bugSubmitButt {
+  font-family: 'Beleren Bold';
+  font-size: 17px;
+}
+
+.rabButton {
+  background: var(--bg);
+  border: none;
+  color: var(--text);
+  padding: 8px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-family: 'Roboto Mono';
+  font-size: 13px;
+  margin: 8px 0px;
+  cursor: pointer;
+  border-radius: 9px;
+  position: relative;
+  left: 50%;
+  width: 70%;
+  transition: background .7s;
+  transform: translate(-50%, 0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rabButton:hover {
+  background: var(--bgShadeDarker);
 }
 
 .mainMenuText {

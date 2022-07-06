@@ -1212,6 +1212,7 @@ function menuModal() {
         mainMenuDisplay();
       });
       document.getElementById('rab').addEventListener('click', function() {
+        menuD.close();
         reportBug();
       });
       document.getElementById('bmad').addEventListener('click', function() {
@@ -1306,19 +1307,42 @@ function getBrowserInfo() {
 //function to report bug
 function reportBug() {
 
-  let s = '{';
-  s += 'browser_info: ' + JSON.stringify(getBrowserInfo()) + ',';
-  s += 'current_game: ' + JSON.stringify(window.gameSesh) + ',';
-  s += 'game_settings: ' + Cookies.get('befuddle') + ',';
-  s += 'dailySaved: ' + Cookies.get('daily') + ',';
-  s += 'freeSaved: ' + Cookies.get('free');
-  s += '}'
-  s = encodeURI(s);
+  // let s = '{';
+  // s += 'browser_info: ' + JSON.stringify(getBrowserInfo()) + ',';
+  // s += 'current_game: ' + JSON.stringify(window.gameSesh) + ',';
+  // s += 'game_settings: ' + Cookies.get('befuddle') + ',';
+  // s += 'dailySaved: ' + Cookies.get('daily') + ',';
+  // s += 'freeSaved: ' + Cookies.get('free');
+  // s += '}'
+  // s = encodeURI(s);
 
-  $.dialog({
+  let mainHtml, formHtml;
+  mainHtml = '<div class="modalTitle" style="text-align: center;">Report a Bug</div><br>' +
+    '<div id="mainBug"><button id="gameBugButton" class="rabButton">Gameplay Bug</button>' +
+    '<button id="artBugButton" class="rabButton">Art Problem</button>' +
+    '<button id="fBugButton" class="rabButton">Other Feedback</button></div>' +
+    '<div id="artBug" style="display:none;"><button id="artGoneButt" class="rabButton">The art is not displayed</button>' +
+    '<button id="artCardButt" class="rabButton">The art corresponds to the wrong card name</button>' +
+    '<button id="artCropButt" class="rabButton">The art is incorrectly cropped</button>' +
+    '<button id="artOtherButt" class="rabButton">Other Art Issues</button></div>' +
+    '<div id="textBug" style="display:none;"><textarea id="bugTextArea" placeholder=""></textArea><button id="bugSubmitButt" class="rabButton" style="display:none;">Submit</button></div>' +
+    '<div id="tyBug" style="display:none;"><div id="tyBugText">Thank you for making Befuddle better!</div><br><button id="bugCloseButt" class="rabButton">Close</button></div>';
+
+  formHtml = '<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>' +
+    '<form id="bugForm" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSfofhsXMv1iW188eXql2h5KwPr08dE4j93EwA3-hd9lNxr5OA/formResponse" target="dummyframe" method="post">' +
+    '<input type="hidden" id="bTypeInput" value="" name="entry.298329572">' + //bug type
+    '<input type="hidden" id="bTextInput" value="" name="entry.1100833739">' + //bug text
+    '<input type="hidden" id="biInput" value="" name="entry.1735799869">' + //browser info
+    '<input type="hidden" id="cgInput" value="" name="entry.619731512">' + //current game
+    '<input type="hidden" id="gsInput" value="" name="entry.176552618">' + //game settings
+    '<input type="hidden" id="dailyInput" value="" name="entry.1801614587">' + //daily saved
+    '<input type="hidden" id="freeInput" value="" name="entry.1780387024">' + //free saved
+    '</form>'
+
+  let rabDialog = $.dialog({
     title: '',
-    content: '<br><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfofhsXMv1iW188eXql2h5KwPr08dE4j93EwA3-hd9lNxr5OA/viewform?embedded=true?usp=pp_url&entry.1735799869=' + s + '" width="100%" height="600px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>',
-    theme: 'light',
+    content: mainHtml + formHtml,
+    theme: window.game.theme,
     animation: 'bottom',
     closeAnimation: 'bottom',
     animateFromElement: false,
@@ -1326,15 +1350,83 @@ function reportBug() {
     draggable: false,
     backgroundDismiss: false,
     useBootstrap: false,
-    onContentReady: function() {}
+    onContentReady: function() {
+      document.getElementById('biInput').value = JSON.stringify(getBrowserInfo());
+      document.getElementById('cgInput').value = JSON.stringify(window.gameSesh);
+      document.getElementById('gsInput').value = Cookies.get('befuddle');
+      document.getElementById('dailyInput').value = Cookies.get('daily');
+      document.getElementById('freeInput').value = Cookies.get('free');
+
+      document.getElementById('gameBugButton').addEventListener('click', function() {
+        document.getElementById('bTypeInput').value = "Gameplay";
+        document.getElementById('mainBug').style="display:none;";
+        document.getElementById('bugTextArea').placeholder = "What gameplay bug did you encounter? Try to be specific, and if possible, include steps to recreate the bug.";
+        document.getElementById('textBug').style="";
+      });
+      document.getElementById('artBugButton').addEventListener('click', function() {
+        document.getElementById('bTypeInput').value = "Art";
+        document.getElementById('mainBug').style="display:none;";
+        document.getElementById('artBug').style="";
+      });
+      document.getElementById('fBugButton').addEventListener('click', function() {
+        document.getElementById('bTypeInput').value = "Feedback";
+        document.getElementById('mainBug').style="display:none;";
+        document.getElementById('bugTextArea').placeholder = "What feedback do you have?";
+        document.getElementById('textBug').style="";
+      });
+
+      document.getElementById('artCardButt').addEventListener('click', function() {
+        document.getElementById('bTextInput').value = 'Art: Wrong card';
+        document.getElementById('artBug').style="display:none;";
+        document.getElementById('bugForm').submit();
+        document.getElementById('tyBug').style="";
+      });
+      document.getElementById('artCropButt').addEventListener('click', function() {
+        document.getElementById('bTextInput').value = 'Art: Crop';
+        document.getElementById('artBug').style="display:none;";
+        document.getElementById('bugForm').submit();
+        document.getElementById('tyBug').style="";
+      });
+      document.getElementById('artGoneButt').addEventListener('click', function() {
+        document.getElementById('bTextInput').value = 'Art: Missing';
+        document.getElementById('artBug').style="display:none;";
+        document.getElementById('bugForm').submit();
+        document.getElementById('tyBug').style="";
+      });
+      document.getElementById('artOtherButt').addEventListener('click', function() {
+        document.getElementById('artBug').style="display:none;";
+        document.getElementById('bugTextArea').placeholder = "What other art issues did you encounter?";
+        document.getElementById('textBug').style="";
+      });
+
+      document.getElementById('bugTextArea').addEventListener('input', function() {
+        if (this.value != '')
+          document.getElementById('bugSubmitButt').style="";
+        else
+          document.getElementById('bugSubmitButt').style="display:none;";
+        document.getElementById('bTextInput').value = this.value;
+      });
+
+      document.getElementById('bugSubmitButt').addEventListener('click', function() {
+        document.getElementById('textBug').style="display:none;";
+        document.getElementById('bugForm').submit();
+        document.getElementById('tyBug').style="";
+      });
+
+      document.getElementById('bugCloseButt').addEventListener('click', function() {
+        rabDialog.close();
+      });
+
+
+    }
   });
 }
 
 //function to buy drink
 function buyDrink() {
   $.dialog({
-    title: '',
-    content: '<br><iframe id="kofiframe" src="https://ko-fi.com/suitangi/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true" style="border:none;padding:4px;" height="712" title="suitangi"></iframe>',
+    title: ' ',
+    content: '<iframe id="kofiframe" src="https://ko-fi.com/suitangi/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true" style="border:none;padding:4px;" height="712" title="suitangi"></iframe>',
     theme: 'light',
     animation: 'bottom',
     closeAnimation: 'bottom',
