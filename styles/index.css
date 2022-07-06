@@ -945,6 +945,8 @@ a:hover {
   cursor: pointer;
   font-size: 11px;
   color: #64baf7;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
 }
 
 #easteggDiv {

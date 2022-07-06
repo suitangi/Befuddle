@@ -1127,7 +1127,7 @@ function menuModal() {
   function clearConfirm() {
     $.confirm({
       title: '<span class=\"modalTitle\">Clear Data</span>',
-      content: '<span class=\"helpText\">This will clear all cookies, delete all statisticss and all unfinished Befuddles. Are you sure?</span>',
+      content: '<span class=\"helpText\">This will clear all cookies, delete all statistics and all unfinished Befuddles. Are you sure?</span>',
       theme: 'dark red',
       animation: 'top',
       closeAnimation: 'top',
@@ -1330,12 +1330,12 @@ function reportBug() {
   let mainHtml, formHtml;
   mainHtml = '<div class="modalTitle" style="text-align: center;">Report a Bug</div><br>' +
     '<div id="mainBug"><button id="gameBugButton" class="rabButton">Gameplay Bug</button>' +
-    '<button id="artBugButton" class="rabButton">Art Problem</button>' +
+    '<button id="artBugButton" class="rabButton">Art Issue</button>' +
     '<button id="fBugButton" class="rabButton">Other Feedback</button></div>' +
-    '<div id="artBug" style="display:none;"><button id="artGoneButt" class="rabButton">The art is not displayed</button>' +
+    '<div id="artBug" style="display:none;"><button id="artGoneButt" class="rabButton">The art is not displaying correctly</button>' +
     '<button id="artCardButt" class="rabButton">The art corresponds to the wrong card name</button>' +
     '<button id="artCropButt" class="rabButton">The art is incorrectly cropped</button>' +
-    '<button id="artOtherButt" class="rabButton">Other Art Issues</button></div>' +
+    '<button id="artOtherButt" class="rabButton">Other art Issues</button></div>' +
     '<div id="textBug" style="display:none;"><textarea id="bugTextArea" placeholder=""></textArea><button id="bugSubmitButt" class="rabButton" style="display:none;">Submit</button></div>' +
     '<div id="tyBug" style="display:none;"><div id="tyBugText">Thank you for making Befuddle better!</div><br><button id="bugCloseButt" class="rabButton">Close</button></div>';
 
