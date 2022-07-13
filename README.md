@@ -6,6 +6,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 [![pages-build-deployment](https://github.com/suitangi/Befuddle/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/pages/pages-build-deployment)
 
 # Todo:
+- Switch to scryfall Collections API
 
 ### Misc/Bugs
 -   Better daily share copy pasta/discord spoilers mode

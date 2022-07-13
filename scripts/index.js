@@ -377,7 +377,7 @@ function gameLostFree() {
         action: function(linkButton) {
           var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            '\n' + window.location.href + '/?cardId=' + window.mtgCard.id +
+            '\n' + window.location.href + '?cardId=' + window.mtgCard.id +
             (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
@@ -624,7 +624,7 @@ function gameWinFree() {
           var str = 'Befuddle: \n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            '\n' + window.location.href + '/?cardId=' + window.mtgCard.id +
+            '\n' + window.location.href + '?cardId=' + window.mtgCard.id +
             (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
@@ -687,10 +687,10 @@ function getCardHtml() {
   let html;
   if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
     html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
-      '<img src=\"' + window.mtgCard['card_faces'][window.mtgCard.cf]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
-      '<img src=\"' + window.mtgCard['card_faces'][1 - window.mtgCard.cf]['image_uris']['normal'] + '\" style=\"border-radius:5%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
+      '<img src=\"' + window.mtgCard['card_faces'][window.mtgCard.cf]['image_uris']['normal'] + '\" style=\"border-radius:8% / 6%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
+      '<img src=\"' + window.mtgCard['card_faces'][1 - window.mtgCard.cf]['image_uris']['normal'] + '\" style=\"border-radius:8% / 6%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
   } else {
-    html = "<img src=\"" + window.mtgCard.image_uris.normal + "\" style=\"border-radius:5%;\">";
+    html = "<img src=\"" + window.mtgCard.image_uris.normal + "\" style=\"border-radius:8% / 6%;\">";
   }
   return html;
 }
@@ -725,7 +725,7 @@ function helpModal() {
       title: '<span class=\"modalTitle\">How to Play</span>',
       content: '<span class=\"helpText\">Guess the <a href="https://magic.wizards.com/en" target="_blank">Magic: The Gathering</a> Card from the art and mana cost, Hangman style. You have 7 lives, meaning after guessing 7 wrong letters, the game is over.<br><br>' +
         'After each guess, the keys will show you if the letter was incorrect, as well as the number of lives you have left.<br><br></span><div class="hr"></div>' +
-        '<span class=\"helpText\">A new Befuddle will be available each day!',
+        '<span class=\"helpText\">A new Befuddle will be available each day!</span>',
       theme: window.game.theme,
       animation: 'top',
       closeAnimation: 'top',
@@ -1389,18 +1389,21 @@ function reportBug() {
         document.getElementById('bTextInput').value = 'Art: Wrong card';
         document.getElementById('artBug').style="display:none;";
         document.getElementById('bugForm').submit();
+        document.getElementById('dummyframe').remove();
         document.getElementById('tyBug').style="";
       });
       document.getElementById('artCropButt').addEventListener('click', function() {
         document.getElementById('bTextInput').value = 'Art: Crop';
         document.getElementById('artBug').style="display:none;";
         document.getElementById('bugForm').submit();
+        document.getElementById('dummyframe').remove();
         document.getElementById('tyBug').style="";
       });
       document.getElementById('artGoneButt').addEventListener('click', function() {
         document.getElementById('bTextInput').value = 'Art: Missing';
         document.getElementById('artBug').style="display:none;";
         document.getElementById('bugForm').submit();
+        document.getElementById('dummyframe').remove();
         document.getElementById('tyBug').style="";
       });
       document.getElementById('artOtherButt').addEventListener('click', function() {
@@ -1420,6 +1423,7 @@ function reportBug() {
       document.getElementById('bugSubmitButt').addEventListener('click', function() {
         document.getElementById('textBug').style="display:none;";
         document.getElementById('bugForm').submit();
+        document.getElementById('dummyframe').remove();
         document.getElementById('tyBug').style="";
       });
 
