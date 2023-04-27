@@ -3,7 +3,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 ## https://befuddle.xyz/
 
-[![Page Deployment](https://https://github.com/suitangi/Befuddle/actions/workflows/static.yml/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/static.yml)
+[![Page Deployment](https://github.com/suitangi/Befuddle/actions/workflows/static.yml/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/static.yml)
 
 # Todo:
 
