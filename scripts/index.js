@@ -388,7 +388,10 @@ function gameLostFree() {
         btnClass: 'btn-blue',
         keys: ['enter'],
         action: function() {
-          requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+          if (window.cardList)
+            requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+          else
+            loadGame();
         }
       }
     }
