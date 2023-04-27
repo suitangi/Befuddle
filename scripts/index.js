@@ -1315,7 +1315,7 @@ function easterEgg() {
     animation: 'bottom',
     closeAnimation: 'bottom',
     animateFromElement: false,
-    boxWidth: 'min(400px, 80%)',
+    boxWidth: 'min(350px, 75%)',
     draggable: false,
     backgroundDismiss: true,
     useBootstrap: false,
@@ -1348,7 +1348,9 @@ function reportBug() {
     '<input type="hidden" id="gsInput" value="" name="entry.176552618">' + //game settings
     '<input type="hidden" id="dailyInput" value="" name="entry.1801614587">' + //daily saved
     '<input type="hidden" id="freeInput" value="" name="entry.1780387024">' + //free saved
-    '</form>'
+    '</form>';
+
+  window.reportingBug = true;
 
   let rabDialog = $.dialog({
     title: '',
@@ -1389,21 +1391,18 @@ function reportBug() {
         document.getElementById('bTextInput').value = 'Art: Wrong card';
         document.getElementById('artBug').style="display:none;";
         document.getElementById('bugForm').submit();
-        document.getElementById('dummyframe').remove();
         document.getElementById('tyBug').style="";
       });
       document.getElementById('artCropButt').addEventListener('click', function() {
         document.getElementById('bTextInput').value = 'Art: Crop';
         document.getElementById('artBug').style="display:none;";
         document.getElementById('bugForm').submit();
-        document.getElementById('dummyframe').remove();
         document.getElementById('tyBug').style="";
       });
       document.getElementById('artGoneButt').addEventListener('click', function() {
         document.getElementById('bTextInput').value = 'Art: Missing';
         document.getElementById('artBug').style="display:none;";
         document.getElementById('bugForm').submit();
-        document.getElementById('dummyframe').remove();
         document.getElementById('tyBug').style="";
       });
       document.getElementById('artOtherButt').addEventListener('click', function() {
@@ -1423,15 +1422,18 @@ function reportBug() {
       document.getElementById('bugSubmitButt').addEventListener('click', function() {
         document.getElementById('textBug').style="display:none;";
         document.getElementById('bugForm').submit();
-        document.getElementById('dummyframe').remove();
         document.getElementById('tyBug').style="";
       });
 
       document.getElementById('bugCloseButt').addEventListener('click', function() {
+        document.getElementById('dummyframe').remove();
         rabDialog.close();
       });
 
 
+    },
+    onClose: function () {
+        window.reportingBug = false;
     }
   });
 }
@@ -1658,7 +1660,8 @@ function loadTimer() {
     return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
   }
 
-  function timerTick() {
+  window.timeTick = function timerTick() {
+    clearTimeout(window.dailyTimer);
     if (seconds == 300) { //every 5 minutes, correct time again
       now = new Date();
       seconds = (now.getMinutes() * 60 + now.getSeconds()) % 300;
@@ -1678,14 +1681,14 @@ function loadTimer() {
         return;
       }
       timeTo = midnight - now;
-      setTimeout(function(t) {
+      window.dailyTimer = setTimeout(function(t) {
         timeTo -= t;
-        timerTick();
+        window.timeTick();
       }, 1000 - now.getMilliseconds(), 1000 - now.getMilliseconds());
     } else {
-      setTimeout(function() {
+      window.dailyTimer = setTimeout(function() {
         timeTo -= 1000;
-        timerTick();
+        window.timeTick();
       }, 1000);
     }
     if (window.dailyModal !== null && window.dailyModal.isOpen()) {
@@ -1694,8 +1697,8 @@ function loadTimer() {
     seconds++;
   }
 
-  setTimeout(function() {
-    timerTick();
+  window.dailyTimer = setTimeout(function() {
+    window.timeTick();
   }, 1000 - now.getMilliseconds());
 }
 
@@ -1946,6 +1949,13 @@ function setTheme() {
   root.setAttribute('color-scheme', `${theme}`);
 }
 
+//Checks if current window is in focus (for timing purposes)
+function checkTabFocused() {
+  if (document.visibilityState === 'visible') {
+    window.timeTick();
+  }
+}
+
 //start script
 $(document).ready(function() {
 
@@ -1954,6 +1964,7 @@ $(document).ready(function() {
   window.displayKeyboard = {};
   window.loadingGuesses = false;
   window.dailyModal = null;
+  window.reportingBug = false;
 
   window.game = {};
   window.game.theme = 'dark'; //dark mode default
@@ -2080,6 +2091,9 @@ $(document).ready(function() {
     seeCardHandler();
   });
 
+  //add checking tab focus
+  document.addEventListener('visibilitychange', checkTabFocused);
+
   //setup the keyboard
   let li = document.getElementById('keyboard').children;
   for (var i = 0; i < li.length; i++) {
@@ -2095,10 +2109,10 @@ $(document).ready(function() {
   //setup keyboard typing
   document.onkeypress = function(e) {
     e = e || window.event;
-    if (!window.gameSesh.end && e.keyCode >= 97 && e.keyCode <= 122) {
+    if (!window.gameSesh.end && !window.reportingBug && e.keyCode >= 97 && e.keyCode <= 122) {
       submitLetter(String.fromCharCode(e.keyCode));
     }
-    if (!window.gameSesh.end && e.keyCode >= 65 && e.keyCode <= 90) {
+    if (!window.gameSesh.end && !window.reportingBug && e.keyCode >= 65 && e.keyCode <= 90) {
       submitLetter(String.fromCharCode(e.keyCode).toLowerCase());
     }
   };
