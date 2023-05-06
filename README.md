@@ -25,6 +25,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 -   Beta testing and pro bug finder Ksax.
 
 #Changelog
+5/6/2023: Updated cards list and new year of daily befuddles
 6/20/2022: Daily Befuddle Bug fixes
 5/8/2022: Stability and optimization fixes
 5/4/2022: Stats launch

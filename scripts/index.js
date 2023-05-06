@@ -1705,16 +1705,6 @@ function loadTimer() {
   }, 1000 - now.getMilliseconds());
 }
 
-//see if today is a new day locally //legacy code
-// function checkNewDay() {
-//   if (window.game.daily.timestamp == undefined)
-//     d1 = -1;
-//   else
-//     d1 = new Date(window.game.daily.timestamp);
-//   d2 = new Date();
-//   return d1.getDOY() != d2.getDOY();
-// }
-
 //charting function for multi-series pie chart
 function mspie(ctx, data, title) {
   return new Chart(ctx, {
