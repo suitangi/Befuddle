@@ -1,4 +1,5 @@
 const canVibrate = window.navigator.vibrate;
+const befuddleAppVersion = "2023.5.6";
 
 //Helper: Get Query
 function getParameterByName(name, url) {
@@ -284,6 +285,10 @@ function submitLetter(char) {
         if (window.game.mode == 'free') {
           gameLostFree();
         } else if (window.game.mode == 'daily') {
+          if (!window.gameSesh.submitted) {
+            window.gameSesh.submitted = true;
+            submitDailyData('x');
+          }
           gameLostDaily();
         }
       }
@@ -316,6 +321,10 @@ function submitLetter(char) {
       if (window.game.mode == 'free') {
         gameWinFree();
       } else if (window.game.mode == 'daily') {
+        if (!window.gameSesh.submitted) {
+          window.gameSesh.submitted = true;
+          submitDailyData(window.gameSesh.wrongGuess.length);
+        }
         gameWinDaily();
       }
     }
@@ -1109,6 +1118,10 @@ function menuModal() {
             document.getElementById('seeCard').style = '';
             if (window.game.mode == 'daily') {
               window.gameSesh.giveUp = true;
+              if (!window.gameSesh.submitted) {
+                window.gameSesh.submitted = true;
+                submitDailyData('x');
+              }
               gameLostDaily();
             } else if (window.game.mode == 'free')
               gameLostFree();
@@ -1949,9 +1962,40 @@ function checkTabFocused() {
   }
 }
 
+//Submits daily data
+function submitDailyData(win) {
+  const uri = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSf8M4zoBjF6ZcY0v4ebBXmBCKr0vpB_EtAZLPE2-B0ZDfGBLg/formResponse";
+  const entryNames = ['entry.1034508364', 'entry.462826655', 'entry.2082961611'];
+  const values = [window.gameSesh.doy % 1000, window.gameSesh.guesses, win];
+
+  let tmpinput;
+  let ddFrame = document.createElement('iframe');
+  ddFrame.setAttribute('name', 'dummydailyframe');
+  ddFrame.setAttribute('id', 'dummydailyframe');
+  ddFrame.style = "display: none;";
+  let form = document.createElement('form');
+  form.setAttribute('id', 'dailyForm');
+  form.setAttribute('action', uri);
+  form.setAttribute('target', 'dummydailyframe');
+  form.setAttribute('method', 'post');
+  entryNames.forEach((en, i) => {
+    tmpinput = document.createElement('input');
+    tmpinput.setAttribute('type', 'hidden');
+    tmpinput.setAttribute('value', values[i]);
+    tmpinput.setAttribute('name', en);
+    form.appendChild(tmpinput);
+  });
+  document.getElementById('dailyDataDummy').appendChild(ddFrame);
+  document.getElementById('dailyDataDummy').appendChild(form);
+  form.submit();
+  setTimeout(() => {
+    document.getElementById('dailyDataDummy').innerHTML = '';
+  }, 2000);
+}
+
 //start script
 $(document).ready(function() {
-
+  console.log('Befuddle version: ' + befuddleAppVersion);
   console.log('https://tinyurl.com/specialcardforbefuddle');
 
   window.displayKeyboard = {};
@@ -1975,6 +2019,7 @@ $(document).ready(function() {
 
   window.gameSesh = {};
   window.gameSesh.end = true;
+  window.gameSesh.submitted = false;
 
   window.stats = {};
   window.stats.daily = {};
