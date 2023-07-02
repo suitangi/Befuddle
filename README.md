@@ -24,7 +24,8 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 -   For beta testing and for helping conceptualize the idea, the one an only [G-Jayakar](https://github.com/G-Jayakar).
 -   Beta testing and pro bug finder Ksax.
 
-#Changelog
+# Changelog
+```
 5/6/2023: Updated cards list and new year of daily befuddles
 6/20/2022: Daily Befuddle Bug fixes
 5/8/2022: Stability and optimization fixes
@@ -32,3 +33,4 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 5/1/2022: First Daily Befuddle Launch
 4/28/2022: Befuddle launched
 4/25/2022: First MTGHangman game played
+```
