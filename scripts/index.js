@@ -96,8 +96,7 @@ function loadCard(data) {
     window.gameSesh.tlv = window.game[window.game.mode].lives;
 
     if (window.game.mode == 'daily') {
-      let dday = new Date();
-      window.gameSesh.doy = dday.getYear() * 1000 + dday.getDOY();
+      window.gameSesh.doy = getDateNumber();
       window.gameSesh.giveUp = false;
     }
 
@@ -416,9 +415,9 @@ function gameLostDaily() {
   }
 
   //new daily stat, not just a refresh
-  let doy = (new Date()).getDOY();
-  if (window.stats.daily.doy != doy) {
-    window.stats.daily.doy = doy
+  let dn = getDateNumber();
+  if (window.stats.daily.doy != dn) {
+    window.stats.daily.doy = dn;
     window.stats.daily.streak = 0;
     if (!window.gameSesh.hideBlanks) {
       window.stats.daily.WL[1]++;
@@ -491,11 +490,11 @@ function gameWinDaily() {
   }
 
   let wr = window.gameSesh.wrongGuess.length;
-  let doy = (new Date()).getDOY();
+  let dn = getDateNumber();
 
   //new daily stat, not just a refresh
-  if (window.stats.daily.doy != doy) {
-    window.stats.daily.doy = doy
+  if (window.stats.daily.doy != dn) {
+    window.stats.daily.doy = dn;
     window.stats.daily.streak++;
 
     //streak data
@@ -1609,7 +1608,7 @@ function loadGame() {
       Cookies.set('befuddle', JSON.stringify(window.game), {
         expires: 365
       });
-      loadCard(data[d.getDOY()]);
+      loadCard(data.list[getDateNumber() - data.start]);
     }
 
     if (window.dailyList == null) { //fetch first if null
@@ -1966,7 +1965,7 @@ function checkTabFocused() {
 function submitDailyData(win) {
   const uri = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSf8M4zoBjF6ZcY0v4ebBXmBCKr0vpB_EtAZLPE2-B0ZDfGBLg/formResponse";
   const entryNames = ['entry.1034508364', 'entry.462826655', 'entry.2082961611'];
-  const values = [window.gameSesh.doy % 1000, window.gameSesh.guesses, win];
+  const values = [window.gameSesh.doy, window.gameSesh.guesses, win];
 
   let tmpinput;
   let ddFrame = document.createElement('iframe');
@@ -2068,7 +2067,7 @@ $(document).ready(function() {
   if (Cookies.get('daily')) { //check for new day in daily
     let tmp = JSON.parse(Cookies.get('daily'));
     let dday = new Date();
-    if (tmp.doy == undefined || (dday.getYear() * 1000 + dday.getDOY()) != tmp.doy)
+    if (tmp.doy == undefined || getDateNumber() != tmp.doy)
       Cookies.remove('daily');
   }
 
@@ -2170,20 +2169,10 @@ $(document).ready(function() {
 
 });
 
-//Lets pollute the date prototype
-//Get leap year
-Date.prototype.isLeapYear = function() {
-  var year = this.getFullYear();
-  if ((year & 3) != 0) return false;
-  return ((year % 100) != 0 || (year % 400) == 0);
-};
-
-// Get Day of Year
-Date.prototype.getDOY = function() {
-  var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-  var mn = this.getMonth();
-  var dn = this.getDate();
-  var dayOfYear = dayCount[mn] + dn;
-  if (mn > 1 && this.isLeapYear()) dayOfYear++;
-  return dayOfYear;
-};
+//gets date corresponding number for daily befuddle
+function getDateNumber() {
+   d1 = new Date('5/6/2022 0:00');
+   d2 = new Date();
+   dd = Math.floor((d2.getTime() - d1.getTime()) / 86400000) - 1;
+   return dd;
+}

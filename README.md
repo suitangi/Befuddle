@@ -26,6 +26,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 # Changelog
 ```
+7/2/2023 Routine card list update
 5/6/2023: Updated cards list and new year of daily befuddles
 6/20/2022: Daily Befuddle Bug fixes
 5/8/2022: Stability and optimization fixes
