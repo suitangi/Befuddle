@@ -1,5 +1,5 @@
 const canVibrate = window.navigator.vibrate;
-const befuddleAppVersion = "2023.5.8";
+const befuddleAppVersion = "2023.7.6";
 
 //Helper: Get Query
 function getParameterByName(name, url) {
@@ -28,25 +28,79 @@ function requestCard(id) {
 
   document.getElementById("cardImage").style = "opacity:0; transition: opacity 0s;";
   document.getElementById("imageLoading").style = "";
-  fetch('https://api.scryfall.com/cards/' + id)
-    .then(response => response.json())
-    .then(data => loadCard(data))
-    .catch(error => {
-      $.dialog({
-        title: '<span class=\"modalTitle\">Error</span>',
-        content: '<span class=\"modalText\">Couldn\'t load card image and information. Check your connection and/or Scryfall API status.</span>',
-        type: 'red',
-        theme: window.game.theme,
-        animation: 'top',
-        closeAnimation: 'top',
-        animateFromElement: false,
-        boxWidth: 'min(400px, 80%)',
-        draggable: false,
-        useBootstrap: false,
-        typeAnimated: true,
-        backgroundDismiss: true
+
+  if (id) {
+    fetchSingleCard(id);
+    return;
+  }
+
+  if (window.cardQueue.length > 0) {
+    loadCard(window.cardQueue.pop());
+    if (window.cardQueue.length == 0) {
+      window.fetchLimit = Math.min(window.fetchLimit + 5, 50);
+      addCardsToQueue();
+    }
+
+  } else {
+    fetchSingleCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+    window.fetchLimit = 5;
+    setTimeout(() => {
+      addCardsToQueue();
+    }, 500);
+  }
+
+  function addCardsToQueue() {
+    console.log(`Fetching ${window.fetchLimit} cards to queue.`)
+    let bodydata = {
+      'identifiers': []
+    };
+    for (var i = 0; i < window.fetchLimit; i++) {
+      bodydata['identifiers'].push({
+        'id': window.cardList[Math.floor(Math.random() * window.cardList.length)]
       });
+    }
+    fetch("https://api.scryfall.com/cards/collection", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodydata),
+      }).then(response => response.json())
+      .then(data => {
+        window.cardQueue.push(...data['data']);
+      }).catch(error => {
+        console.error(error);
+        fetchError();
+      });
+  }
+
+  function fetchSingleCard(id) {
+    fetch('https://api.scryfall.com/cards/' + id)
+      .then(response => response.json())
+      .then(data => loadCard(data))
+      .catch(error => {
+        console.error(error);
+        fetchError();
+      });
+    }
+
+  function fetchError() {
+    $.dialog({
+      title: '<span class=\"modalTitle\">Error</span>',
+      content: '<span class=\"modalText\">Couldn\'t load card images and information. Check your connection and/or Scryfall API status.</span>',
+      type: 'red',
+      theme: window.game.theme,
+      animation: 'top',
+      closeAnimation: 'top',
+      animateFromElement: false,
+      boxWidth: 'min(400px, 80%)',
+      draggable: false,
+      useBootstrap: false,
+      typeAnimated: true,
+      backgroundDismiss: true
     });
+  }
 }
 
 //helper to see if char is an English letter
@@ -397,7 +451,7 @@ function gameLostFree() {
         keys: ['enter'],
         action: function() {
           if (window.cardList)
-            requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+            requestCard();
           else
             loadGame();
         }
@@ -647,7 +701,7 @@ function gameWinFree() {
         keys: ['enter'],
         action: function() {
           if (window.cardList)
-            requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+            requestCard();
           else
             loadGame();
         }
@@ -1630,7 +1684,7 @@ function loadGame() {
       if (getParameterByName('cardId'))
         requestCard(getParameterByName('cardId'));
       else
-        requestCard(window.cardList[Math.floor(Math.random() * window.cardList.length)]);
+        requestCard();
     }
 
     if (window.cardList == null) { //fetch card list then request
@@ -1652,10 +1706,11 @@ function loadGame() {
 //function to load the timer
 function loadTimer() {
 
+  const SYNCSECONDS = 120; //every 2 minutes
   let now = new Date();
   let midnight = new Date;
   midnight.setHours(24, 0, 0, 0);
-  let seconds = (now.getMinutes() * 60 + now.getSeconds()) % 300;
+  let seconds = (now.getMinutes() * 60 + now.getSeconds()) % SYNCSECONDS;
   let timeTo = midnight - now;
   let str, h, m, s;
 
@@ -1677,10 +1732,10 @@ function loadTimer() {
 
   window.timeTick = function timerTick() {
     clearTimeout(window.dailyTimer);
-    if (seconds == 300) { //every 5 minutes, correct time again
+    if (seconds == SYNCSECONDS) { //Sync time again
       now = new Date();
-      seconds = (now.getMinutes() * 60 + now.getSeconds()) % 300;
-      if (now > midnight) { //midnight, load new daily game
+      seconds = (now.getMinutes() * 60 + now.getSeconds()) % SYNCSECONDS;
+      if (now >= midnight) { //midnight, load new daily game
         if (window.game.mode == 'daily') {
           if (window.dailyModal !== null && window.dailyModal.isOpen()) {
             window.dailyModal.close();
@@ -2001,6 +2056,7 @@ $(document).ready(function() {
   window.loadingGuesses = false;
   window.dailyModal = null;
   window.reportingBug = false;
+  window.cardQueue = [];
 
   window.game = {};
   window.game.theme = 'dark'; //dark mode default

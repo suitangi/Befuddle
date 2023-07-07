@@ -9,7 +9,6 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 
 ### Misc/Bugs
--   Switch to scryfall Collections API for free play
 -   Better daily share copy pasta/discord spoilers mode
 -   Easter eggs
 
@@ -26,7 +25,9 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 # Changelog
 ```
-7/2/2023 Routine card list update
+7/6/2023: Switch to Scryfall Collections API (free play)
+7/5/2023: Small fix for daily index system
+7/2/2023: Routine card list update
 5/6/2023: Updated cards list and new year of daily befuddles
 6/20/2022: Daily Befuddle Bug fixes
 5/8/2022: Stability and optimization fixes
