@@ -25,6 +25,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 # Changelog
 ```
+1/25/2024: Small bug fix (daylight savings 1 hour off bug)
 7/6/2023: Switch to Scryfall Collections API (free play)
 7/5/2023: Small fix for daily index system
 7/2/2023: Routine card list update

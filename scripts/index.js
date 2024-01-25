@@ -1,5 +1,5 @@
 const canVibrate = window.navigator.vibrate;
-const befuddleAppVersion = "2023.7.6";
+const befuddleAppVersion = "2024.1.25";
 
 //Helper: Get Query
 function getParameterByName(name, url) {
@@ -83,7 +83,7 @@ function requestCard(id) {
         console.error(error);
         fetchError();
       });
-    }
+  }
 
   function fetchError() {
     $.dialog({
@@ -215,7 +215,7 @@ function loadCard(data) {
         else if (window.mtgCard.manaCost[i] == '//')
           html += ' // ';
         else {
-          html += '<img class="manaSymbol" alt="' + window.mtgCard.manaCost[i] + '" src="' + window.mtgSymbols[window.mtgCard.manaCost[i]] + '">';
+          html += `<img class="manaSymbol" alt="${window.mtgCard.manaCost[i]}" src="${window.mtgSymbols[window.mtgCard.manaCost[i]]}">`;
         }
       }
     }
@@ -224,10 +224,10 @@ function loadCard(data) {
   else if ((window.game.mode == 'free' && window.gameSesh.manastate == 1)) {
     html = 'Color' + (window.mtgCard['colors'].length < 2 ? '' : 's') + ': '
     if (window.mtgCard['colors'].length == 0) {
-      html += '<img class="manaSymbol" src="' + window.mtgSymbols["C"] + '">';
+      html += `<img class="manaSymbol" src="${window.mtgSymbols["C"]}">`;
     } else {
       for (var i = 0; i < window.mtgCard['colors'].length; i++) {
-        html += '<img class="manaSymbol" alt="' + window.mtgCard['colors'][i] + '" src="' + window.mtgSymbols[window.mtgCard['colors'][i]] + '">';
+        html += `<img class="manaSymbol" alt="${window.mtgCard['colors'][i]}" src="${window.mtgSymbols[window.mtgCard['colors'][i]]}">`;
       }
     }
     html += '<br><br>';
@@ -524,9 +524,10 @@ function gameLostDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") +
-            '\n' + 'X' + (window.gameSesh.hideBlanks ? '*' : '') +
-            '\n' + window.location.href;
+          let str =
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}
+             \nX${(window.gameSesh.hideBlanks ? '*' : '')}
+             \n${window.location.href}`;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -581,9 +582,8 @@ function gameWinDaily() {
   }
 
   window.dailyModal = $.confirm({
-    title: "<span class=\"modalText\">" + getWinTerms(wr) +
-      (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
-    content: getCardHtml() + '<div id="dailyTimerDisplay"></div>',
+    title: `<span class=\"modalText\">${getWinTerms(wr)}${(wr != 0 ? (` — ${wr} wrong`): '')}</span>`,
+    content: `${getCardHtml()}<div id="dailyTimerDisplay"></div>`,
     theme: window.game.theme,
     animation: 'top',
     closeAnimation: 'top',
@@ -622,9 +622,10 @@ function gameWinDaily() {
         btnClass: 'btn-green',
         action: function(linkButton) {
           let d = new Date();
-          let str = 'Daily Befuddle ' + d.toLocaleDateString("en-US") +
-            '\n' + wr + '/' + window.game.daily.lives + (window.gameSesh.hideBlanks ? '*' : '') +
-            '\n' + window.location.href;
+          let str =
+            `Daily Befuddle${d.toLocaleDateString("en-US")}
+            \n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}
+            \n${window.location.href}`;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -669,8 +670,7 @@ function gameWinFree() {
   });
 
   $.confirm({
-    title: "<span class=\"modalText\">" + getWinTerms(wr) +
-      (wr != 0 ? (" — " + wr + " wrong") : '') + "</span>",
+    title: `<span class=\"modalText\">${getWinTerms(wr)}${(wr != 0 ? (` — ${wr} wrong`) : '')}</span>`,
     content: getCardHtml(),
     theme: window.game.theme,
     animation: 'top',
@@ -1441,57 +1441,57 @@ function reportBug() {
 
       document.getElementById('gameBugButton').addEventListener('click', function() {
         document.getElementById('bTypeInput').value = "Gameplay";
-        document.getElementById('mainBug').style="display:none;";
+        document.getElementById('mainBug').style = "display:none;";
         document.getElementById('bugTextArea').placeholder = "What gameplay bug did you encounter? Try to be specific, and if possible, include steps to recreate the bug.";
-        document.getElementById('textBug').style="";
+        document.getElementById('textBug').style = "";
       });
       document.getElementById('artBugButton').addEventListener('click', function() {
         document.getElementById('bTypeInput').value = "Art";
-        document.getElementById('mainBug').style="display:none;";
-        document.getElementById('artBug').style="";
+        document.getElementById('mainBug').style = "display:none;";
+        document.getElementById('artBug').style = "";
       });
       document.getElementById('fBugButton').addEventListener('click', function() {
         document.getElementById('bTypeInput').value = "Feedback";
-        document.getElementById('mainBug').style="display:none;";
+        document.getElementById('mainBug').style = "display:none;";
         document.getElementById('bugTextArea').placeholder = "All feedback and comments are welcome!";
-        document.getElementById('textBug').style="";
+        document.getElementById('textBug').style = "";
       });
       document.getElementById('artCardButt').addEventListener('click', function() {
         document.getElementById('bTextInput').value = 'Art: Wrong card';
-        document.getElementById('artBug').style="display:none;";
+        document.getElementById('artBug').style = "display:none;";
         document.getElementById('bugForm').submit();
-        document.getElementById('tyBug').style="";
+        document.getElementById('tyBug').style = "";
       });
       document.getElementById('artCropButt').addEventListener('click', function() {
         document.getElementById('bTextInput').value = 'Art: Crop';
-        document.getElementById('artBug').style="display:none;";
+        document.getElementById('artBug').style = "display:none;";
         document.getElementById('bugForm').submit();
-        document.getElementById('tyBug').style="";
+        document.getElementById('tyBug').style = "";
       });
       document.getElementById('artGoneButt').addEventListener('click', function() {
         document.getElementById('bTextInput').value = 'Art: Missing';
-        document.getElementById('artBug').style="display:none;";
+        document.getElementById('artBug').style = "display:none;";
         document.getElementById('bugForm').submit();
-        document.getElementById('tyBug').style="";
+        document.getElementById('tyBug').style = "";
       });
       document.getElementById('artOtherButt').addEventListener('click', function() {
-        document.getElementById('artBug').style="display:none;";
+        document.getElementById('artBug').style = "display:none;";
         document.getElementById('bugTextArea').placeholder = "What other art issues did you encounter?";
-        document.getElementById('textBug').style="";
+        document.getElementById('textBug').style = "";
       });
 
       document.getElementById('bugTextArea').addEventListener('input', function() {
         if (this.value != '')
-          document.getElementById('bugSubmitButt').style="";
+          document.getElementById('bugSubmitButt').style = "";
         else
-          document.getElementById('bugSubmitButt').style="display:none;";
+          document.getElementById('bugSubmitButt').style = "display:none;";
         document.getElementById('bTextInput').value = this.value;
       });
 
       document.getElementById('bugSubmitButt').addEventListener('click', function() {
-        document.getElementById('textBug').style="display:none;";
+        document.getElementById('textBug').style = "display:none;";
         document.getElementById('bugForm').submit();
-        document.getElementById('tyBug').style="";
+        document.getElementById('tyBug').style = "";
       });
 
       document.getElementById('bugCloseButt').addEventListener('click', function() {
@@ -1501,8 +1501,8 @@ function reportBug() {
 
 
     },
-    onClose: function () {
-        window.reportingBug = false;
+    onClose: function() {
+      window.reportingBug = false;
     }
   });
 }
@@ -2042,6 +2042,7 @@ function submitDailyData(win) {
   document.getElementById('dailyDataDummy').appendChild(ddFrame);
   document.getElementById('dailyDataDummy').appendChild(form);
   form.submit();
+  console.log('Daily data submitted');
   setTimeout(() => {
     document.getElementById('dailyDataDummy').innerHTML = '';
   }, 2000);
@@ -2227,8 +2228,9 @@ $(document).ready(function() {
 
 //gets date corresponding number for daily befuddle
 function getDateNumber() {
-   d1 = new Date('5/6/2022 0:00');
-   d2 = new Date();
-   dd = Math.floor((d2.getTime() - d1.getTime()) / 86400000) - 1;
-   return dd;
+  d1 = new Date('5/6/2022 0:00');
+  d2 = new Date();
+  d2.setHours(0, 0, 0);
+  dd = Math.floor((d2.getTime() - d1.getTime()) / 86400000) - 1;
+  return dd;
 }
