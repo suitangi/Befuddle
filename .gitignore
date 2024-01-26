@@ -1,3 +1,10 @@
-#Ignore the ignore directory
+#Ignore these directories
+
 ignore/
+statsScripts/
 stats/
+
+
+#Ignore these ide files
+
+.tern-project
