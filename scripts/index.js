@@ -525,9 +525,7 @@ function gameLostDaily() {
         action: function(linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}
-             \nX${(window.gameSesh.hideBlanks ? '*' : '')}
-             \n${window.location.href}`;
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\nX${(window.gameSesh.hideBlanks ? '*' : '')}\n${window.location.href}`;
           clipboardHandler(linkButton, str);
           return false;
         }
