@@ -621,11 +621,7 @@ function gameWinDaily() {
         action: function(linkButton) {
           let d = new Date();
           let str =
-<<<<<<< HEAD
             `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}\n${window.location.href}`;
-=======
-            `Daily Befuddle${d.toLocaleDateString("en-US")}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}\n${window.location.href}`;
->>>>>>> b7c7fe59f06d0138cdd8160c5438766093ee8f0a
           clipboardHandler(linkButton, str);
           return false;
         }
