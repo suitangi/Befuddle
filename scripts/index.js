@@ -1382,7 +1382,8 @@ function getBrowserInfo() {
     'Major version': majorVersion,
     'navigator.appName': navigator.appName,
     'navigator.userAgent': navigator.userAgent,
-    'OS': osName
+    'OS': osName,
+    'Befuddle Version': befuddleAppVersion
   }
   return result;
 }
