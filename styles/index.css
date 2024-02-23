@@ -173,7 +173,7 @@ body {
   top: 50%;
   transform: translate(0, -50%);
   left: 1%;
-  font-variation-settings: 'FILL'0, 'wght'300;
+  font-variation-settings: 'FILL' 0, 'wght' 300;
 }
 
 #help-button {
@@ -181,7 +181,7 @@ body {
   top: 50%;
   transform: translate(125%, -50%);
   left: 1%;
-  font-variation-settings: 'FILL'0, 'wght'250;
+  font-variation-settings: 'FILL' 0, 'wght' 250;
 }
 
 #stats-button {
@@ -189,7 +189,7 @@ body {
   top: 50%;
   right: 1%;
   transform: translate(-125%, -50%);
-  font-variation-settings: 'FILL'0, 'wght'150;
+  font-variation-settings: 'FILL' 0, 'wght' 150;
 }
 
 #settings-button {
@@ -197,7 +197,7 @@ body {
   top: 50%;
   right: 1%;
   transform: translate(0, -50%);
-  font-variation-settings: 'FILL'1, 'wght'150;
+  font-variation-settings: 'FILL' 1, 'wght' 150;
   ;
 }
 
@@ -615,6 +615,43 @@ body {
 #bugSubmitButt {
   font-family: 'Beleren Bold';
   font-size: 17px;
+}
+
+.kofi-btn {
+  position: absolute;
+  background: none !important;
+  left: 1%;
+}
+
+.kofi-btn img {
+  animation: none;
+  height: 20px;
+}
+
+.kofi-btn:hover img {
+  animation: tilt-shaking 0.25s infinite;
+}
+
+@keyframes tilt-shaking {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(5deg);
+  }
+
+  50% {
+    transform: rotate(0eg);
+  }
+
+  75% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .rabButton {

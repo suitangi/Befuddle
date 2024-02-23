@@ -1,5 +1,5 @@
 const canVibrate = window.navigator.vibrate;
-const befuddleAppVersion = "2024.1.25";
+const befuddleAppVersion = "2024.2.23";
 
 //Helper: Get Query
 function getParameterByName(name, url) {
@@ -496,6 +496,14 @@ function gameLostDaily() {
     typeAnimated: true,
     closeIcon: true,
     buttons: {
+      kofi: {
+        text: '<img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi">',
+        btnClass: 'btn-blue kofi-btn',
+        action: function() {
+          buyDrink();
+          return false;
+        }
+      },
       free: {
         text: "Free Play",
         btnClass: 'btn-purple',
@@ -592,6 +600,14 @@ function gameWinDaily() {
     typeAnimated: true,
     closeIcon: true,
     buttons: {
+      kofi: {
+        text: '<img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi">',
+        btnClass: 'btn-blue kofi-btn',
+        action: function() {
+          buyDrink();
+          return false;
+        }
+      },
       free: {
         text: "Free Play",
         btnClass: 'btn-purple',
@@ -1658,6 +1674,9 @@ function loadGame() {
       Cookies.set('befuddle', JSON.stringify(window.game), {
         expires: 365
       });
+      if (getDateNumber() - data.start >= data.list.length) {
+        console.error('Daily Befuddle needs to be updated, please report a bug to Suitangi');
+      }
       loadCard(data.list[getDateNumber() - data.start]);
     }
 
