@@ -1254,6 +1254,7 @@ function menuModal() {
       '<div class="hr"></div>' +
       '<div class="helpText" style="text-align: center;line-height:1.8;">Developed with <span id="easterEggHeart" class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;"> favorite </span> by Suitangi' +
       '<br><a><span id="rab">Report a Bug</span></a>' +
+      '<br><a href="https://twitter.com/BefuddleMTG" target="_blank"><span>Twitter</span></a>' +
       '<br><a><span id="bmad">Buy me a Drink</span></a></div>',
     theme: window.game.theme,
     animation: 'left',
