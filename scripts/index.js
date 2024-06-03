@@ -1,5 +1,5 @@
 const canVibrate = window.navigator.vibrate;
-const befuddleAppVersion = "2024.4.13";
+const befuddleAppVersion = "2024.6.3";
 
 //Helper: Get Query
 function getParameterByName(name, url) {
