@@ -25,6 +25,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 # Changelog
 ```
+7/29/2024: Routine card update
 6/3/2024: Routine card update; new Dailies
 4/13/2024: Routine card update; new Daily
 2/23/2024: Routine card update; added new Daily Befuddles, added Ko-Fi button
