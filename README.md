@@ -5,11 +5,18 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 [![Page Deployment](https://github.com/suitangi/Befuddle/actions/workflows/static.yml/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/static.yml)
 
+# Updating Befuddle
+Run `node ./maintenance/update.js` from the root directory of the repo
+
+The script accepts the following flags:
+- `-nd` or `-nodownload`: Skips downloading the bulk data from Scryfall
+- `-daily`: Adds 50 days to the Daily mode
+
 # Todo:
 
-
 ### Misc/Bugs
--   Better daily share copy pasta/discord spoilers mode
+-   Better daily share copy pasta (emojis!)/discord spoilers mode
+-   Add more characters to the keyboard, allowing for AE, dashes and accents
 -   More Easter eggs
 
 ### Options menu:
@@ -25,7 +32,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 # Changelog
 ```
-7/29/2024: Routine card update
+7/29/2024: Routine card update; a couple more new Dailies; added maintenance
 6/3/2024: Routine card update; new Dailies
 4/13/2024: Routine card update; new Daily
 2/23/2024: Routine card update; added new Daily Befuddles, added Ko-Fi button
