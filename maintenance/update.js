@@ -129,9 +129,12 @@ function start() {
     } else if (dfc.includes(d[i].layout) && d[i].card_faces == undefined) {
       //dfc and no card_faces array
       continue;
+    } else if (d[i].promo_types && d[i].promo_types.includes('poster')) {
+      //poster promo style cards
+      continue;
     } else { //include the card
       let card = d[i];
-      
+
       let toPush = {
         id: card.id
       };
