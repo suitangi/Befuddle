@@ -16,7 +16,6 @@ The script accepts the following flags:
 
 ### Misc/Bugs
 -   Better daily share copy pasta (emojis!)/discord spoilers mode
--   Add more characters to the keyboard, allowing for AE, dashes and accents
 -   More Easter eggs
 
 ### Options menu:
@@ -32,6 +31,7 @@ The script accepts the following flags:
 
 # Changelog
 ```
+7/31/2024: Trimmed card database; accents are no longer free and will correspond to letters
 7/29/2024: Routine card update; a couple more new Dailies; added maintenance
 6/3/2024: Routine card update; new Dailies
 4/13/2024: Routine card update; new Daily

@@ -1,5 +1,5 @@
 const canVibrate = window.navigator.vibrate;
-const befuddleAppVersion = "2024.7.29";
+const befuddleAppVersion = "2024.7.31";
 
 //Helper: Get Query
 function getParameterByName(name, url) {
@@ -112,6 +112,7 @@ function isAlpha(char) {
 //function to load the card data into memory
 function loadCard(data) {
 
+  let multiFace = ['transform', 'modal_dfc'];
   if (data) {
     //setup new mtg card object
     window.mtgCard = {};
@@ -122,7 +123,8 @@ function loadCard(data) {
     window.mtgCard.name = data['name'];
     window.mtgCard.colors = data['colors'];
 
-    if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
+
+    if (multiFace.includes(window.mtgCard['layout'])) {
       window.mtgCard.card_faces = [];
       for (var i = 0; i < data['card_faces'].length; i++) {
         window.mtgCard.card_faces.push({
@@ -175,13 +177,13 @@ function loadCard(data) {
   document.getElementById('seeCard').style = 'display:none;';
   window.mtgCard.cf = -1;
 
-  // select card face if MDFC or transform
-  if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
-    if (getParameterByName('cf'))
+  // select card face if multiface
+  if (multiFace.includes(window.mtgCard['layout'])) {
+    if (getParameterByName('cf')) //if there's a cardFace parameter, use that
       window.mtgCard.cf = parseInt(getParameterByName('cf'));
-    else if (window.game.mode == 'daily')
+    else if (window.game.mode == 'daily') //daily mode always front face
       window.mtgCard.cf = 0;
-    else
+    else //random which card face
       window.mtgCard.cf = Math.floor(Math.random() * window.mtgCard['card_faces'].length);
     let cf = window.mtgCard['card_faces'][window.mtgCard.cf];
     window.mtgCard['mana_cost'] = cf['mana_cost'];
@@ -254,6 +256,13 @@ function loadCard(data) {
     window.gameSesh.hiddenName = hideName(str, '_');
 
   document.getElementById("cardName").innerText = window.gameSesh.hiddenName;
+
+  if (window.gameSesh.hiddenName.length > 30) { //accomodate longer names
+    document.getElementById("cardName").style = "font-size: min(25px, 5vw);";
+  } else {
+    document.getElementById("cardName").style = "";
+  }
+
   document.getElementById('card').style = "";
 
   //save loaded game if daily
@@ -288,17 +297,23 @@ function submitLetter(char) {
   //search in real card name and replace with correct letter
   let uChar = char.toUpperCase();
   let s = window.mtgCard.name;
-  let r = '';
+  let r = '',
+    ch;
   for (var i = 0; i < s.length; i++) {
-    if (s.charAt(i) == char || s.charAt(i) == uChar) {
+    ch = s.charAt(i);
+    if (ch == char || ch == uChar || window.reverseAccentMap[ch] == char) {
       found = true;
-      r += s.charAt(i);
+      r += ch;
     } else {
-      if (!window.gameSesh.hideBlanks)
+      if (!window.gameSesh.hideBlanks) //not hidden mode
         r += window.gameSesh.hiddenName.charAt(i);
-      else {
-        if (window.gameSesh.guesses.includes(s.toLowerCase().charAt(i)) || !isAlpha(s.charAt(i)))
-          r += s.charAt(i);
+      else { //hidden mode
+        if (
+          window.gameSesh.guesses.includes(ch.toLowerCase()) || //letter has been guessed
+          (window.accentedChars.has(ch) && window.gameSesh.guesses.includes(window.reverseAccentMap(ch).toLowerCase())) || //is accented char and accented char's mapped letter has been guessed
+          (!isAlpha(ch) && !window.accentedChars.has(ch)) //not alpha and not an accented character
+        )
+          r += ch;
       }
     }
   }
@@ -785,12 +800,15 @@ function getWinTerms(ind) {
 
 //function to hide the name of the card
 function hideName(str, c) {
-  let r = '';
+
+  let r = '',
+    ch;
   for (var i = 0; i < str.length; i++) {
-    if (isAlpha(str.charAt(i)))
+    ch = str.charAt(i);
+    if (isAlpha(ch) || window.accentedChars.has(ch))
       r += c;
     else
-      r += str.charAt(i);
+      r += ch;
   }
   return r;
 }
@@ -2117,6 +2135,26 @@ $(document).ready(function() {
     [],
     []
   ];
+
+  window.accentMap = {
+    'a': ['à', 'á'],
+    'e': ['é'],
+    'i': ['í', 'ï'],
+    'o': ['ó', 'ö'],
+    'u': ['ú', 'û', 'ü'],
+    'n': ['ñ'],
+    'E': ['É']
+  }
+
+  window.reverseAccentMap = {};
+
+
+  Object.keys(window.accentMap).forEach((letter) => {
+    window.accentMap[letter].forEach((aLetter) => {
+      window.reverseAccentMap[aLetter] = letter;
+    });
+  });
+  window.accentedChars = new Set(Object.keys(window.reverseAccentMap));
 
   for (var i = 0; i < 25; i++) {
     window.stats.free.wr[0].push([0, 0]);

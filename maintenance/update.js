@@ -91,12 +91,14 @@ function start() {
   let setTypeExclude = ['memorabilia', 'token'];
   let layoutExclude = ['vanguard', 'token', 'double_faced_token', 'art_series', 'scheme', 'planar', 'emblem',
     'reversible_card', 'host', 'augment'];
-  let setNameExclude = ['Mystery Booster Playtest Cards 2021', 'Mystery Booster Playtest Cards 2019'];
+  let setNameExclude = ['Mystery Booster Playtest Cards 2021', 'Mystery Booster Playtest Cards 2019', 'Unfinity Sticker Sheets'];
+  let setExcludeDaily = ['Unfinity', 'Unhinged', 'Unsanctioned', 'Unstable', 'Unglued', 'The List (Unfinity Foil Edition)'];
   let dfc = ['transform', 'modal_dfc'];
 
   let toKeep = ['name', 'layout', 'mana_cost', 'colors', 'type_line'];
   let img_uri = 'image_uris';
-  let toKeepImg = ['normal', 'art_crop']
+  let toKeepImg = ['normal', 'art_crop'];
+  let bannedChars = ['_', '®'];
 
   let cleanList = [];
   let idList = [];
@@ -104,6 +106,16 @@ function start() {
   let progress = 1;
   console.log('Started list building and card processing .. ');
   for (var i = 0; i < d.length; i++) {
+
+    let banned = false;
+    bannedChars.forEach((c) => {
+      if (d[i].name.includes(c)) {
+        banned = true;
+      }
+    });
+    if (banned) //exclude cards with banned characters in the name
+      continue;
+
     if (setTypeExclude.includes(d[i].set_type) || layoutExclude.includes(d[i].layout) || setNameExclude.includes(d[i].set_name) ||
       d[i].oversized || d[i].content_warning || d[i].games == undefined || !d[i].games.includes('paper') || d[i].flavor_name != undefined) {
       //excluded lists, oversized, content_warning, not paper, cards with flavor names
@@ -119,7 +131,7 @@ function start() {
       continue;
     } else { //include the card
       let card = d[i];
-
+      
       let toPush = {
         id: card.id
       };
@@ -205,7 +217,8 @@ function start() {
       card = cleanList.pop();
       console.log(card);
       if ((card['type_line'] != undefined && !card['type_line'].includes('Basic')) && //not basic lands
-        !historical.includes(card.id) // not in historical
+        !historical.includes(card.id) && // not in historical
+        !setExcludeDaily.includes(card.set_name) // not in excluded sets
       ) {
         dailyList.list.push(card);
         historical.push(card);
