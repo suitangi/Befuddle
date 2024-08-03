@@ -14,7 +14,9 @@ The script accepts the following flags:
 
 # Todo:
 
+
 ### Misc/Bugs
+-   Migrate mana and color symbols to https://mana.andrewgioia.com/icons.html
 -   Better daily share copy pasta (emojis!)/discord spoilers mode
 -   More Easter eggs
 
