@@ -12,11 +12,13 @@ The script accepts the following flags:
 - `-nd` or `-nodownload`: Skips downloading the bulk data from Scryfall
 - `-daily`: Adds 50 days to the Daily mode
 
-# Todo:
+Then commit the changes.
 
+# Todo:
 
 ### Misc/Bugs
 -   Migrate mana and color symbols to https://mana.andrewgioia.com/icons.html
+-   Add statusCode checks and backoffs
 -   Better daily share copy pasta (emojis!)/discord spoilers mode
 -   More Easter eggs
 
