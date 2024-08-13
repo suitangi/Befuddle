@@ -5,14 +5,14 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 [![Page Deployment](https://github.com/suitangi/Befuddle/actions/workflows/static.yml/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/static.yml)
 
-# Updating Befuddle
-Run `node ./maintenance/update.js` from the root directory of the repo
+© Ignatius Liu, 2024
 
-The script accepts the following flags:
+# Updating Befuddle
+Run `node ./maintenance/update.js` from the root directory of the repo. The script accepts the following flags:
 - `-nd` or `-nodownload`: Skips downloading the bulk data from Scryfall
 - `-daily`: Adds 50 days to the Daily mode
 
-Then commit the changes.
+Then commit/push the changes.
 
 # Todo:
 
@@ -33,8 +33,15 @@ Then commit the changes.
 -   For beta testing and for helping conceptualize the idea, the one an only [G-Jayakar](https://github.com/G-Jayakar).
 -   Beta testing and pro bug finder Ksax.
 
+# Disclaimer and Credits
+Portions of Befuddle are unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy. The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.
+
+- Card Data and Images: [Scryfall](https://scryfall.com/)
+- Font: [Wizards of the Coast](https://company.wizards.com/en)
+
 # Changelog
 ```
+8/12/2024: Card update; added TCGPlayer URL to Free Mode
 7/31/2024: Trimmed card database; accents are no longer free and will correspond to letters
 7/29/2024: Routine card update; a couple more new Dailies; added maintenance
 6/3/2024: Routine card update; new Dailies

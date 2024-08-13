@@ -617,6 +617,20 @@ body {
   font-size: 17px;
 }
 
+.tcg-btn {
+  background-color: #20247a !important;
+  padding: 1px 9px !important;
+}
+
+.tcg-btn:hover {
+  background-color: #191b43 !important;
+}
+
+.tcg-svg {
+  width: 29px;
+  transform: translateY(3px);
+}
+
 .kofi-btn {
   position: absolute;
   background: none !important;
