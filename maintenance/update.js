@@ -1,6 +1,6 @@
 // node update.js to run
 // options:
-// - daily   to add 50 cards of daily befuddle
+// - daily   to add 30 cards of daily befuddle
 // - nd or -nodownload   will not download latest bulk card data
 
 const fs = require('fs');
@@ -205,7 +205,7 @@ function start() {
     shuffle(cleanList);
     console.log("  done shuffling, building list now")
 
-    let days = 3;
+    let days = 30;
     let overlap = 2;
     let dailyList = {
       start: getDateNumber() - overlap,

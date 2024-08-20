@@ -10,7 +10,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 # Updating Befuddle
 Run `node ./maintenance/update.js` from the root directory of the repo. The script accepts the following flags:
 - `-nd` or `-nodownload`: Skips downloading the bulk data from Scryfall
-- `-daily`: Adds 50 days to the Daily mode
+- `-daily`: Adds 30 days to the Daily mode
 
 Then commit/push the changes.
 
@@ -41,6 +41,7 @@ Portions of Befuddle are unofficial Fan Content permitted under the Wizards of t
 
 # Changelog
 ```
+8/19/2024: New Dailies
 8/12/2024: Card update; added TCGPlayer URL to Free Mode
 7/31/2024: Trimmed card database; accents are no longer free and will correspond to letters
 7/29/2024: Routine card update; a couple more new Dailies; added maintenance
