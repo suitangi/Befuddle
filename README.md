@@ -41,6 +41,7 @@ Portions of Befuddle are unofficial Fan Content permitted under the Wizards of t
 
 # Changelog
 ```
+12/07/2024: Added new error message when Daily needs an update
 10/23/2024: Routine card update; new Dailies
 8/19/2024: New Dailies
 8/12/2024: Card update; added TCGPlayer URL to Free Mode
