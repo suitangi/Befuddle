@@ -8,9 +8,10 @@ const https = require('https');
 const path = require('path');
 const url = require('url');
 
-function deleteFile(filename) {
+function deleteCardsJson(filename) {
   console.log("Deleting " + filename + "...")
   if (!fs.existsSync(filename)) {
+    getBulkData();
     return;
   }
   fs.unlink(filename, (err) => {
@@ -77,28 +78,35 @@ function getBulkData() {
 }
 
 function getDateNumber() {
-   d1 = new Date('5/6/2022 0:00');
-   d2 = new Date();
-   dd = Math.floor((d2.getTime() - d1.getTime()) / 86400000) - 1;
-   return dd;
+  d1 = new Date('5/6/2022 0:00');
+  d2 = new Date();
+  dd = Math.floor((d2.getTime() - d1.getTime()) / 86400000) - 1;
+  return dd;
+}
+
+//helper function to see if a and b have intersecting elements
+function arrayIntersect(a, b) {
+  return a.filter(e => e.includes(b)).length !== 0;
 }
 
 function start() {
 
   let d = require('../ignore/mtgCards.json');
-  let historical = require('../ignore/historical.json');
+  let historical = require('../data/historical.json');
 
-  let setTypeExclude = ['memorabilia', 'token'];
-  let layoutExclude = ['vanguard', 'token', 'double_faced_token', 'art_series', 'scheme', 'planar', 'emblem',
-    'reversible_card', 'host', 'augment'];
-  let setNameExclude = ['Mystery Booster Playtest Cards 2021', 'Mystery Booster Playtest Cards 2019', 'Unfinity Sticker Sheets'];
-  let setExcludeDaily = ['Unfinity', 'Unhinged', 'Unsanctioned', 'Unstable', 'Unglued', 'The List (Unfinity Foil Edition)'];
-  let dfc = ['transform', 'modal_dfc'];
+  const setTypeExclude = ['memorabilia', 'token'];
+  const layoutExclude = ['vanguard', 'token', 'double_faced_token', 'art_series', 'scheme', 'planar', 'emblem',
+    'reversible_card', 'host', 'augment'
+  ];
+  const setNameExclude = ['Mystery Booster Playtest Cards 2021', 'Mystery Booster Playtest Cards 2019', 'Unfinity Sticker Sheets'];
+  const promoExclude = ['playtest', 'poster'];
+  const setExcludeDaily = ['Unfinity', 'Unhinged', 'Unsanctioned', 'Unstable', 'Unglued', 'The List (Unfinity Foil Edition)'];
+  const dfc = ['transform', 'modal_dfc'];
 
-  let toKeep = ['name', 'layout', 'mana_cost', 'colors', 'type_line'];
-  let img_uri = 'image_uris';
-  let toKeepImg = ['normal', 'art_crop'];
-  let bannedChars = ['_', '®'];
+  const toKeep = ['name', 'layout', 'mana_cost', 'colors', 'type_line'];
+  const img_uri = 'image_uris';
+  const toKeepImg = ['normal', 'art_crop'];
+  const bannedChars = ['_', '®'];
 
   let cleanList = [];
   let idList = [];
@@ -116,21 +124,20 @@ function start() {
     if (banned) //exclude cards with banned characters in the name
       continue;
 
-    if (setTypeExclude.includes(d[i].set_type) || layoutExclude.includes(d[i].layout) || setNameExclude.includes(d[i].set_name) ||
-      d[i].oversized || d[i].content_warning || d[i].games == undefined || !d[i].games.includes('paper') || d[i].flavor_name != undefined) {
-      //excluded lists, oversized, content_warning, not paper, cards with flavor names
-      continue;
-    } else if (!dfc.includes(d[i].layout) && d[i].image_uris == undefined) {
-      //not dfc and no art images
-      continue;
-    } else if (!dfc.includes(d[i].layout) && (d[i].image_uris.art_crop == undefined || d[i].image_uris.normal == undefined)) {
-      //not dfc and doesn't have art crop
-      continue;
-    } else if (dfc.includes(d[i].layout) && d[i].card_faces == undefined) {
-      //dfc and no card_faces array
-      continue;
-    } else if (d[i].promo_types && d[i].promo_types.includes('poster')) {
-      //poster promo style cards
+    if (
+      setTypeExclude.includes(d[i].set_type) || //excluded set types
+      layoutExclude.includes(d[i].layout) || //excluded layouts
+      setNameExclude.includes(d[i].set_name) || //excluded set names
+      (d[i].promo_types && arrayIntersect(d[i].promo_types, promoExclude)) || //excluded promos
+      d[i].oversized || //exclude oversized cards
+      d[i].content_warning || //exclude content warning cards
+      d[i].games == undefined || //exclude cards without games
+      !d[i].games.includes('paper') || //only include paper cards
+      d[i].flavor_name != undefined || //exclude cards with flavor names
+      (!dfc.includes(d[i].layout) && d[i].image_uris == undefined) || //not dfc and no art images
+      (!dfc.includes(d[i].layout) && (d[i].image_uris.art_crop == undefined || d[i].image_uris.normal == undefined)) || //not dfc and doesn't have art crop
+      (dfc.includes(d[i].layout) && d[i].card_faces == undefined) //dfc and no card_faces array
+    ) {
       continue;
     } else { //include the card
       let card = d[i];
@@ -164,7 +171,7 @@ function start() {
       idList.push(card.id);
     }
     if (i > progress * Math.floor(d.length / 10)) {
-      console.log("  " + i + "/" + d.length + " cards processed");
+      console.log(`  ${i}/${d.length} cards processed`);
       progress++;
     }
   }
@@ -205,15 +212,17 @@ function start() {
     shuffle(cleanList);
     console.log("  done shuffling, building list now")
 
-    let days = 30;
+    let days = 60;
     let overlap = 2;
     let dailyList = {
       start: getDateNumber() - overlap,
       list: []
     };
 
-    for (var loopDays = getDateNumber() - overlap ; loopDays < historical.length; loopDays++) {
-      dailyList.list.push({...historical[loopDays]});
+    for (var loopDays = getDateNumber() - overlap; loopDays < historical.length; loopDays++) {
+      dailyList.list.push({
+        ...historical[loopDays]
+      });
     }
     let card;
     while (days >= 0) {
@@ -237,10 +246,10 @@ function start() {
 
     console.log("Updating historical.json ...");
     let hl = JSON.stringify(historical);
-    fs.writeFileSync('./ignore/historical.json', hl);
+    fs.writeFileSync('./data/historical.json', hl);
     console.log("  historical.json exported.")
   } else {
-      console.log("To update daily list +50 cards please include -daily flag");
+    console.log("To update daily list +50 cards please include -daily flag");
   }
 
   console.log("--- All Done ---");
@@ -250,5 +259,5 @@ if (process.argv.includes('-nd') || process.argv.includes('-nodownload')) {
   console.log('No download mode selected');
   start();
 } else {
-  deleteFile("./ignore/mtgCards.json");
+  deleteCardsJson("./ignore/mtgCards.json");
 }
