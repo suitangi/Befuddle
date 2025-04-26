@@ -1,12 +1,13 @@
 // node update.js to run
 // options:
-// - daily   to add 30 cards of daily befuddle
+// - daily   to add cards to daily befuddle
 // - nd or -nodownload   will not download latest bulk card data
 
 const fs = require('fs');
 const https = require('https');
 const path = require('path');
 const url = require('url');
+const DAILY_CARDS = 50;
 
 function deleteCardsJson(filename) {
   console.log("Deleting " + filename + "...")
@@ -212,7 +213,7 @@ function start() {
     shuffle(cleanList);
     console.log("  done shuffling, building list now")
 
-    let days = 60;
+    let days = DAILY_CARDS;
     let overlap = 2;
     let dailyList = {
       start: getDateNumber() - overlap,
@@ -237,7 +238,7 @@ function start() {
         days--;
       }
     }
-
+	console.log(`Updated daily Befuddle with ${DAILY_CARDS} new cards`);
     console.log("Exporting dailyList.json ...");
     let dl = JSON.stringify(dailyList);
     fs.writeFileSync('./ignore/dailyList.json', dl);
@@ -249,7 +250,7 @@ function start() {
     fs.writeFileSync('./data/historical.json', hl);
     console.log("  historical.json exported.")
   } else {
-    console.log("To update daily list +50 cards please include -daily flag");
+    console.log(`To update daily list with ${DAILY_CARDS} cards please include -daily flag`);
   }
 
   console.log("--- All Done ---");

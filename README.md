@@ -41,6 +41,7 @@ Portions of Befuddle are unofficial Fan Content permitted under the Wizards of t
 
 # Changelog
 ```
+4/26/2025: Card update; new dailies
 2/26/2025: Card update; new dailies
 1/30/2024: New dailies
 12/25/2024: Merry Christmas! New dailies
