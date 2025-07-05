@@ -11,7 +11,6 @@ if (window.discordSdk) {
             await discordSdkInstance.ready();
             const user = await discordSdkInstance.commands.getUser();
             console.log("Discord user:", user);
-            document.getElementById("username").textContent = user.username;
         } catch (err) {
             console.error("Error in Discord SDK:", err);
         }
@@ -19,8 +18,6 @@ if (window.discordSdk) {
     init();
 } else {
     console.log("Discord SDK not available, running in normal browser");
-    // optional fallback
-    document.getElementById("username").textContent = "Guest";
 }
 
 //Helper: Get Query
