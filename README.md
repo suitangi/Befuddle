@@ -5,7 +5,7 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 [![Page Deployment](https://github.com/suitangi/Befuddle/actions/workflows/static.yml/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/static.yml)
 
-© Ignatius Liu, 2024
+© Ignatius Liu, 2025
 
 # Updating Befuddle
 Run `node ./maintenance/update.js` from the root directory of the repo. The script accepts the following flags:
@@ -41,7 +41,8 @@ Portions of Befuddle are unofficial Fan Content permitted under the Wizards of t
 
 # Changelog
 ```
-6/25/2025: Card update: new dailies
+8/14/2025: Card update; new dailies
+6/25/2025: Card update; new dailies
 4/26/2025: Card update; new dailies
 2/26/2025: Card update; new dailies
 1/30/2024: New dailies
