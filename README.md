@@ -41,6 +41,7 @@ Portions of Befuddle are unofficial Fan Content permitted under the Wizards of t
 
 # Changelog
 ```
+1/12/2026: Card update; new dailies; fixed share URL bug
 12/5/2025: Card update; new dailies
 10/6/2025: Card update; new dailies
 8/14/2025: Card update; new dailies
