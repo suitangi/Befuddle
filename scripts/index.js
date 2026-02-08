@@ -2138,7 +2138,9 @@ function getDiscordProxiedUrl(originalUrl) {
     .replace("https://api.scryfall.com", "/scry-com/api")
     .replace("https://c2.scryfall.com", "/scry-com/c2")
     .replace("https://cards.scryfall.io", "/scry-io/cards")
-    .replace("https://svgs.scryfall.io", "/scry-io/svg");
+    .replace("https://svgs.scryfall.io", "/scry-io/svg")
+    .replace("https://docs.google.com/forms", "/google/forms")
+    .replace("https://ko-fi.com", "/kofi");
 }
 
 
