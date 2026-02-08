@@ -5,23 +5,27 @@ const tcgSVG = '<svg class="tcg-svg" version="1.1" viewBox="0.0 0.0 144.0 120.0"
 
 const DISCORD_APPLICATION_ID = '1389389854747525152';
 
-try {
-  const discordSdk = new window.discordSdk.DiscordSDK(DISCORD_APPLICATION_ID);
-  async function setupDiscord() {
-    await discordSdk.ready();
-    console.log("Discord SDK is ready");
+// 1. Check if the SDK was already attached to the window in HTML
+const discordSdk = window.discordSdk;
 
-    // Now you can authorize or get player info
+if (discordSdk) {
+  async function setupDiscord() {
+    try {
+      // 2. Just wait for it to be ready
+      await discordSdk.ready();
+      console.log("Discord SDK is ready and connected!");
+
+      // Now you can proceed with auth or game logic
+    } catch (error) {
+      console.error("Discord handshake failed:", error);
+    }
   }
 
   setupDiscord();
-
-  // Your existing logs will now work if you use the variable:
-  console.log("SDK Instance:", discordSdk); ``
-} catch (error) {
-  console.error("Failed to initialize Discord SDK:", error);
+  console.log("Using existing SDK Instance:", discordSdk);
+} else {
+  console.warn("Discord SDK not found. This is a standard browser?");
 }
-
 
 
 //Helper: Get Query
