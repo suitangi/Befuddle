@@ -4,19 +4,24 @@ const tcgSVG = '<svg class="tcg-svg" version="1.1" viewBox="0.0 0.0 144.0 120.0"
 
 
 const DISCORD_APPLICATION_ID = '1389389854747525152';
-const discordSdk = new window.discordSdk.DiscordSDK(DISCORD_APPLICATION_ID);
 
-async function setupDiscord() {
+try {
+  const discordSdk = new window.discordSdk.DiscordSDK(DISCORD_APPLICATION_ID);
+  async function setupDiscord() {
     await discordSdk.ready();
     console.log("Discord SDK is ready");
-    
+
     // Now you can authorize or get player info
+  }
+
+  setupDiscord();
+
+  // Your existing logs will now work if you use the variable:
+  console.log("SDK Instance:", discordSdk); ``
+} catch (error) {
+  console.error("Failed to initialize Discord SDK:", error);
 }
 
-setupDiscord();
-
-// Your existing logs will now work if you use the variable:
-console.log("SDK Instance:", discordSdk);
 
 
 //Helper: Get Query
@@ -70,13 +75,13 @@ function requestCard(id) {
       });
     }
     fetch("https://api.scryfall.com/cards/collection", {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodydata),
-      }).then(response => response.json())
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(bodydata),
+    }).then(response => response.json())
       .then(data => {
         window.cardQueue.push(...data['data']);
       }).catch(error => {
@@ -251,7 +256,7 @@ function loadCard(data) {
 
   var img = document.getElementById("cardImage");
   var newImg = new Image;
-  newImg.onload = function() {
+  newImg.onload = function () {
     img.src = this.src;
     document.getElementById("cardImage").style = "opacity:1;";
     document.getElementById("imageLoading").style = "display:none;";
@@ -461,14 +466,14 @@ function gameLostFree() {
       tcg: {
         text: `${tcgSVG}`,
         btnClass: 'tcg-btn',
-        action: function() {
+        action: function () {
           window.open(window.mtgCard.tcgLink, '_blank').focus();
         }
       },
       link: {
         text: "Share",
         btnClass: 'btn-green',
-        action: function(linkButton) {
+        action: function (linkButton) {
           var baseUrl = window.location.origin + window.location.pathname;
           var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
@@ -482,7 +487,7 @@ function gameLostFree() {
         text: "Next Card",
         btnClass: 'btn-blue',
         keys: ['enter'],
-        action: function() {
+        action: function () {
           if (window.cardList)
             requestCard();
           else
@@ -532,7 +537,7 @@ function gameLostDaily() {
       kofi: {
         text: '<img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi">',
         btnClass: 'btn-blue kofi-btn',
-        action: function() {
+        action: function () {
           buyDrink();
           return false;
         }
@@ -540,7 +545,7 @@ function gameLostDaily() {
       free: {
         text: "Free Play",
         btnClass: 'btn-purple',
-        action: function(linkButton) {
+        action: function (linkButton) {
           window.gameSesh.end = true;
           window.game.mode = 'free';
           if (Cookies.get('free')) {
@@ -556,14 +561,14 @@ function gameLostDaily() {
       stats: {
         text: "Stats",
         btnClass: 'btn-blue',
-        action: function() {
+        action: function () {
           statsModal();
         }
       },
       link: {
         text: "Share",
         btnClass: 'btn-green',
-        action: function(linkButton) {
+        action: function (linkButton) {
           let d = new Date();
           let str =
             `Daily Befuddle ${d.toLocaleDateString("en-US")}\nX${(window.gameSesh.hideBlanks ? '*' : '')}\n${window.location.href}`;
@@ -621,7 +626,7 @@ function gameWinDaily() {
   }
 
   window.dailyModal = $.confirm({
-    title: `<span class=\"modalText\">${getWinTerms(wr)}${(wr != 0 ? (` — ${wr} wrong`): '')}</span>`,
+    title: `<span class=\"modalText\">${getWinTerms(wr)}${(wr != 0 ? (` — ${wr} wrong`) : '')}</span>`,
     content: `${getCardHtml()}<div id="dailyTimerDisplay"></div>`,
     theme: window.game.theme,
     animation: 'top',
@@ -636,7 +641,7 @@ function gameWinDaily() {
       kofi: {
         text: '<img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi">',
         btnClass: 'btn-blue kofi-btn',
-        action: function() {
+        action: function () {
           buyDrink();
           return false;
         }
@@ -644,7 +649,7 @@ function gameWinDaily() {
       free: {
         text: "Free Play",
         btnClass: 'btn-purple',
-        action: function(linkButton) {
+        action: function (linkButton) {
           window.gameSesh.end = true;
           window.game.mode = 'free';
           if (Cookies.get('free')) {
@@ -660,14 +665,14 @@ function gameWinDaily() {
       stats: {
         text: "Stats",
         btnClass: 'btn-blue',
-        action: function() {
+        action: function () {
           statsModal();
         }
       },
       link: {
         text: "Share",
         btnClass: 'btn-green',
-        action: function(linkButton) {
+        action: function (linkButton) {
           let d = new Date();
           let str =
             `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}\n${window.location.href}`;
@@ -730,14 +735,14 @@ function gameWinFree() {
       tcg: {
         text: `${tcgSVG}`,
         btnClass: 'tcg-btn',
-        action: function() {
+        action: function () {
           window.open(window.mtgCard.tcgLink, '_blank').focus();
         }
       },
       link: {
         text: "Share",
         btnClass: 'btn-green',
-        action: function(linkButton) {
+        action: function (linkButton) {
           var str = 'Befuddle: \n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
@@ -751,7 +756,7 @@ function gameWinFree() {
         text: "Next Card",
         btnClass: 'btn-blue',
         keys: ['enter'],
-        action: function() {
+        action: function () {
           if (window.cardList)
             requestCard();
           else
@@ -764,19 +769,19 @@ function gameWinFree() {
 
 //handler for the clipboard buttons
 function clipboardHandler(linkButton, str) {
-  navigator.clipboard.writeText(str).then(function() {
+  navigator.clipboard.writeText(str).then(function () {
     linkButton.addClass('displayButton');
     linkButton.setText('Copied');
     linkButton.addClass('btn-dark');
     linkButton.removeClass('btn-green');
-    setTimeout(function(lb) {
+    setTimeout(function (lb) {
       linkButton.removeClass('btn-dark');
       linkButton.addClass('btn-green');
     }, 100, linkButton);
-    setTimeout(function(lb) {
+    setTimeout(function (lb) {
       linkButton.setText('Share');
     }, 3000, linkButton);
-  }, function() {
+  }, function () {
     clipboardError(str);
   });
 }
@@ -904,9 +909,9 @@ function settingsModal() {
       draggable: false,
       backgroundDismiss: true,
       useBootstrap: false,
-      onContentReady: function() {
+      onContentReady: function () {
         let hi = this.$content.find('#hmInput');
-        hi.on('input', function() {
+        hi.on('input', function () {
           window.game.daily.hideBlanks = this.checked;
           Cookies.set('befuddle', JSON.stringify(window.game), {
             expires: 365
@@ -914,7 +919,7 @@ function settingsModal() {
         });
 
         let di = this.$content.find('#darkInput');
-        di.on('input', function() {
+        di.on('input', function () {
           window.game.theme = (this.checked ? 'dark' : 'light');
           setTheme();
           Cookies.set('befuddle', JSON.stringify(window.game), {
@@ -924,7 +929,7 @@ function settingsModal() {
 
         if (canVibrate) {
           let vi = this.$content.find('#vibraInput');
-          vi.on('input', function() {
+          vi.on('input', function () {
             window.game.vibra = this.checked;
             Cookies.set('befuddle', JSON.stringify(window.game), {
               expires: 365
@@ -965,9 +970,9 @@ function settingsModal() {
       draggable: false,
       backgroundDismiss: true,
       useBootstrap: false,
-      onContentReady: function() {
+      onContentReady: function () {
         let lv = this.$content.find('#livesInput');
-        lv.on('input', function() {
+        lv.on('input', function () {
           if (this.value > 0) {
             document.getElementById('livesdisplay').innerText = this.value;
             window.game.free.lives = parseInt(this.value);
@@ -981,7 +986,7 @@ function settingsModal() {
         });
 
         let mi = this.$content.find('#manaInput');
-        mi.on('input', function() {
+        mi.on('input', function () {
           let manastates = ['Show Nothing', 'Show Colors', 'Show Mana Cost'];
           window.game.free.manaState = parseInt(this.value);
           document.getElementById('manadisplay').innerText = manastates[parseInt(this.value)];
@@ -991,7 +996,7 @@ function settingsModal() {
         });
 
         let hi = this.$content.find('#hideInput');
-        hi.on('input', function() {
+        hi.on('input', function () {
           window.game.free.hideBlanks = this.checked;
           Cookies.set('befuddle', JSON.stringify(window.game), {
             expires: 365
@@ -999,7 +1004,7 @@ function settingsModal() {
         });
 
         let di = this.$content.find('#darkInput');
-        di.on('input', function() {
+        di.on('input', function () {
           window.game.theme = (this.checked ? 'dark' : 'light');
           setTheme();
           Cookies.set('befuddle', JSON.stringify(window.game), {
@@ -1008,7 +1013,7 @@ function settingsModal() {
         });
         if (canVibrate) {
           let vi = this.$content.find('#vibraInput');
-          vi.on('input', function() {
+          vi.on('input', function () {
             window.game.vibra = this.checked;
             Cookies.set('befuddle', JSON.stringify(window.game), {
               expires: 365
@@ -1054,7 +1059,7 @@ function statsModal() {
     draggable: false,
     backgroundDismiss: true,
     useBootstrap: false,
-    onContentReady: function() {
+    onContentReady: function () {
       if (window.game.mode == 'daily') {
         dailyChartsSetup();
       } else if (window.game.mode == 'free') {
@@ -1078,9 +1083,9 @@ function wrvl() {
 //function to setup the charts for free mode stats
 function freeChartsSetup() {
   let wr = [
-      [],
-      []
-    ],
+    [],
+    []
+  ],
     w, l, la = [],
     la2 = [];
   for (var i = 0; i < 25; i++) {
@@ -1221,7 +1226,7 @@ function menuModal() {
         show: {
           text: 'Show Answer',
           btnClass: 'btn-red',
-          action: function() {
+          action: function () {
             window.gameSesh.end = true;
             document.getElementById('seeCard').style = '';
             if (window.game.mode == 'daily') {
@@ -1264,7 +1269,7 @@ function menuModal() {
         show: {
           text: 'Clear Data',
           btnClass: 'btn-red',
-          action: function() {
+          action: function () {
             Cookies.remove('befuddle');
             Cookies.remove('daily');
             Cookies.remove('free');
@@ -1307,8 +1312,8 @@ function menuModal() {
     draggable: false,
     backgroundDismiss: true,
     useBootstrap: false,
-    onContentReady: function() {
-      document.getElementById('credits').addEventListener('click', function() {
+    onContentReady: function () {
+      document.getElementById('credits').addEventListener('click', function () {
         let s = document.getElementById('creditText');
         if (!s.classList.contains('collapsediv')) {
           s.classList.add('collapsediv');
@@ -1318,7 +1323,7 @@ function menuModal() {
           document.getElementById('creditExpand').classList.add('rotato');
         }
       });
-      document.getElementById('disclaimer').addEventListener('click', function() {
+      document.getElementById('disclaimer').addEventListener('click', function () {
         let s = document.getElementById('disclaimerText');
         if (!s.classList.contains('collapsediv')) {
           s.classList.add('collapsediv');
@@ -1328,26 +1333,26 @@ function menuModal() {
           document.getElementById('disclaimerExpand').classList.add('rotato');
         }
       });
-      document.getElementById('clearButton').addEventListener('click', function() {
+      document.getElementById('clearButton').addEventListener('click', function () {
         clearConfirm();
       });
-      document.getElementById('returnButton').addEventListener('click', function() {
+      document.getElementById('returnButton').addEventListener('click', function () {
         window.gameSesh.end = true;
         menuD.close();
         mainMenuDisplay();
       });
-      document.getElementById('rab').addEventListener('click', function() {
+      document.getElementById('rab').addEventListener('click', function () {
         menuD.close();
         reportBug();
       });
-      document.getElementById('bmad').addEventListener('click', function() {
+      document.getElementById('bmad').addEventListener('click', function () {
         buyDrink();
       });
-      document.getElementById('easterEggHeart').addEventListener('click', function() {
+      document.getElementById('easterEggHeart').addEventListener('click', function () {
         easterEgg();
       });
       if (!window.gameSesh.end) {
-        document.getElementById('guButton').addEventListener('click', function() {
+        document.getElementById('guButton').addEventListener('click', function () {
           giveupConfirm();
         });
       }
@@ -1445,7 +1450,7 @@ function easterEgg() {
     draggable: false,
     backgroundDismiss: true,
     useBootstrap: false,
-    onContentReady: function() {}
+    onContentReady: function () { }
   });
 }
 
@@ -1489,55 +1494,55 @@ function reportBug() {
     draggable: false,
     backgroundDismiss: false,
     useBootstrap: false,
-    onContentReady: function() {
+    onContentReady: function () {
       document.getElementById('biInput').value = JSON.stringify(getBrowserInfo());
       document.getElementById('cgInput').value = JSON.stringify(window.gameSesh);
       document.getElementById('gsInput').value = Cookies.get('befuddle');
       document.getElementById('dailyInput').value = Cookies.get('daily');
       document.getElementById('freeInput').value = Cookies.get('free');
 
-      document.getElementById('gameBugButton').addEventListener('click', function() {
+      document.getElementById('gameBugButton').addEventListener('click', function () {
         document.getElementById('bTypeInput').value = "Gameplay";
         document.getElementById('mainBug').style = "display:none;";
         document.getElementById('bugTextArea').placeholder = "What gameplay bug did you encounter? Try to be specific, and if possible, include steps to recreate the bug.";
         document.getElementById('textBug').style = "";
       });
-      document.getElementById('artBugButton').addEventListener('click', function() {
+      document.getElementById('artBugButton').addEventListener('click', function () {
         document.getElementById('bTypeInput').value = "Art";
         document.getElementById('mainBug').style = "display:none;";
         document.getElementById('artBug').style = "";
       });
-      document.getElementById('fBugButton').addEventListener('click', function() {
+      document.getElementById('fBugButton').addEventListener('click', function () {
         document.getElementById('bTypeInput').value = "Feedback";
         document.getElementById('mainBug').style = "display:none;";
         document.getElementById('bugTextArea').placeholder = "All feedback and comments are welcome!";
         document.getElementById('textBug').style = "";
       });
-      document.getElementById('artCardButt').addEventListener('click', function() {
+      document.getElementById('artCardButt').addEventListener('click', function () {
         document.getElementById('bTextInput').value = 'Art: Wrong card';
         document.getElementById('artBug').style = "display:none;";
         document.getElementById('bugForm').submit();
         document.getElementById('tyBug').style = "";
       });
-      document.getElementById('artCropButt').addEventListener('click', function() {
+      document.getElementById('artCropButt').addEventListener('click', function () {
         document.getElementById('bTextInput').value = 'Art: Crop';
         document.getElementById('artBug').style = "display:none;";
         document.getElementById('bugForm').submit();
         document.getElementById('tyBug').style = "";
       });
-      document.getElementById('artGoneButt').addEventListener('click', function() {
+      document.getElementById('artGoneButt').addEventListener('click', function () {
         document.getElementById('bTextInput').value = 'Art: Missing';
         document.getElementById('artBug').style = "display:none;";
         document.getElementById('bugForm').submit();
         document.getElementById('tyBug').style = "";
       });
-      document.getElementById('artOtherButt').addEventListener('click', function() {
+      document.getElementById('artOtherButt').addEventListener('click', function () {
         document.getElementById('artBug').style = "display:none;";
         document.getElementById('bugTextArea').placeholder = "What other art issues did you encounter?";
         document.getElementById('textBug').style = "";
       });
 
-      document.getElementById('bugTextArea').addEventListener('input', function() {
+      document.getElementById('bugTextArea').addEventListener('input', function () {
         if (this.value != '')
           document.getElementById('bugSubmitButt').style = "";
         else
@@ -1545,20 +1550,20 @@ function reportBug() {
         document.getElementById('bTextInput').value = this.value;
       });
 
-      document.getElementById('bugSubmitButt').addEventListener('click', function() {
+      document.getElementById('bugSubmitButt').addEventListener('click', function () {
         document.getElementById('textBug').style = "display:none;";
         document.getElementById('bugForm').submit();
         document.getElementById('tyBug').style = "";
       });
 
-      document.getElementById('bugCloseButt').addEventListener('click', function() {
+      document.getElementById('bugCloseButt').addEventListener('click', function () {
         document.getElementById('dummyframe').remove();
         rabDialog.close();
       });
 
 
     },
-    onClose: function() {
+    onClose: function () {
       window.reportingBug = false;
     }
   });
@@ -1577,7 +1582,7 @@ function buyDrink() {
     draggable: false,
     backgroundDismiss: true,
     useBootstrap: false,
-    onContentReady: function() {}
+    onContentReady: function () { }
   });
 }
 
@@ -1598,7 +1603,7 @@ function continueGameModal() {
       free: {
         text: 'New Game',
         btnClass: 'btn-purple',
-        action: function() {
+        action: function () {
           window.gameSesh.end = true;
           Cookies.remove('free');
           loadGame();
@@ -1607,7 +1612,7 @@ function continueGameModal() {
       daily: {
         text: 'Continue',
         btnClass: 'btn-blue',
-        action: function() {
+        action: function () {
           loadGame();
         }
       }
@@ -1629,23 +1634,23 @@ function mainMenuDisplay() {
     backgroundDismiss: false,
     backgroundDismissAnimation: 'none',
     useBootstrap: false,
-    onContentReady: function() {
-      this.buttons.daily.el.hover(function() {
+    onContentReady: function () {
+      this.buttons.daily.el.hover(function () {
         mainMenuModal.setContent('<span class=\"mainMenuText\">Challenge the daily Befuddle</span>');
-      }, function() {
+      }, function () {
         mainMenuModal.setContent('<span class=\"mainMenuText\">Select your game mode</span>');
       });
 
-      this.buttons.free.el.hover(function() {
+      this.buttons.free.el.hover(function () {
         mainMenuModal.setContent('<span class=\"mainMenuText\">Play endlessly on free mode</span>');
-      }, function() {
+      }, function () {
         mainMenuModal.setContent('<span class=\"mainMenuText\">Select your game mode</span>');
       });
     },
     buttons: {
       daily: {
         text: '<span class=\"mainMenuText\">Daily Befuddle</span>',
-        action: function() {
+        action: function () {
           window.game.mode = 'daily';
           if (Cookies.get('daily')) {
             window.gameSesh = JSON.parse(Cookies.get('daily'));
@@ -1660,7 +1665,7 @@ function mainMenuDisplay() {
       },
       free: {
         text: '<span class=\"mainMenuText\">Free Play</span>',
-        action: function() {
+        action: function () {
           window.game.mode = 'free';
           if (Cookies.get('free')) {
             window.gameSesh = JSON.parse(Cookies.get('free'));
@@ -1747,7 +1752,7 @@ function loadGame() {
           window.dailyList = data;
           dailyCard(data);
         })
-        .catch(function(e) {
+        .catch(function (e) {
           console.log(e);
           console.error('Could not fetch daily card list');
         });
@@ -1770,7 +1775,7 @@ function loadGame() {
           window.cardList = data;
           freeCard(data);
         })
-        .catch(function() {
+        .catch(function () {
           console.error('Could not fetch card list');
         });
     } else { //no need to re-fetch
@@ -1827,12 +1832,12 @@ function loadTimer() {
         return;
       }
       timeTo = midnight - now;
-      window.dailyTimer = setTimeout(function(t) {
+      window.dailyTimer = setTimeout(function (t) {
         timeTo -= t;
         window.timeTick();
       }, 1000 - now.getMilliseconds(), 1000 - now.getMilliseconds());
     } else {
-      window.dailyTimer = setTimeout(function() {
+      window.dailyTimer = setTimeout(function () {
         timeTo -= 1000;
         window.timeTick();
       }, 1000);
@@ -1843,7 +1848,7 @@ function loadTimer() {
     seconds++;
   }
 
-  window.dailyTimer = setTimeout(function() {
+  window.dailyTimer = setTimeout(function () {
     window.timeTick();
   }, 1000 - now.getMilliseconds());
 }
@@ -1859,13 +1864,13 @@ function mspie(ctx, data, title) {
         legend: {
           position: 'bottom',
           labels: {
-            generateLabels: function(chart) {
+            generateLabels: function (chart) {
               // Get the default label list
               const original = Chart.overrides.pie.plugins.legend.labels.generateLabels;
               const labelsOriginal = original.call(this, chart);
 
               // Build an array of colors used in the datasets of the chart
-              let datasetColors = chart.data.datasets.map(function(e) {
+              let datasetColors = chart.data.datasets.map(function (e) {
                 return e.backgroundColor;
               });
               datasetColors = datasetColors.flat();
@@ -1889,7 +1894,7 @@ function mspie(ctx, data, title) {
               family: 'Roboto Mono'
             },
           },
-          onClick: function(mouseEvent, legendItem, legend) {
+          onClick: function (mouseEvent, legendItem, legend) {
             // toggle the visibility of the dataset from what it currently is
             legend.chart.getDatasetMeta(
               legendItem.datasetIndex
@@ -1899,7 +1904,7 @@ function mspie(ctx, data, title) {
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
+            label: function (context) {
               const labelIndex = (context.datasetIndex * 2) + context.dataIndex;
               return context.chart.data.labels[labelIndex] + ': ' + context.formattedValue;
             }
@@ -2125,7 +2130,7 @@ function submitDailyData(win) {
 }
 
 //start script
-$(document).ready(function() {
+$(document).ready(function () {
   console.log('Befuddle version: ' + befuddleAppVersion);
   console.log('https://tinyurl.com/specialcardforbefuddle');
 
@@ -2264,19 +2269,19 @@ $(document).ready(function() {
   }
 
   //setup onclick for top nav buttons
-  document.getElementById('stats-button').addEventListener('click', function() {
+  document.getElementById('stats-button').addEventListener('click', function () {
     statsModal();
   });
-  document.getElementById('menu-button').addEventListener('click', function() {
+  document.getElementById('menu-button').addEventListener('click', function () {
     menuModal();
   });
-  document.getElementById('settings-button').addEventListener('click', function() {
+  document.getElementById('settings-button').addEventListener('click', function () {
     settingsModal();
   });
-  document.getElementById('help-button').addEventListener('click', function() {
+  document.getElementById('help-button').addEventListener('click', function () {
     helpModal();
   });
-  document.getElementById('seeCard').addEventListener('click', function() {
+  document.getElementById('seeCard').addEventListener('click', function () {
     seeCardHandler();
   });
 
@@ -2288,7 +2293,7 @@ $(document).ready(function() {
   for (var i = 0; i < li.length; i++) {
     window.displayKeyboard[li[i].innerText.toLowerCase()] = li[i];
     li[i].setAttribute('data-key', li[i].innerText);
-    li[i].addEventListener('click', function() {
+    li[i].addEventListener('click', function () {
       if (!window.gameSesh.end) {
         submitLetter(this.getAttribute('data-key').toLowerCase());
       }
@@ -2296,7 +2301,7 @@ $(document).ready(function() {
   }
 
   //setup keyboard typing
-  document.onkeypress = function(e) {
+  document.onkeypress = function (e) {
     e = e || window.event;
     if (!window.gameSesh.end && !window.reportingBug && e.keyCode >= 97 && e.keyCode <= 122) {
       submitLetter(String.fromCharCode(e.keyCode));
