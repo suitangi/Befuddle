@@ -1450,6 +1450,10 @@ function easterEgg() {
 function reportBug() {
 
   let mainHtml, formHtml;
+  let formUri = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSfofhsXMv1iW188eXql2h5KwPr08dE4j93EwA3-hd9lNxr5OA/formResponse';
+  if (window.isDiscord) {
+    formUri = getDiscordProxiedUrl(formUri);
+  }
   mainHtml = '<div class="modalTitle" style="text-align: center;">Report a Bug</div><br>' +
     '<div id="mainBug"><button id="gameBugButton" class="rabButton">Gameplay Bug</button>' +
     '<button id="artBugButton" class="rabButton">Art Issue</button>' +
@@ -1462,7 +1466,7 @@ function reportBug() {
     '<div id="tyBug" style="display:none;"><div id="tyBugText">Thank you for making Befuddle better!</div><br><button id="bugCloseButt" class="rabButton">Close</button></div>';
 
   formHtml = '<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>' +
-    '<form id="bugForm" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSfofhsXMv1iW188eXql2h5KwPr08dE4j93EwA3-hd9lNxr5OA/formResponse" target="dummyframe" method="post">' +
+    `<form id="bugForm" action="${formUri}" target="dummyframe" method="post">` +
     '<input type="hidden" id="bTypeInput" value="" name="entry.298329572">' + //bug type
     '<input type="hidden" id="bTextInput" value="" name="entry.1100833739">' + //bug text
     '<input type="hidden" id="biInput" value="" name="entry.1735799869">' + //browser info
@@ -1562,9 +1566,13 @@ function reportBug() {
 
 //function to buy drink
 function buyDrink() {
+  let src = "https://ko-fi.com/suitangi/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true";
+  if (window.isDiscord) {
+    src = getDiscordProxiedUrl(src);
+  }
   $.dialog({
     title: ' ',
-    content: '<iframe id="kofiframe" src="https://ko-fi.com/suitangi/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true" style="border:none;padding:4px;" height="712" title="suitangi"></iframe>',
+    content: `<iframe id="kofiframe" src="${src}" style="border:none;padding:4px;" height="712" title="suitangi"></iframe>`,
     theme: 'light',
     animation: 'bottom',
     closeAnimation: 'bottom',
@@ -2090,7 +2098,10 @@ function checkTabFocused() {
 
 //Submits daily data
 function submitDailyData(win) {
-  const uri = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSf8M4zoBjF6ZcY0v4ebBXmBCKr0vpB_EtAZLPE2-B0ZDfGBLg/formResponse";
+  let uri = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSf8M4zoBjF6ZcY0v4ebBXmBCKr0vpB_EtAZLPE2-B0ZDfGBLg/formResponse";
+  if (window.isDiscord) {
+    uri = getDiscordProxiedUrl(uri);
+  }
   const entryNames = ['entry.1034508364', 'entry.462826655', 'entry.2082961611'];
   const values = [window.gameSesh.doy, window.gameSesh.guesses, win];
 
