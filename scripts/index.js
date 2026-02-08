@@ -621,6 +621,11 @@ function gameWinDaily() {
 
   }
 
+  let imgSrc = 'https://storage.ko-fi.com/cdn/cup-border.png';
+  if (window.isDiscord) {
+    imgSrc = getDiscordProxiedUrl(imgSrc);
+  };
+
   window.dailyModal = $.confirm({
     title: `<span class=\"modalText\">${getWinTerms(wr)}${(wr != 0 ? (` — ${wr} wrong`) : '')}</span>`,
     content: `${getCardHtml()}<div id="dailyTimerDisplay"></div>`,
@@ -635,7 +640,7 @@ function gameWinDaily() {
     closeIcon: true,
     buttons: {
       kofi: {
-        text: '<img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi">',
+        text: `<img src="${imgSrc}" alt="Ko-Fi">`,
         btnClass: 'btn-blue kofi-btn',
         action: function () {
           buyDrink();
@@ -1581,6 +1586,15 @@ function reportBug() {
 
 //function to buy drink
 function buyDrink() {
+  if (isDiscord) {
+    try {
+      discordSdk.commands.openExternalLink({ url: 'https://ko-fi.com/suitangi' });
+    } catch (error) {
+      console.error("Could not open link in Discord:", error);
+    }
+    return;
+  }
+
   let src = "https://ko-fi.com/suitangi/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true";
   if (window.isDiscord) {
     src = getDiscordProxiedUrl(src);
@@ -2148,12 +2162,12 @@ function submitDailyData(win) {
 
 function getDiscordProxiedUrl(originalUrl) {
   if (!originalUrl) return '';
-  
+
   return originalUrl
     .replace("https://api.scryfall.com", "/scry-com/api")
     .replace("https://c2.scryfall.com", "/scry-com/c2")
     .replace("https://cards.scryfall.io", "/scry-io/cards")
-    .replace("https://svgs.scryfall.io", "/scry-io/svg")
+    .replace("https://svgs.scryfall.io", "/scry-io/svgs")
     .replace("https://docs.google.com/forms", "/google/forms")
     .replace("https://ko-fi.com", "/kofi")
     .replace("https://storage.ko-fi.com", "/kofi-storage");
