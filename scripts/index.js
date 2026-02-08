@@ -248,7 +248,11 @@ function loadCard(data) {
     document.getElementById("cardImage").style = "opacity:1;";
     document.getElementById("imageLoading").style = "display:none;";
   }
-  newImg.src = window.mtgCard['image_uris']['art_crop'];
+  let imgSrc = window.mtgCard['image_uris']['art_crop'];
+  if (window.isDiscord) {
+    imgSrc = getDiscordProxiedUrl(imgSrc);
+  }
+  newImg.src = imgSrc;
 
   let str = window.mtgCard['name'];
 
