@@ -512,6 +512,11 @@ function gameLostDaily() {
     });
   }
 
+  let imgSrc = 'https://storage.ko-fi.com/cdn/cup-border.png';
+  if (window.isDiscord) {
+    imgSrc = getDiscordProxiedUrl(imgSrc);
+  };
+
   window.dailyModal = $.confirm({
     title: "<span class=\"modalTitle\">Totally Lost</span>",
     content: getCardHtml() + '<div id="dailyTimerDisplay"></div>',
@@ -526,7 +531,7 @@ function gameLostDaily() {
     closeIcon: true,
     buttons: {
       kofi: {
-        text: '<img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi">',
+        text: `<img src="${imgSrc}" alt="Ko-Fi">`,
         btnClass: 'btn-blue kofi-btn',
         action: function () {
           buyDrink();
@@ -799,11 +804,21 @@ function clipboardError(str) {
 function getCardHtml() {
   let html;
   if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
+    let imgSrc0 = window.mtgCard['card_faces'][window.mtgCard.cf]['image_uris']['normal'];
+    let imgSrc1 = window.mtgCard['card_faces'][1 - window.mtgCard.cf]['image_uris']['normal'];
+    if (window.isDiscord) {
+      imgSrc0 = getDiscordProxiedUrl(imgSrc0);
+      imgSrc1 = getDiscordProxiedUrl(imgSrc1);
+    }
     html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
-      '<img src=\"' + window.mtgCard['card_faces'][window.mtgCard.cf]['image_uris']['normal'] + '\" style=\"border-radius:8% / 6%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
-      '<img src=\"' + window.mtgCard['card_faces'][1 - window.mtgCard.cf]['image_uris']['normal'] + '\" style=\"border-radius:8% / 6%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
+      '<img src=\"' + imgSrc0 + '\" style=\"border-radius:8% / 6%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
+      '<img src=\"' + imgSrc1 + '\" style=\"border-radius:8% / 6%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
   } else {
-    html = "<img src=\"" + window.mtgCard.image_uris.normal + "\" style=\"border-radius:8% / 6%;\">";
+    let imgSrc = window.mtgCard.image_uris.normal;
+    if (window.isDiscord) {
+      imgSrc = getDiscordProxiedUrl(imgSrc);
+    }
+    html = "<img src=\"" + imgSrc + "\" style=\"border-radius:8% / 6%;\">";
   }
   return html;
 }
@@ -2140,7 +2155,8 @@ function getDiscordProxiedUrl(originalUrl) {
     .replace("https://cards.scryfall.io", "/scry-io/cards")
     .replace("https://svgs.scryfall.io", "/scry-io/svg")
     .replace("https://docs.google.com/forms", "/google/forms")
-    .replace("https://ko-fi.com", "/kofi");
+    .replace("https://ko-fi.com", "/kofi")
+    .replace("https://storage.ko-fi.com", "/kofi-storage");
 }
 
 
