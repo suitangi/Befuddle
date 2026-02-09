@@ -769,22 +769,58 @@ function gameWinFree() {
 }
 
 //handler for the clipboard buttons
-function clipboardHandler(linkButton, str) {
-  navigator.clipboard.writeText(str).then(function () {
-    linkButton.addClass('displayButton');
-    linkButton.setText('Copied');
-    linkButton.addClass('btn-dark');
-    linkButton.removeClass('btn-green');
-    setTimeout(function (lb) {
-      linkButton.removeClass('btn-dark');
-      linkButton.addClass('btn-green');
-    }, 100, linkButton);
-    setTimeout(function (lb) {
-      linkButton.setText('Share');
-    }, 3000, linkButton);
-  }, function () {
+// centralised clipboard write + UI update
+function _doClipboardWrite(linkButton, str) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(str).then(function () {
+      linkButton.addClass('displayButton');
+      linkButton.setText('Copied');
+      linkButton.addClass('btn-dark');
+      linkButton.removeClass('btn-green');
+      setTimeout(function (lb) {
+        linkButton.removeClass('btn-dark');
+        linkButton.addClass('btn-green');
+      }, 100, linkButton);
+      setTimeout(function (lb) {
+        linkButton.setText('Share');
+      }, 3000, linkButton);
+    }, function () {
+      clipboardError(str);
+    });
+  } else {
     clipboardError(str);
-  });
+  }
+}
+
+function clipboardHandler(linkButton, str) {
+  // Use native share when available (mobile browsers) and fall back to clipboard
+  if (navigator.share) {
+    navigator.share({
+      title: 'Befuddle',
+      text: str,
+      url: window.location.href || 'https://befuddle.xyz/'
+    }).then(function () {
+      linkButton.addClass('displayButton');
+      linkButton.setText('Shared');
+      linkButton.addClass('btn-dark');
+      linkButton.removeClass('btn-green');
+      setTimeout(function (lb) {
+        linkButton.removeClass('btn-dark');
+        linkButton.addClass('btn-green');
+      }, 100, linkButton);
+      setTimeout(function (lb) {
+        linkButton.setText('Share');
+      }, 3000, linkButton);
+    }).catch(function () {
+      // share failed or was cancelled — fall through to clipboard behaviour
+      _doClipboardWrite(linkButton, str);
+    });
+
+    return;
+  }
+
+  // No native share available — use clipboard
+  _doClipboardWrite(linkButton, str);
 }
 
 //function to display clipboard error
