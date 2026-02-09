@@ -465,7 +465,7 @@ function gameLostFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
-          var baseUrl = window.location.origin + window.location.pathname;
+          var baseUrl = 'https://befuddle.xyz/';
           var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
             '\n' + baseUrl + '?cardId=' + window.mtgCard.id +
@@ -567,7 +567,7 @@ function gameLostDaily() {
         action: function (linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}\nX${(window.gameSesh.hideBlanks ? '*' : '')}\n${window.location.href}`;
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\nX${(window.gameSesh.hideBlanks ? '*' : '')}\nhttps://befuddle.xyz/`;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -676,7 +676,7 @@ function gameWinDaily() {
         action: function (linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}\n${window.location.href}`;
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}\nhttps://befuddle.xyz/`;
           clipboardHandler(linkButton, str);
           return false;
         }
@@ -747,7 +747,7 @@ function gameWinFree() {
           var str = 'Befuddle: \n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '') +
-            '\n' + window.location.href + '?cardId=' + window.mtgCard.id +
+            '\n' + 'https://befuddle.xyz/?cardId=' + window.mtgCard.id +
             (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
           clipboardHandler(linkButton, str);
           return false;
@@ -791,7 +791,7 @@ function clipboardHandler(linkButton, str) {
 function clipboardError(str) {
   $.dialog({
     title: '<span class=\"modalTitle\">Error: Clipboard Access Denied</span>',
-    content: '<span class=\"modalText\">You can manually copy the text below:<br><br><div class=\"copyText\">' + str + '</div></span>',
+    content: '<span class=\"modalText\">You can manually copy the text below:<br><br><pre class=\"copyText\">' + str + '</pre></span>',
     type: 'red',
     theme: window.game.theme,
     animation: 'top',
@@ -2173,6 +2173,32 @@ function getDiscordProxiedUrl(originalUrl) {
     .replace("https://storage.ko-fi.com", "/kofi-storage");
 }
 
+function isMobile() {
+  let hasTouchScreen = false;
+
+  // 1. Check for maxTouchPoints (MDN recommended primary method)
+  if ("maxTouchPoints" in navigator) {
+    hasTouchScreen = navigator.maxTouchPoints > 0;
+  } else if ("msMaxTouchPoints" in navigator) { // Fallback for older IE
+    hasTouchScreen = navigator.msMaxTouchPoints > 0;
+  } else {
+    // 2. Fallback to matchMedia for pointer accuracy
+    var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+    if (mQ && mQ.media === "(pointer:coarse)") {
+      hasTouchScreen = !!mQ.matches;
+    } else if ('orientation' in window) { // 3. Fallback to orientation check (deprecated, good fallback)
+      hasTouchScreen = true;
+    } else {
+      // 4. Last resort: User Agent sniffing
+      var UA = navigator.userAgent;
+      hasTouchScreen = (
+        /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+        /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+      );
+    }
+  }
+  return hasTouchScreen;
+}
 
 async function initializeDiscordApp() {
   console.log("Checking platform environment...");
@@ -2197,6 +2223,11 @@ async function initializeDiscordApp() {
     Object.keys(window.mtgSymbols).forEach(key => {
       window.mtgSymbols[key] = getDiscordProxiedUrl(window.mtgSymbols[key]);
     });
+
+    if (isMobile()) {
+      console.log("Mobile environment detected");
+      document.getElementsByTagName('html')[0].style = "transform: translateY(50px); height: calc(100% - 50px);";
+    }
 
     try {
       await discordSdk.ready();
