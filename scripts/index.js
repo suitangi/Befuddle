@@ -465,12 +465,10 @@ function gameLostFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
-          var baseUrl = 'https://befuddle.xyz/';
           var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
-            (window.gameSesh.hideBlanks ? '*' : '') +
-            '\n' + baseUrl + '?cardId=' + window.mtgCard.id +
-            (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
-          clipboardHandler(linkButton, str);
+            (window.gameSesh.hideBlanks ? '*' : '');
+          const url = 'https://befuddle.xyz/?cardId=' + window.mtgCard.id + (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '')
+          clipboardHandler(linkButton, str, url);
           return false;
         }
       },
@@ -567,8 +565,8 @@ function gameLostDaily() {
         action: function (linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}\nX${(window.gameSesh.hideBlanks ? '*' : '')}\nhttps://befuddle.xyz/`;
-          clipboardHandler(linkButton, str);
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\nX${(window.gameSesh.hideBlanks ? '*' : '')}`;
+          clipboardHandler(linkButton, str, 'https://befuddle.xyz/');
           return false;
         }
       }
@@ -676,8 +674,8 @@ function gameWinDaily() {
         action: function (linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}\nhttps://befuddle.xyz/`;
-          clipboardHandler(linkButton, str);
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}`;
+          clipboardHandler(linkButton, str, 'https://befuddle.xyz/');
           return false;
         }
       }
@@ -746,10 +744,9 @@ function gameWinFree() {
         action: function (linkButton) {
           var str = 'Befuddle: \n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
-            (window.gameSesh.hideBlanks ? '*' : '') +
-            '\n' + 'https://befuddle.xyz/?cardId=' + window.mtgCard.id +
-            (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '');
-          clipboardHandler(linkButton, str);
+            (window.gameSesh.hideBlanks ? '*' : '');
+          const url = 'https://befuddle.xyz/?cardId=' + window.mtgCard.id + (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '')
+          clipboardHandler(linkButton, str, url);
           return false;
         }
       },
@@ -792,13 +789,13 @@ function _doClipboardWrite(linkButton, str) {
   }
 }
 
-function clipboardHandler(linkButton, str) {
+function clipboardHandler(linkButton, str, url) {
   // Use native share when available (mobile browsers) and fall back to clipboard
   if (navigator.share) {
     navigator.share({
       title: 'Befuddle',
       text: str,
-      url: window.location.href || 'https://befuddle.xyz/'
+      url: url
     }).then(function () {
       linkButton.addClass('displayButton');
       linkButton.setText('Shared');
