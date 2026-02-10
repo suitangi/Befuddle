@@ -17,13 +17,29 @@ const isAlpha = (char) => {
   return code >= 97 && code <= 122;
 };
 
-// Build emoji progress string from guessProgress: 🟩 for correct, 🟥 for incorrect
+// Build emoji progress stconst ring from guessProgress: 🟩 for correct, 🟥 for incorrect
 function buildGuessString() {
   try {
     if (!window.gameSesh || !Array.isArray(window.gameSesh.guessProgress)) return '';
-    return window.gameSesh.guessProgress.map(v => v ? '🟩' : '🟥').join('');
+    return window.gameSesh.guessProgress.map(v => v ? '🟩 ' : '🟥 ').join('');
   } catch (e) {
     console.error('buildGuessString error', e);
+    return '';
+  }
+}
+
+// Build lives heart string for daily mode: ❤️ for remaining, 🖤 for used
+function buildDailyLivesString() {
+  try {
+    const total = window.game.daily.lives;
+    const used = window.gameSesh.wrongGuess.length;
+    const remaining = Math.max(0, total - used);
+    const hearts = [];
+    for (let i = 0; i < remaining; i++) hearts.push('❤️ ');
+    for (let i = 0; i < used; i++) hearts.push('🖤 ');
+    return hearts.join('') + ` (${remaining}/${total})`;
+  } catch (e) {
+    console.error('buildDailyLivesString error', e);
     return '';
   }
 }
@@ -584,7 +600,7 @@ function gameLostDaily() {
         action: function (linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${buildGuessString()}\nX${(window.gameSesh.hideBlanks ? '*' : '')}`;
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${buildGuessString()}\n${buildDailyLivesString()}${(window.gameSesh.hideBlanks ? '*' : '')}`;
           clipboardHandler(linkButton, str, 'https://befuddle.xyz/');
           return false;
         }
@@ -693,7 +709,7 @@ function gameWinDaily() {
         action: function (linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${buildGuessString()}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}`;
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${buildGuessString()}\n${buildDailyLivesString()}${(window.gameSesh.hideBlanks ? '*' : '')}`;
           clipboardHandler(linkButton, str, 'https://befuddle.xyz/');
           return false;
         }
