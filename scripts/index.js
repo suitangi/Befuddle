@@ -17,6 +17,17 @@ const isAlpha = (char) => {
   return code >= 97 && code <= 122;
 };
 
+// Build emoji progress string from guessProgress: 🟩 for correct, 🟥 for incorrect
+function buildGuessString() {
+  try {
+    if (!window.gameSesh || !Array.isArray(window.gameSesh.guessProgress)) return '';
+    return window.gameSesh.guessProgress.map(v => v ? '🟩' : '🟥').join('');
+  } catch (e) {
+    console.error('buildGuessString error', e);
+    return '';
+  }
+}
+
 //function to request random card data from scryfall api
 function requestCard(id) {
 
@@ -151,6 +162,7 @@ function loadCard(data) {
     window.gameSesh.end = false;
     window.gameSesh.wrongGuess = '';
     window.gameSesh.guesses = '';
+    window.gameSesh.guessProgress = [];
     window.gameSesh.tlv = window.game[window.game.mode].lives;
 
     if (window.game.mode == 'daily') {
@@ -285,6 +297,7 @@ function loadGuesses() {
   let g = window.gameSesh.guesses;
   window.gameSesh.wrongGuess = '';
   window.gameSesh.guesses = '';
+  window.gameSesh.guessProgress = [];
   for (var i = 0; i < g.length; i++) {
     submitLetter(g.charAt(i));
   }
@@ -323,6 +336,11 @@ function submitLetter(char) {
       }
     }
   }
+
+  // record correctness of this guess (incremental method)
+  if (!Array.isArray(window.gameSesh.guessProgress))
+    window.gameSesh.guessProgress = [];
+  window.gameSesh.guessProgress.push(found);
 
 
   if (!found) { //letter is not in card name
@@ -465,7 +483,8 @@ function gameLostFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
-          var str = 'Befuddle:\n' + (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
+          let str = 'Befuddle:\n' + buildGuessString() + '\n' +
+            (window.gameSesh.tlv == -1 ? 'Gave Up' : ('X/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '');
           const url = 'https://befuddle.xyz/?cardId=' + window.mtgCard.id + (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '')
           clipboardHandler(linkButton, str, url);
@@ -565,7 +584,7 @@ function gameLostDaily() {
         action: function (linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}\nX${(window.gameSesh.hideBlanks ? '*' : '')}`;
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${buildGuessString()}\nX${(window.gameSesh.hideBlanks ? '*' : '')}`;
           clipboardHandler(linkButton, str, 'https://befuddle.xyz/');
           return false;
         }
@@ -674,7 +693,7 @@ function gameWinDaily() {
         action: function (linkButton) {
           let d = new Date();
           let str =
-            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}`;
+            `Daily Befuddle ${d.toLocaleDateString("en-US")}\n${buildGuessString()}\n${wr}/${window.game.daily.lives}${(window.gameSesh.hideBlanks ? '*' : '')}`;
           clipboardHandler(linkButton, str, 'https://befuddle.xyz/');
           return false;
         }
@@ -742,7 +761,7 @@ function gameWinFree() {
         text: "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
-          var str = 'Befuddle: \n' +
+          let str = 'Befuddle: \n' + buildGuessString() + '\n' +
             wr + (window.gameSesh.tlv == -1 ? (' wrong guess' + (wr == 1 ? '' : 'es')) : ('/' + window.gameSesh.tlv)) +
             (window.gameSesh.hideBlanks ? '*' : '');
           const url = 'https://befuddle.xyz/?cardId=' + window.mtgCard.id + (window.mtgCard.cf != -1 ? ('&cf=' + window.mtgCard.cf) : '')
@@ -768,8 +787,9 @@ function gameWinFree() {
 //handler for the clipboard buttons
 // centralised clipboard write + UI update
 function _doClipboardWrite(linkButton, str) {
+  const output = `${str}\n${url}`;
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(str).then(function () {
+    navigator.clipboard.writeText(output).then(function () {
       linkButton.addClass('displayButton');
       linkButton.setText('Copied');
       linkButton.addClass('btn-dark');
@@ -782,10 +802,10 @@ function _doClipboardWrite(linkButton, str) {
         linkButton.setText('Share');
       }, 3000, linkButton);
     }, function () {
-      clipboardError(str);
+      clipboardError(output);
     });
   } else {
-    clipboardError(str);
+    clipboardError(output);
   }
 }
 
@@ -810,14 +830,14 @@ function clipboardHandler(linkButton, str, url) {
       }, 3000, linkButton);
     }).catch(function () {
       // share failed or was cancelled — fall through to clipboard behaviour
-      _doClipboardWrite(linkButton, str);
+      _doClipboardWrite(linkButton, str, url);
     });
 
     return;
   }
 
   // No native share available — use clipboard
-  _doClipboardWrite(linkButton, str);
+  _doClipboardWrite(linkButton, str, url);
 }
 
 //function to display clipboard error
