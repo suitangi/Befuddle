@@ -786,7 +786,7 @@ function gameWinFree() {
 
 //handler for the clipboard buttons
 // centralised clipboard write + UI update
-function _doClipboardWrite(linkButton, str) {
+function _doClipboardWrite(linkButton, str, url) {
   const output = `${str}\n${url}`;
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(output).then(function () {
