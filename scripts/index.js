@@ -2275,6 +2275,13 @@ function isMobile() {
 async function initializeDiscordApp() {
   console.log("Checking platform environment...");
 
+  window.addEventListener('message', (event) => {
+  if (event.data?.evt === 'READY') {
+    console.log('--- RAW DISCORD HANDSHAKE ---');
+    console.log(JSON.stringify(event.data.data, null, 2));
+  }
+});
+
   // 2. Wait up to 2 seconds for the SDK module to attach to window
   let attempts = 0;
   while (!window.discordSdk && attempts < 20) {
