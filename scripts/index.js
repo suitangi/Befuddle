@@ -1748,16 +1748,7 @@ function mainMenuDisplay() {
       daily: {
         text: '<span class=\"mainMenuText\">Daily Befuddle</span>',
         action: function () {
-          window.game.mode = 'daily';
-          if (Cookies.get('daily')) {
-            window.gameSesh = JSON.parse(Cookies.get('daily'));
-            window.mtgCard = window.gameSesh.card;
-            // if (checkNewDay())
-            //   window.gameSesh.end = true;
-            if (window.gameSesh.end) //seems counterintuitive, but is for reshowing the daily result
-              window.gameSesh.end = false;
-          }
-          loadGame();
+          startDaily();
         }
       },
       free: {
@@ -1778,7 +1769,19 @@ function mainMenuDisplay() {
   });
 }
 
-//functinon to load the game
+//function to start the daily game
+function startDaily() {
+    window.game.mode = 'daily';
+    if (Cookies.get('daily')) {
+      window.gameSesh = JSON.parse(Cookies.get('daily'));
+      window.mtgCard = window.gameSesh.card;
+      if (window.gameSesh.end) //seems counterintuitive, but is for reshowing the daily result
+        window.gameSesh.end = false;
+    }
+    loadGame();
+}
+
+//function to load the game
 function loadGame() {
 
   if (window.game.mode == undefined) {
@@ -2506,6 +2509,8 @@ $(document).ready(function () {
     window.game.mode = 'free';
     window.gameSesh.end = true;
     loadGame();
+  } else if (getParameterByName('daily')) {
+    startDaily();
   } else {
     mainMenuDisplay();
   }
@@ -2515,9 +2520,8 @@ $(document).ready(function () {
 
 //gets date corresponding number for daily befuddle
 function getDateNumber() {
-  d1 = new Date('5/6/2022 0:00');
-  d2 = new Date();
+  const d1 = new Date('5/6/2022 0:00');
+  let d2 = new Date();
   d2.setHours(0, 0, 0);
-  dd = Math.floor((d2.getTime() - d1.getTime()) / 86400000) - 1;
-  return dd;
+  return Math.floor((d2.getTime() - d1.getTime()) / 86400000) - 1;
 }
