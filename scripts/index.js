@@ -2503,7 +2503,6 @@ $(document).ready(function () {
 
   //set game mode
   window.game.mode = '';
-  const entryData = discordSdk.commands.getEntryPointData();
 
   //specific link to card
   if (getParameterByName('cardId')) {
@@ -2511,7 +2510,7 @@ $(document).ready(function () {
     window.gameSesh.end = true;
     loadGame();
   } else if (getParameterByName('daily') ||
-    window.isDiscord && entryData.command_type === 'daily'
+    getParameterByName('custom_id') === 'daily'
   ) {
     console.log('Daily link detected');
     startDaily();
