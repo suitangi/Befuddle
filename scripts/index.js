@@ -2503,13 +2503,16 @@ $(document).ready(function () {
 
   //set game mode
   window.game.mode = '';
+  const entryData = discordSdk.commands.getEntryPointData();
 
   //specific link to card
   if (getParameterByName('cardId')) {
     window.game.mode = 'free';
     window.gameSesh.end = true;
     loadGame();
-  } else if (getParameterByName('daily')) {
+  } else if (getParameterByName('daily') ||
+    window.isDiscord && entryData.command_type === 'daily'
+  ) {
     console.log('Daily link detected');
     startDaily();
   } else {
