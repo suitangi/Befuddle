@@ -2347,6 +2347,9 @@ async function initializeDiscordApp() {
       if (!localStorage.getItem('discordUser')) {
         console.log("No Discord user info found in localStorage, getting user info...");
         getDiscordUserInfo();
+      } else {
+        window.discordUser = JSON.parse(localStorage.getItem('discordUser'));
+        console.log("Discord user info loaded from localStorage:", window.discordUser);
       }
 
     } catch (err) {
@@ -2393,7 +2396,7 @@ async function sendDiscordMessageUpdate() {
     const response = await fetch('/share', {
       method: 'POST',
       body: JSON.stringify({
-        channelId: window.discordSdk.clientId,
+        channelId: window.discordSdk.channelId,
         userId: window.discordUser.id,
         hiddenMode: window.gameSesh.hideBlanks,
         cardArtUrl: window.mtgCard.image_uris ? window.mtgCard.image_uris.art_crop : (window.mtgCard.card_faces ? window.mtgCard.card_faces[0].image_uris.art_crop : ''),
