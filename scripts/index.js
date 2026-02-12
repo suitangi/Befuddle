@@ -333,7 +333,7 @@ function loadCard(data) {
 
   //save loaded game if daily
   if (window.game.mode == 'daily') {
-    Cookies.set('daily', JSON.stringify(window.gameSesh), {
+    setStorage('daily', JSON.stringify(window.gameSesh), {
       expires: 365
     });
   }
@@ -405,7 +405,7 @@ function submitLetter(char) {
         window.stats[window.game.mode].acc[1]++;
       else
         window.stats[window.game.mode].acc[3]++;
-      Cookies.set(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
+      setStorage(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
         expires: 365
       });
     }
@@ -448,7 +448,7 @@ function submitLetter(char) {
         window.stats[window.game.mode].acc[0]++;
       else
         window.stats[window.game.mode].acc[2]++;
-      Cookies.set(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
+      setStorage(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
         expires: 365
       });
     }
@@ -471,7 +471,7 @@ function submitLetter(char) {
   }
 
   //save game session data to respective mode cookie
-  Cookies.set(window.game.mode, JSON.stringify(window.gameSesh), {
+  setStorage(window.game.mode, JSON.stringify(window.gameSesh), {
     expires: 365
   });
 }
@@ -502,7 +502,7 @@ function gameLostFree() {
     } else {
       window.stats.free.wr[1][window.gameSesh.tlv - 1][1]++;
     }
-    Cookies.set('freeStats', JSON.stringify(window.stats.free), {
+    setStorage('freeStats', JSON.stringify(window.stats.free), {
       expires: 365
     });
   }
@@ -572,7 +572,7 @@ function gameLostDaily() {
     } else {
       window.stats.daily.WL[3]++;
     }
-    Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+    setStorage('dailyStats', JSON.stringify(window.stats.daily), {
       expires: 365
     });
   }
@@ -609,8 +609,8 @@ function gameLostDaily() {
         action: function (linkButton) {
           window.gameSesh.end = true;
           window.game.mode = 'free';
-          if (Cookies.get('free')) {
-            window.gameSesh = JSON.parse(Cookies.get('free'));
+          if (getStorage('free')) {
+            window.gameSesh = JSON.parse(getStorage('free'));
             window.mtgCard = window.gameSesh.card;
           }
           if (!window.gameSesh.end)
@@ -667,7 +667,7 @@ function gameWinDaily() {
       window.stats.daily.score[1][wr]++;
       window.stats.daily.WL[2]++;
     }
-    Cookies.set('dailyStats', JSON.stringify(window.stats.daily), {
+    setStorage('dailyStats', JSON.stringify(window.stats.daily), {
       expires: 365
     });
 
@@ -718,8 +718,8 @@ function gameWinDaily() {
         action: function (linkButton) {
           window.gameSesh.end = true;
           window.game.mode = 'free';
-          if (Cookies.get('free')) {
-            window.gameSesh = JSON.parse(Cookies.get('free'));
+          if (getStorage('free')) {
+            window.gameSesh = JSON.parse(getStorage('free'));
             window.mtgCard = window.gameSesh.card;
           }
           if (!window.gameSesh.end)
@@ -781,7 +781,7 @@ function gameWinFree() {
       colors: window.game.theme == 'dark' ? ['#eee'] : ['#333']
     });
   }
-  Cookies.set('freeStats', JSON.stringify(window.stats.free), {
+  setStorage('freeStats', JSON.stringify(window.stats.free), {
     expires: 365
   });
 
@@ -1025,7 +1025,7 @@ function settingsModal() {
         let hi = this.$content.find('#hmInput');
         hi.on('input', function () {
           window.game.daily.hideBlanks = this.checked;
-          Cookies.set('befuddle', JSON.stringify(window.game), {
+          setStorage('befuddle', JSON.stringify(window.game), {
             expires: 365
           }); //save game settings data to cookies
         });
@@ -1034,7 +1034,7 @@ function settingsModal() {
         di.on('input', function () {
           window.game.theme = (this.checked ? 'dark' : 'light');
           setTheme();
-          Cookies.set('befuddle', JSON.stringify(window.game), {
+          setStorage('befuddle', JSON.stringify(window.game), {
             expires: 365
           }); //save game settings data to cookies
         });
@@ -1043,7 +1043,7 @@ function settingsModal() {
           let vi = this.$content.find('#vibraInput');
           vi.on('input', function () {
             window.game.vibra = this.checked;
-            Cookies.set('befuddle', JSON.stringify(window.game), {
+            setStorage('befuddle', JSON.stringify(window.game), {
               expires: 365
             }); //save game settings data to cookies
           });
@@ -1092,7 +1092,7 @@ function settingsModal() {
             document.getElementById('livesdisplay').innerText = 'Off';
             window.game.free.lives = -1;
           }
-          Cookies.set('befuddle', JSON.stringify(window.game), {
+          setStorage('befuddle', JSON.stringify(window.game), {
             expires: 365
           }); //save game settings data to cookies
         });
@@ -1102,7 +1102,7 @@ function settingsModal() {
           let manastates = ['Show Nothing', 'Show Colors', 'Show Mana Cost'];
           window.game.free.manaState = parseInt(this.value);
           document.getElementById('manadisplay').innerText = manastates[parseInt(this.value)];
-          Cookies.set('befuddle', JSON.stringify(window.game), {
+          setStorage('befuddle', JSON.stringify(window.game), {
             expires: 365
           }); //save game settings data to cookies
         });
@@ -1110,7 +1110,7 @@ function settingsModal() {
         let hi = this.$content.find('#hideInput');
         hi.on('input', function () {
           window.game.free.hideBlanks = this.checked;
-          Cookies.set('befuddle', JSON.stringify(window.game), {
+          setStorage('befuddle', JSON.stringify(window.game), {
             expires: 365
           }); //save game settings data to cookies
         });
@@ -1119,7 +1119,7 @@ function settingsModal() {
         di.on('input', function () {
           window.game.theme = (this.checked ? 'dark' : 'light');
           setTheme();
-          Cookies.set('befuddle', JSON.stringify(window.game), {
+          setStorage('befuddle', JSON.stringify(window.game), {
             expires: 365
           }); //save game settings data to cookies
         });
@@ -1127,7 +1127,7 @@ function settingsModal() {
           let vi = this.$content.find('#vibraInput');
           vi.on('input', function () {
             window.game.vibra = this.checked;
-            Cookies.set('befuddle', JSON.stringify(window.game), {
+            setStorage('befuddle', JSON.stringify(window.game), {
               expires: 365
             }); //save game settings data to cookies
           });
@@ -1351,7 +1351,7 @@ function menuModal() {
             } else if (window.game.mode == 'free')
               gameLostFree();
 
-            Cookies.set(window.game.mode, JSON.stringify(window.gameSesh), {
+            setStorage(window.game.mode, JSON.stringify(window.gameSesh), {
               expires: 365
             });
             menuD.close();
@@ -1612,9 +1612,9 @@ function reportBug() {
     onContentReady: function () {
       document.getElementById('biInput').value = JSON.stringify(getBrowserInfo());
       document.getElementById('cgInput').value = JSON.stringify(window.gameSesh);
-      document.getElementById('gsInput').value = Cookies.get('befuddle');
-      document.getElementById('dailyInput').value = Cookies.get('daily');
-      document.getElementById('freeInput').value = Cookies.get('free');
+      document.getElementById('gsInput').value = getStorage('befuddle');
+      document.getElementById('dailyInput').value = getStorage('daily');
+      document.getElementById('freeInput').value = getStorage('free');
 
       document.getElementById('gameBugButton').addEventListener('click', function () {
         document.getElementById('bTypeInput').value = "Gameplay";
@@ -1786,8 +1786,8 @@ function mainMenuDisplay() {
         text: '<span class=\"mainMenuText\">Free Play</span>',
         action: function () {
           window.game.mode = 'free';
-          if (Cookies.get('free')) {
-            window.gameSesh = JSON.parse(Cookies.get('free'));
+          if (getStorage('free')) {
+            window.gameSesh = JSON.parse(getStorage('free'));
             window.mtgCard = window.gameSesh.card;
           }
           if (!window.gameSesh.end)
@@ -1803,8 +1803,8 @@ function mainMenuDisplay() {
 //function to start the daily game
 function startDaily() {
     window.game.mode = 'daily';
-    if (Cookies.get('daily')) {
-      window.gameSesh = JSON.parse(Cookies.get('daily'));
+    if (getStorage('daily')) {
+      window.gameSesh = JSON.parse(getStorage('daily'));
       window.mtgCard = window.gameSesh.card;
       if (window.gameSesh.end) //seems counterintuitive, but is for reshowing the daily result
         window.gameSesh.end = false;
@@ -1831,7 +1831,7 @@ function loadGame() {
       window.gameSesh.end = true;
       document.getElementById('seeCard').style = '';
       gameLostDaily();
-      Cookies.set('daily', JSON.stringify(window.gameSesh), {
+      setStorage('daily', JSON.stringify(window.gameSesh), {
         expires: 365
       });
     }
@@ -1852,7 +1852,7 @@ function loadGame() {
       document.getElementById("imageLoading").style = "";
       let d = new Date();
       // window.game.daily.timestamp = d.getTime();
-      Cookies.set('befuddle', JSON.stringify(window.game), {
+      setStorage('befuddle', JSON.stringify(window.game), {
         expires: 365
       });
       if (getDateNumber() - data.start >= data.list.length) {
