@@ -2343,6 +2343,12 @@ async function initializeDiscordApp() {
       await discordSdk.ready();
       console.log("Discord Handshake Complete!");
       // Proceed with Discord-specific features (Auth, etc.)
+
+      if (!localStorage.getItem('discordUser')) {
+        console.log("No Discord user info found in localStorage, getting user info...");
+        getDiscordUserInfo();
+      }
+
     } catch (err) {
       console.error("Discord SDK failed to ready:", err);
     }
@@ -2505,16 +2511,9 @@ $(document).ready(function () {
     window.game.theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     window.firstTime = true;
     setTheme();
-
-    getDiscordUserInfo();
   } else {
     window.firstTime = false;
     window.game = JSON.parse(getStorage('befuddle'));
-
-    if (window.isDiscord && !localStorage.getItem('discordUser')) {
-      console.log("No Discord user info found in localStorage, getting user info...");
-      getDiscordUserInfo();
-    }
 
     if (window.game.theme == '')
       window.game.theme = 'light';
