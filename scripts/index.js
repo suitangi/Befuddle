@@ -2357,6 +2357,7 @@ async function initializeDiscordApp() {
  * This is to get the user's Discord info if they're playing in the Discord Activity
  */
 async function getDiscordUserInfo() {
+  console.log("Attempting to get Discord user info...");
   if (window.isDiscord) {
     const { code } = await window.discordSdk.commands.authorize({
       client_id: window.discordSdk.clientId,
@@ -2511,6 +2512,7 @@ $(document).ready(function () {
     window.game = JSON.parse(getStorage('befuddle'));
 
     if (window.isDiscord && !localStorage.getItem('discordUser')) {
+      console.log("No Discord user info found in localStorage, getting user info...");
       getDiscordUserInfo();
     }
 
