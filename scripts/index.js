@@ -2410,7 +2410,12 @@ async function sendDiscordMessageUpdate() {
 
 async function getDiscordLaunchConfig() {
   if (window.isDiscord) {
-    const { channelId, userId } = window.discordSdk;
+    if (!window.discordUser) {
+      console.error("No Discord user info found, cannot get launch config");
+      return;
+    }
+    const { channelId } = window.discordSdk;
+    const userId = window.discordUser.id;
     const res = await fetch(`/api/config?channelId=${channelId}&userId=${userId}`);
     const intent = await res.json();
 
