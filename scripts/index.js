@@ -333,9 +333,7 @@ function loadCard(data) {
 
   //save loaded game if daily
   if (window.game.mode == 'daily') {
-    setStorage('daily', JSON.stringify(window.gameSesh), {
-      expires: 365
-    });
+    setStorage('daily', JSON.stringify(window.gameSesh)); //save daily game session data to local storage
   }
 }
 
@@ -405,9 +403,7 @@ function submitLetter(char) {
         window.stats[window.game.mode].acc[1]++;
       else
         window.stats[window.game.mode].acc[3]++;
-      setStorage(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
-        expires: 365
-      });
+      setStorage(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode])); //save game stats to local storage
     }
 
     if (window.lives != -1) {
@@ -448,9 +444,7 @@ function submitLetter(char) {
         window.stats[window.game.mode].acc[0]++;
       else
         window.stats[window.game.mode].acc[2]++;
-      setStorage(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode]), {
-        expires: 365
-      });
+      setStorage(window.game.mode + 'Stats', JSON.stringify(window.stats[window.game.mode])); //save game stats to local storage
     }
 
     //player win!
@@ -471,9 +465,7 @@ function submitLetter(char) {
   }
 
   //save game session data to respective mode cookie
-  setStorage(window.game.mode, JSON.stringify(window.gameSesh), {
-    expires: 365
-  });
+  setStorage(window.game.mode, JSON.stringify(window.gameSesh)); //save game session data to local storage
 }
 
 //handler for see card button
@@ -502,9 +494,7 @@ function gameLostFree() {
     } else {
       window.stats.free.wr[1][window.gameSesh.tlv - 1][1]++;
     }
-    setStorage('freeStats', JSON.stringify(window.stats.free), {
-      expires: 365
-    });
+    setStorage('freeStats', JSON.stringify(window.stats.free)); //save free mode stats to local storage
   }
 
   $.confirm({
@@ -572,9 +562,7 @@ function gameLostDaily() {
     } else {
       window.stats.daily.WL[3]++;
     }
-    setStorage('dailyStats', JSON.stringify(window.stats.daily), {
-      expires: 365
-    });
+    setStorage('dailyStats', JSON.stringify(window.stats.daily)); //save daily stats to local storage
   }
 
   let imgSrc = 'https://storage.ko-fi.com/cdn/cup-border.png';
@@ -668,9 +656,7 @@ function gameWinDaily() {
       window.stats.daily.score[1][wr]++;
       window.stats.daily.WL[2]++;
     }
-    setStorage('dailyStats', JSON.stringify(window.stats.daily), {
-      expires: 365
-    });
+    setStorage('dailyStats', JSON.stringify(window.stats.daily)); //save daily stats to local storage
 
     //vibrate if on
     if (window.game.vibra && canVibrate)
@@ -783,9 +769,7 @@ function gameWinFree() {
       colors: window.game.theme == 'dark' ? ['#eee'] : ['#333']
     });
   }
-  setStorage('freeStats', JSON.stringify(window.stats.free), {
-    expires: 365
-  });
+  setStorage('freeStats', JSON.stringify(window.stats.free)); //save free mode stats to local storage
 
   $.confirm({
     title: `<span class=\"modalText\">${getWinTerms(wr)}${(wr != 0 ? (` — ${wr} wrong`) : '')}</span>`,
@@ -1027,27 +1011,21 @@ function settingsModal() {
         let hi = this.$content.find('#hmInput');
         hi.on('input', function () {
           window.game.daily.hideBlanks = this.checked;
-          setStorage('befuddle', JSON.stringify(window.game), {
-            expires: 365
-          }); //save game settings data to cookies
+          setStorage('befuddle', JSON.stringify(window.game)); //save game settings data to local storage
         });
 
         let di = this.$content.find('#darkInput');
         di.on('input', function () {
           window.game.theme = (this.checked ? 'dark' : 'light');
           setTheme();
-          setStorage('befuddle', JSON.stringify(window.game), {
-            expires: 365
-          }); //save game settings data to cookies
+          setStorage('befuddle', JSON.stringify(window.game)); //save game settings data to local storage
         });
 
         if (canVibrate) {
           let vi = this.$content.find('#vibraInput');
           vi.on('input', function () {
             window.game.vibra = this.checked;
-            setStorage('befuddle', JSON.stringify(window.game), {
-              expires: 365
-            }); //save game settings data to cookies
+            setStorage('befuddle', JSON.stringify(window.game)); //save game settings data to local storage
           });
         }
       }
@@ -1094,9 +1072,7 @@ function settingsModal() {
             document.getElementById('livesdisplay').innerText = 'Off';
             window.game.free.lives = -1;
           }
-          setStorage('befuddle', JSON.stringify(window.game), {
-            expires: 365
-          }); //save game settings data to cookies
+          setStorage('befuddle', JSON.stringify(window.game)); //save game settings data to local storage
         });
 
         let mi = this.$content.find('#manaInput');
@@ -1104,34 +1080,26 @@ function settingsModal() {
           let manastates = ['Show Nothing', 'Show Colors', 'Show Mana Cost'];
           window.game.free.manaState = parseInt(this.value);
           document.getElementById('manadisplay').innerText = manastates[parseInt(this.value)];
-          setStorage('befuddle', JSON.stringify(window.game), {
-            expires: 365
-          }); //save game settings data to cookies
+          setStorage('befuddle', JSON.stringify(window.game)); //save game settings data to local storage
         });
 
         let hi = this.$content.find('#hideInput');
         hi.on('input', function () {
           window.game.free.hideBlanks = this.checked;
-          setStorage('befuddle', JSON.stringify(window.game), {
-            expires: 365
-          }); //save game settings data to cookies
+          setStorage('befuddle', JSON.stringify(window.game)); //save game settings data to local storage
         });
 
         let di = this.$content.find('#darkInput');
         di.on('input', function () {
           window.game.theme = (this.checked ? 'dark' : 'light');
           setTheme();
-          setStorage('befuddle', JSON.stringify(window.game), {
-            expires: 365
-          }); //save game settings data to cookies
+          setStorage('befuddle', JSON.stringify(window.game)); //save game settings data to local storage
         });
         if (canVibrate) {
           let vi = this.$content.find('#vibraInput');
           vi.on('input', function () {
             window.game.vibra = this.checked;
-            setStorage('befuddle', JSON.stringify(window.game), {
-              expires: 365
-            }); //save game settings data to cookies
+            setStorage('befuddle', JSON.stringify(window.game)); //save game settings data to local storage
           });
         }
       }
@@ -1353,9 +1321,7 @@ function menuModal() {
             } else if (window.game.mode == 'free')
               gameLostFree();
 
-            setStorage(window.game.mode, JSON.stringify(window.gameSesh), {
-              expires: 365
-            });
+            setStorage(window.game.mode, JSON.stringify(window.gameSesh)); //save game session data to local storage
             menuD.close();
           }
         },
@@ -1808,8 +1774,7 @@ function startDaily() {
   if (getStorage('daily')) {
     window.gameSesh = JSON.parse(getStorage('daily'));
     window.mtgCard = window.gameSesh.card;
-    if (window.gameSesh.end) //seems counterintuitive, but is for reshowing the daily result
-      window.gameSesh.end = false;
+    window.gameSesh.end = false; //seems counterintuitive, but is for reshowing the daily result
   }
   loadGame();
 }
@@ -1833,9 +1798,7 @@ function loadGame() {
       window.gameSesh.end = true;
       document.getElementById('seeCard').style = '';
       gameLostDaily();
-      setStorage('daily', JSON.stringify(window.gameSesh), {
-        expires: 365
-      });
+      setStorage('daily', JSON.stringify(window.gameSesh)); //save daily game session data to local storage
     }
     return; //don't load a new game
   } else {
@@ -1861,7 +1824,7 @@ function loadGame() {
         console.error('Daily Befuddle needs to be updated, please report a bug to Suitangi');
         $.dialog({
           title: '<span class=\"modalTitle\">Error</span>',
-          content: '<span class=\"modalText\">Daily Befuddle needs to be updated, please contact us on Twitter or on discord!</span>',
+          content: '<span class=\"modalText\">Daily Befuddle needs to be updated, please contact us on <a href="https://x.com/BefuddleMTG" target="_blank">Twitter</a> or on Discord!</span>',
           type: 'red',
           theme: window.game.theme,
           animation: 'top',
@@ -2394,7 +2357,7 @@ async function getDiscordUserInfo() {
 }
 
 async function sendDiscordMessageUpdate() {
-  if (window.isDiscord) {
+  if (window.isDiscord && !window.gameSesh.discordSent) {
     const response = await fetch('/share', {
       method: 'POST',
       body: JSON.stringify({
@@ -2406,6 +2369,8 @@ async function sendDiscordMessageUpdate() {
         guessProgress: window.gameSesh.guessProgress
       })
     });
+    window.gameSesh.discordSent = true;
+    setStorage('daily', JSON.stringify(window.gameSesh));
   }
 }
 
@@ -2503,9 +2468,9 @@ $(document).ready(function () {
 
   if (getStorage('daily')) { //check for new day in daily
     let tmp = JSON.parse(getStorage('daily'));
-    let dday = new Date();
-    if (tmp.doy == undefined || getDateNumber() != tmp.doy)
+    if (tmp.doy == undefined || getDateNumber() != tmp.doy) {
       removeStorage('daily');
+    }
   }
 
   //set up storage
