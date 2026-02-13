@@ -1,6 +1,6 @@
 // --- end migration utilities ---
 const canVibrate = window.navigator.vibrate;
-const befuddleAppVersion = "2026.2.12";
+const befuddleAppVersion = "2026.2.13.129";
 const tcgSVG = '<svg class="tcg-svg" version="1.1" viewBox="0.0 0.0 144.0 120.0" fill="none" stroke="none" stroke-linecap="square" stroke-miterlimit="10" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><clipPath id="p.0"><path d="m0 0l144.0 0l0 120.0l-144.0 0l0 -120.0z" clip-rule="nonzero"/></clipPath><g clip-path="url(#p.0)"><path fill="#000000" fill-opacity="0.0" d="m0 0l144.0 0l0 120.0l-144.0 0z" fill-rule="evenodd"/><path fill="#ffffff" d="m3.6983974 43.321297l0 0c-2.0432932 -5.575428 0.84098935 -11.693382 6.4422255 -13.664833l40.56652 -14.278071l0 0c2.689808 -0.94672394 5.6592407 -0.79107285 8.255051 0.4327116c2.5958138 1.2237835 4.6053696 3.4154549 5.5865936 6.0928707l21.734444 59.30565c2.0432892 5.575424 -0.8409958 11.693382 -6.44223 13.664833l-40.56652 14.278069c-5.6012383 1.9714508 -11.798353 -0.95014954 -13.841646 -6.5255814z" fill-rule="evenodd"/><path stroke="#333333" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="butt" d="m3.6983974 43.321297l0 0c-2.0432932 -5.575428 0.84098935 -11.693382 6.4422255 -13.664833l40.56652 -14.278071l0 0c2.689808 -0.94672394 5.6592407 -0.79107285 8.255051 0.4327116c2.5958138 1.2237835 4.6053696 3.4154549 5.5865936 6.0928707l21.734444 59.30565c2.0432892 5.575424 -0.8409958 11.693382 -6.44223 13.664833l-40.56652 14.278069c-5.6012383 1.9714508 -11.798353 -0.95014954 -13.841646 -6.5255814z" fill-rule="evenodd"/><path fill="#ffffff" d="m79.253204 21.990696l0 0c2.013565 -5.6003723 8.205383 -8.563349 13.829811 -6.6179914l40.734505 14.089097l0 0c2.700943 0.93419456 4.9071503 2.8984814 6.1332703 5.460745c1.22612 2.5622635 1.3717194 5.512615 0.4047699 8.202007l-21.369644 59.435795c-2.013565 5.6003723 -8.205383 8.563347 -13.829819 6.6179886l-40.734497 -14.089096c-5.6244316 -1.9453583 -8.551613 -8.062378 -6.538044 -13.66275z" fill-rule="evenodd"/><path stroke="#333333" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="butt" d="m79.253204 21.990696l0 0c2.013565 -5.6003723 8.205383 -8.563349 13.829811 -6.6179914l40.734505 14.089097l0 0c2.700943 0.93419456 4.9071503 2.8984814 6.1332703 5.460745c1.22612 2.5622635 1.3717194 5.512615 0.4047699 8.202007l-21.369644 59.435795c-2.013565 5.6003723 -8.205383 8.563347 -13.829819 6.6179886l-40.734497 -14.089096c-5.6244316 -1.9453583 -8.551613 -8.062378 -6.538044 -13.66275z" fill-rule="evenodd"/><path fill="#ffffff" d="m36.106525 18.050085l0 0c0 -5.9491396 4.822731 -10.77187 10.77187 -10.77187l43.08618 0l0 0c2.8568802 0 5.5967484 1.1348906 7.616867 3.1550074c2.020111 2.0201178 3.1550064 4.759984 3.1550064 7.6168623l0 62.960197c0 5.949135 -4.822731 10.771866 -10.771873 10.771866l-43.08618 0c-5.9491386 0 -10.77187 -4.822731 -10.77187 -10.771866z" fill-rule="evenodd"/><path stroke="#333333" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="butt" d="m36.106525 18.050085l0 0c0 -5.9491396 4.822731 -10.77187 10.77187 -10.77187l43.08618 0l0 0c2.8568802 0 5.5967484 1.1348906 7.616867 3.1550074c2.020111 2.0201178 3.1550064 4.759984 3.1550064 7.6168623l0 62.960197c0 5.949135 -4.822731 10.771866 -10.771873 10.771866l-43.08618 0c-5.9491386 0 -10.77187 -4.822731 -10.77187 -10.771866z" fill-rule="evenodd"/><path fill="#333333" d="m79.776436 24.556463l-4.074669 14.430754l-3.3064575 -1.0685692l-1.3463058 14.468933l-3.5430756 -0.83686066l-5.1932907 21.343666l-3.7317772 -23.917072l4.118435 1.2251434l-2.120121 -15.0548935l5.1785316 1.0673485l-2.2834625 -15.851421z" fill-rule="evenodd"/><path stroke="#303030" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="butt" d="m79.776436 24.556463l-4.074669 14.430754l-3.3064575 -1.0685692l-1.3463058 14.468933l-3.5430756 -0.83686066l-5.1932907 21.343666l-3.7317772 -23.917072l4.118435 1.2251434l-2.120121 -15.0548935l5.1785316 1.0673485l-2.2834625 -15.851421z" fill-rule="evenodd"/></g></svg>';
 const DISCORD_APPLICATION_ID = '1389389854747525152';
 
@@ -2430,6 +2430,7 @@ async function getDiscordLaunchConfig() {
     const userId = window.discordUser.id;
     const res = await fetch(`/api/config?channelId=${channelId}&userId=${userId}`);
     const intent = await res.json();
+    console.log("Launch intent received from backend:", intent);
 
     if (intent.mode === 'daily') {
       console.log("Launched with intent for Daily Befuddle");
@@ -2445,7 +2446,7 @@ async function getDiscordLaunchConfig() {
 }
 
 //start script
-$(document).ready(function () {
+$(document).ready(async function () {
   console.log('Befuddle version: ' + befuddleAppVersion);
   console.log('https://tinyurl.com/specialcardforbefuddle');
 
@@ -2517,7 +2518,7 @@ $(document).ready(function () {
 
   window.isDiscord = false;
 
-  initializeDiscordApp();
+  await initializeDiscordApp();
 
 
   for (var i = 0; i < 25; i++) {
@@ -2621,7 +2622,7 @@ $(document).ready(function () {
   window.game.mode = '';
 
   //get Discord activity launch configs
-  let discordLaunchParam = getDiscordLaunchConfig();
+  let discordLaunchParam = await getDiscordLaunchConfig();
 
   //specific link to card
   if (getParameterByName('cardId') || discordLaunchParam === 'cardId') {
@@ -2637,7 +2638,6 @@ $(document).ready(function () {
   } else {
     mainMenuDisplay();
   }
-
 
 });
 
