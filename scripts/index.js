@@ -1860,6 +1860,8 @@ function loadGame() {
     function freeCard(data) {
       if (getParameterByName('cardId'))
         requestCard(getParameterByName('cardId'));
+      else if (window.discordCardId)
+        requestCard(window.discordCardId);
       else
         requestCard();
     }
@@ -2420,7 +2422,10 @@ async function getDiscordLaunchConfig() {
     const intent = await res.json();
 
     if (intent.mode === 'daily') {
-      return('daily');
+      return 'daily';
+    } else if (intent.mode === 'free' && intent.cardId) {
+      window.discordCardId = intent.cardId;
+      return 'cardId';
     } else {
       console.log("Loading standard Befuddle...");
     }
@@ -2607,12 +2612,11 @@ $(document).ready(function () {
   let discordLaunchParam = getDiscordLaunchConfig();
 
   //specific link to card
-  if (getParameterByName('cardId')) {
+  if (getParameterByName('cardId') ||  discordLaunchParam != 'cardId') {
     window.game.mode = 'free';
     window.gameSesh.end = true;
     loadGame();
-  } else if (getParameterByName('daily')
-  ) {
+  } else if (getParameterByName('daily')) {
     console.log('Daily link detected');
     startDaily();
   } else if (discordLaunchParam === 'daily') {
