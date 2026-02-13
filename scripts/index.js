@@ -2400,6 +2400,7 @@ async function sendDiscordMessageUpdate() {
         channelId: window.discordSdk.channelId,
         userId: window.discordUser.id,
         hiddenMode: window.gameSesh.hideBlanks,
+        cardId: window.mtgCard.id,
         cardArtUrl: window.mtgCard.image_uris ? window.mtgCard.image_uris.art_crop : (window.mtgCard.card_faces ? window.mtgCard.card_faces[0].image_uris.art_crop : ''),
         lives: window.game.mode == 'daily' ? window.game.daily.lives - window.gameSesh.wrongGuess.length : undefined,
         guessProgress: window.gameSesh.guessProgress
@@ -2612,7 +2613,7 @@ $(document).ready(function () {
   let discordLaunchParam = getDiscordLaunchConfig();
 
   //specific link to card
-  if (getParameterByName('cardId') ||  discordLaunchParam != 'cardId') {
+  if (getParameterByName('cardId') ||  discordLaunchParam === 'cardId') {
     window.game.mode = 'free';
     window.gameSesh.end = true;
     loadGame();
