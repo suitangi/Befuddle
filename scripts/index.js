@@ -497,6 +497,10 @@ function gameLostFree() {
     setStorage('freeStats', JSON.stringify(window.stats.free)); //save free mode stats to local storage
   }
 
+  if (window.isDiscord) {
+    sendDiscordMessageUpdate();
+  };
+
   $.confirm({
     title: "<span class=\"modalTitle\">Totally Lost</span>",
     content: getCardHtml(),
@@ -742,6 +746,10 @@ function gameWinDaily() {
 function gameWinFree() {
 
   let wr = window.gameSesh.wrongGuess.length;
+
+  if (window.isDiscord) {
+    sendDiscordMessageUpdate();
+  };
 
   if (!window.gameSesh.hideBlanks) {
     if (wr == 0)
@@ -2397,12 +2405,13 @@ async function sendDiscordMessageUpdate() {
     const response = await fetch('/share', {
       method: 'POST',
       body: JSON.stringify({
+        mode: window.game.mode,
         channelId: window.discordSdk.channelId,
         userId: window.discordUser.id,
         hiddenMode: window.gameSesh.hideBlanks,
         cardId: window.mtgCard.id,
         cardArtUrl: window.mtgCard.image_uris ? window.mtgCard.image_uris.art_crop : (window.mtgCard.card_faces ? window.mtgCard.card_faces[0].image_uris.art_crop : ''),
-        lives: window.game.mode == 'daily' ? window.game.daily.lives - window.gameSesh.wrongGuess.length : undefined,
+        lives: window.gameSesh.tlv - window.gameSesh.wrongGuess.length,
         guessProgress: window.gameSesh.guessProgress
       })
     });
@@ -2613,7 +2622,7 @@ $(document).ready(function () {
   let discordLaunchParam = getDiscordLaunchConfig();
 
   //specific link to card
-  if (getParameterByName('cardId') ||  discordLaunchParam === 'cardId') {
+  if (getParameterByName('cardId') || discordLaunchParam === 'cardId') {
     window.game.mode = 'free';
     window.gameSesh.end = true;
     loadGame();
