@@ -2333,26 +2333,60 @@ async function initializeDiscordApp() {
 async function getDiscordUserInfo() {
   console.log("Attempting to get Discord user info...");
   if (window.isDiscord) {
-    const { code } = await window.discordSdk.commands.authorize({
-      client_id: window.discordSdk.clientId,
-      response_type: "code",
-      scope: ["identify"],
-      prompt: "none"
-    });
+    try {
+      const { code } = await window.discordSdk.commands.authorize({
+        client_id: window.discordSdk.clientId,
+        response_type: "code",
+        scope: ["identify"],
+        prompt: "none"
+      });
 
-    const response = await fetch('/token', {
-      method: 'POST',
-      body: JSON.stringify({ code }),
-    });
-    const data = await response.json();
-    const token = data.access_token;
-    const auth = await window.discordSdk.commands.authenticate({
-      access_token: token,
-    });
-    console.log("User ID:", auth.user.id);
-    console.log("Username:", auth.user.username);
-    window.discordUser = auth.user;
-    localStorage.setItem('discordUser', JSON.stringify(auth.user));
+      const response = await fetch('/api/token', {
+        method: 'POST',
+        body: JSON.stringify({ code }),
+      });
+      const data = await response.json();
+      const token = data.access_token;
+      const auth = await window.discordSdk.commands.authenticate({
+        access_token: token,
+      });
+      if (!auth.user || !auth.user.id || !auth.user.username) {
+        throw new Error('Missing Discord user info');
+      }
+      console.log("User ID:", auth.user.id);
+      console.log("Username:", auth.user.username);
+      window.discordUser = auth.user;
+      localStorage.setItem('discordUser', JSON.stringify(auth.user));
+    } catch (err) {
+      console.error("Discord User Authorization Failed:", err);
+      $.dialog({
+        title: '<span class="modalTitle">Error</span>',
+        content: '<span class="modalText">Discord User Authorization Failed, some features may not work correctly.</span>',
+        type: 'red',
+        theme: window.game.theme,
+        animation: 'top',
+        closeAnimation: 'top',
+        animateFromElement: false,
+        boxWidth: 'min(400px, 80%)',
+        draggable: false,
+        useBootstrap: false,
+        typeAnimated: true,
+        backgroundDismiss: true,
+        buttons: {
+          retry: {
+            text: 'Retry',
+            btnClass: 'btn-blue',
+            action: function () {
+              getDiscordUserInfo();
+            }
+          },
+          close: {
+            text: 'Close',
+            btnClass: 'btn-default'
+          }
+        }
+      });
+    }
   }
 }
 
@@ -2365,12 +2399,26 @@ async function sendDiscordMessageUpdate() {
         userId: window.discordUser.id,
         hiddenMode: window.gameSesh.hideBlanks,
         cardArtUrl: window.mtgCard.image_uris ? window.mtgCard.image_uris.art_crop : (window.mtgCard.card_faces ? window.mtgCard.card_faces[0].image_uris.art_crop : ''),
-        lives: window.game.mode == 'daily'? window.game.daily.lives - window.gameSesh.wrongGuess.length : undefined,
+        lives: window.game.mode == 'daily' ? window.game.daily.lives - window.gameSesh.wrongGuess.length : undefined,
         guessProgress: window.gameSesh.guessProgress
       })
     });
     window.gameSesh.discordSent = true;
     setStorage('daily', JSON.stringify(window.gameSesh));
+  }
+}
+
+async function getDiscordLaunchConfig() {
+  if (window.isDiscord) {
+    const { channelId, userId } = window.discordSdk;
+    const res = await fetch(`/api/config?channelId=${channelId}&userId=${userId}`);
+    const intent = await res.json();
+
+    if (intent.mode === 'daily') {
+      return('daily');
+    } else {
+      console.log("Loading standard Befuddle...");
+    }
   }
 }
 
@@ -2550,15 +2598,20 @@ $(document).ready(function () {
   //set game mode
   window.game.mode = '';
 
+  //get Discord activity launch configs
+  let discordLaunchParam = getDiscordLaunchConfig();
+
   //specific link to card
   if (getParameterByName('cardId')) {
     window.game.mode = 'free';
     window.gameSesh.end = true;
     loadGame();
-  } else if (getParameterByName('daily') ||
-    getParameterByName('custom_id') === 'daily'
+  } else if (getParameterByName('daily')
   ) {
     console.log('Daily link detected');
+    startDaily();
+  } else if (discordLaunchParam === 'daily') {
+    console.log('Discord daily trigger detected');
     startDaily();
   } else {
     mainMenuDisplay();
