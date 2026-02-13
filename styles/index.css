@@ -148,6 +148,146 @@ body {
   background-color: var(--bg);
 }
 
+/* Full-screen Overlay (Centers everything) */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #1e1e1e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000000;
+  transition: opacity 0.4s ease;
+}
+
+.loading-content {
+  text-align: center;
+  font-family: 'Beleren Bold';
+  /* Ensure the content container doesn't block the centering */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container for the cards */
+.card-deck {
+  position: relative;
+  width: 60px;
+  height: 85px;
+  left: -30px;
+  margin-bottom: 30px;
+}
+
+/* Base Card Design */
+.card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #4a3b2a;
+  /* Dark MtG Brown */
+  border: 3px solid #1a110a;
+  /* Darker Border */
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+
+  /* Flexbox to center the oval */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* The Animation */
+  animation: shuffle-rotate 1.5s infinite ease-in-out;
+}
+
+/* The "Oval" on the back (MtG Style) */
+.card::after {
+  content: '';
+  display: block;
+  width: 75%;
+  height: 85%;
+  background: linear-gradient(135deg, #8c6a4a, #5e402b);
+  /* Gradient Brown */
+  border-radius: 50%;
+  /* Makes it an oval */
+  border: 2px solid #2e1d10;
+}
+
+/* Stagger the animation so they fan out */
+.card:nth-child(1) {
+  animation-delay: 0.0s;
+}
+
+.card:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.card:nth-child(3) {
+  animation-delay: 1.0s;
+}
+
+/* The Rotating Shuffle Animation */
+@keyframes shuffle-rotate {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    z-index: 10;
+    /* Top of stack */
+  }
+
+  40% {
+    /* Slide right and rotate */
+    transform: translate(50px, -5px) rotate(15deg);
+    z-index: 10;
+  }
+
+  50% {
+    /* Drop to back */
+    transform: translate(50px, -5px) rotate(15deg);
+    z-index: 0;
+  }
+
+  75% {
+    /* Slide back to center, still slightly rotated for organic feel */
+    transform: translate(0, 0) rotate(-5deg);
+    z-index: 0;
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+    z-index: 0;
+  }
+}
+
+/* Text Styling */
+#loading-title {
+  font-size: 1.5rem;
+  color: #cbcbcb;
+  margin: 0 0 8px 0;
+}
+
+#loading-subtitle {
+  color: #d6d6d6;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+#main-title {
+  font-size: 3.5rem;
+  letter-spacing: 0.5rem;
+  color: #ececec;
+  /* Gold color */
+  margin-bottom: 40px;
+  text-shadow: 0 0 15px rgba(243, 243, 243, 0.5);
+  text-transform: uppercase;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 #top-nav {
   position: fixed;
   width: 100%;

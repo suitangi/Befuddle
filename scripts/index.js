@@ -2181,6 +2181,18 @@ function lineChart(ctx, data, title) {
   });
 }
 
+/**
+ * Show or Hide the loading screen
+ */
+function toggleLoadingScreen(isVisible) {
+    const screen = document.getElementById('loading-screen');
+    if (isVisible) {
+        screen.classList.remove('hidden');
+    } else {
+        screen.classList.add('hidden');
+    }
+}
+
 //sets the theme for the site
 function setTheme() {
   let theme = window.game.theme;
@@ -2292,7 +2304,7 @@ async function initializeDiscordApp() {
 
   // 2. Wait up to 2 seconds for the SDK module to attach to window
   let attempts = 0;
-  while (!window.discordSdk && attempts < 20) {
+  while (!window.discordSdk && attempts < 5) {
     await new Promise(r => setTimeout(r, 100));
     attempts++;
   }
@@ -2323,7 +2335,7 @@ async function initializeDiscordApp() {
 
       if (!localStorage.getItem('discordUser')) {
         console.log("No Discord user info found in localStorage, getting user info...");
-        getDiscordUserInfo();
+        await getDiscordUserInfo();
       } else {
         window.discordUser = JSON.parse(localStorage.getItem('discordUser'));
         console.log("Discord user info loaded from localStorage:", window.discordUser);
@@ -2430,7 +2442,7 @@ async function getDiscordLaunchConfig() {
     }
     const { channelId } = window.discordSdk;
     const userId = window.discordUser.id;
-    await sleep(1000); //wait a second for the KV store to update with the user's Discord info from the handshake
+    await sleep(4000); //wait a second for the KV store to update with the user's Discord info from the handshake
     const res = await fetch(`/api/config?channelId=${channelId}&userId=${userId}`);
     const intent = await res.json();
     console.log("Launch intent received from backend:", intent);
@@ -2521,9 +2533,6 @@ $(document).ready(async function () {
 
   window.isDiscord = false;
 
-  await initializeDiscordApp();
-
-
   for (var i = 0; i < 25; i++) {
     window.stats.free.wr[0].push([0, 0]);
     window.stats.free.wr[1].push([0, 0]);
@@ -2577,6 +2586,7 @@ $(document).ready(async function () {
       window.stats.daily = JSON.parse(getStorage('dailyStats'));
     setTheme();
   }
+  await initializeDiscordApp();
 
   //setup onclick for top nav buttons
   document.getElementById('stats-button').addEventListener('click', function () {
@@ -2623,9 +2633,12 @@ $(document).ready(async function () {
 
   //set game mode
   window.game.mode = '';
+  await sleep(500);
 
   //get Discord activity launch configs
   let discordLaunchParam = await getDiscordLaunchConfig();
+
+  toggleLoadingScreen(false);
 
   //specific link to card
   if (getParameterByName('cardId') || discordLaunchParam === 'cardId') {
