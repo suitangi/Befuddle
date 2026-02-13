@@ -2432,8 +2432,10 @@ async function getDiscordLaunchConfig() {
     const intent = await res.json();
 
     if (intent.mode === 'daily') {
+      console.log("Launched with intent for Daily Befuddle");
       return 'daily';
     } else if (intent.mode === 'free' && intent.cardId) {
+      console.log("Launched with intent for Free Befuddle, card ID:", intent.cardId);
       window.discordCardId = intent.cardId;
       return 'cardId';
     } else {
