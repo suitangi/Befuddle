@@ -579,6 +579,7 @@ function gameLostDaily() {
 
   let imgSrc = 'https://storage.ko-fi.com/cdn/cup-border.png';
   if (window.isDiscord) {
+    sendDiscordMessageUpdate();
     imgSrc = getDiscordProxiedUrl(imgSrc);
   };
 
@@ -626,7 +627,7 @@ function gameLostDaily() {
           statsModal();
         }
       },
-      link: {
+      link: window.isDiscord ? undefined : {
         text: "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
@@ -689,6 +690,7 @@ function gameWinDaily() {
   let imgSrc = 'https://storage.ko-fi.com/cdn/cup-border.png';
   if (window.isDiscord) {
     imgSrc = getDiscordProxiedUrl(imgSrc);
+    sendDiscordMessageUpdate();
   };
 
   window.dailyModal = $.confirm({
@@ -735,7 +737,7 @@ function gameWinDaily() {
           statsModal();
         }
       },
-      link: {
+      link: window.isDiscord ? undefined : {
         text: "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
@@ -1553,7 +1555,7 @@ function getBrowserInfo() {
 function easterEgg() {
   $.dialog({
     title: '<div class="modalTitle" style="text-align: center;">Easter Egg!</div>',
-    content: '<div id="easteggDiv">Special thanks to my Beta testers pkmnfn and killersax!<br>Version<div>',
+    content: `<div id="easteggDiv">Special thanks to my Beta testers pkmnfn and killersax!<br><br>Version ${befuddleAppVersion}</div>`,
     theme: window.game.theme,
     animation: 'bottom',
     closeAnimation: 'bottom',
@@ -2400,7 +2402,7 @@ async function sendDiscordMessageUpdate() {
         userId: window.discordUser.id,
         hiddenMode: window.gameSesh.hideBlanks,
         cardArtUrl: window.mtgCard.image_uris ? window.mtgCard.image_uris.art_crop : (window.mtgCard.card_faces ? window.mtgCard.card_faces[0].image_uris.art_crop : ''),
-        lives: window.game.daily.lives - window.gameSesh.wrongGuess.length,
+        lives: window.game.mode == 'daily'? window.game.daily.lives - window.gameSesh.wrongGuess.length : undefined,
         guessProgress: window.gameSesh.guessProgress
       })
     });
