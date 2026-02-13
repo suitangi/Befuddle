@@ -17,6 +17,8 @@ function removeStorage(key) {
   localStorage.removeItem(key);
 }
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Migrate from js-cookie to localStorage (run once per user)
 function migrateCookiesToLocalStorage() {
   if (localStorage.getItem('__cookiesMigrated')) return;
@@ -2428,6 +2430,7 @@ async function getDiscordLaunchConfig() {
     }
     const { channelId } = window.discordSdk;
     const userId = window.discordUser.id;
+    await sleep(1000); //wait a second for the KV store to update with the user's Discord info from the handshake
     const res = await fetch(`/api/config?channelId=${channelId}&userId=${userId}`);
     const intent = await res.json();
     console.log("Launch intent received from backend:", intent);
