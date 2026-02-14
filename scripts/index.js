@@ -309,6 +309,7 @@ function loadCard(data) {
     img.src = this.src;
     document.getElementById("cardImage").style = "opacity:1;";
     document.getElementById("imageLoading").style = "display:none;";
+    toggleLoadingScreen(false);
   }
   let imgSrc = window.mtgCard['image_uris']['art_crop'];
   if (window.isDiscord) {
@@ -2442,7 +2443,7 @@ async function getDiscordLaunchConfig() {
     }
     const { channelId } = window.discordSdk;
     const userId = window.discordUser.id;
-    await sleep(4000); //wait a second for the KV store to update with the user's Discord info from the handshake
+    await sleep(1000);
     const res = await fetch(`/api/config?channelId=${channelId}&userId=${userId}`);
     const intent = await res.json();
     console.log("Launch intent received from backend:", intent);
@@ -2633,12 +2634,9 @@ $(document).ready(async function () {
 
   //set game mode
   window.game.mode = '';
-  await sleep(500);
 
   //get Discord activity launch configs
   let discordLaunchParam = await getDiscordLaunchConfig();
-
-  toggleLoadingScreen(false);
 
   //specific link to card
   if (getParameterByName('cardId') || discordLaunchParam === 'cardId') {
@@ -2652,6 +2650,7 @@ $(document).ready(async function () {
     console.log('Discord daily trigger detected');
     startDaily();
   } else {
+    toggleLoadingScreen(false);
     mainMenuDisplay();
   }
 

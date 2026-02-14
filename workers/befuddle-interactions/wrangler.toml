@@ -1,0 +1,23 @@
+name = "befuddle-interactions"
+main = "src/index.js"
+compatibility_date = "2026-02-13"
+workers_dev = true
+preview_urls = false
+
+[[durable_objects.bindings]]
+name = "CONFIG_STORE"
+class_name = "ConfigStore"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ConfigStore"]
+
+[[routes]]
+pattern = "interactions.befuddle.xyz"
+zone_name = "befuddle.xyz"
+custom_domain = true
+
+[observability]
+enabled = true
+[observability.logs]
+enabled = true
