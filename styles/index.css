@@ -161,6 +161,14 @@ body {
   align-items: center;
   z-index: 100000000;
   transition: opacity 0.4s ease;
+  /* Safari, Chrome, iOS */
+  -webkit-user-select: none;
+  /* Firefox */
+  -moz-user-select: none;
+  /* Internet Explorer 10+ */
+  -ms-user-select: none;
+  /* Standard syntax */
+  user-select: none;
 }
 
 .loading-content {

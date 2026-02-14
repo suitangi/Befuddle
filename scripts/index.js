@@ -525,7 +525,7 @@ function gameLostFree() {
         }
       },
       link: {
-        text: "Share",
+        text: (window.isDiscord || !navigator.share) ? "Copy" : "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
           let str = 'Befuddle:\n' + buildGuessString() + '\n' +
@@ -622,8 +622,8 @@ function gameLostDaily() {
           statsModal();
         }
       },
-      link: window.isDiscord ? undefined : {
-        text: "Share",
+      link: {
+        text: (window.isDiscord || !navigator.share) ? "Copy" : "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
           let d = new Date();
@@ -730,8 +730,8 @@ function gameWinDaily() {
           statsModal();
         }
       },
-      link: window.isDiscord ? undefined : {
-        text: "Share",
+      link: {
+        text: (window.isDiscord || !navigator.share) ? "Copy" : "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
           let d = new Date();
@@ -803,7 +803,7 @@ function gameWinFree() {
         }
       },
       link: {
-        text: "Share",
+        text: (window.isDiscord || !navigator.share) ? "Copy" : "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
           let str = 'Befuddle: \n' + buildGuessString() + '\n' +
@@ -856,7 +856,7 @@ function _doClipboardWrite(linkButton, str, url) {
 
 function clipboardHandler(linkButton, str, url) {
   // Use native share when available (mobile browsers) and fall back to clipboard
-  if (navigator.share) {
+  if (navigator.share && !window.isDiscord) {
     navigator.share({
       title: 'Befuddle',
       text: `${str}\n`,
