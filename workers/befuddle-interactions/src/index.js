@@ -25,7 +25,9 @@ export class ConfigStore {
         // ── PUT ──
         if (action === "put") {
             const { value, ttl } = await request.json();
+            const bucketSize = 300 * 1000;
             const expiresAt = Date.now() + ttl * 1000;
+            const batchedExpiry = Math.ceil(expiresAt / bucketSize) * bucketSize;
 
             this.sql.exec(
                 `INSERT OR REPLACE INTO configs (key, value, expires_at) VALUES (?, ?, ?)`,
@@ -34,8 +36,8 @@ export class ConfigStore {
 
             // Schedule an alarm to clean up after TTL
             const currentAlarm = await this.ctx.storage.getAlarm();
-            if (!currentAlarm || expiresAt < currentAlarm) {
-                await this.ctx.storage.setAlarm(expiresAt);
+            if (!currentAlarm || batchedExpiry < currentAlarm) {
+                await this.ctx.storage.setAlarm(batchedExpiry);
             }
 
             return new Response("OK");
