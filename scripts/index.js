@@ -2389,7 +2389,6 @@ function isMobile() {
 }
 
 async function initializeDiscordApp() {
-  console.log("Checking platform environment...");
 
   window.addEventListener('message', (event) => {
     if (event.data?.evt === 'READY') {
@@ -2435,7 +2434,7 @@ async function initializeDiscordApp() {
         window.discordUser = JSON.parse(localStorage.getItem('discordUser'));
         console.log("Discord user info loaded from localStorage:", window.discordUser);
       }
-
+      return true;
     } catch (err) {
       console.error("Discord SDK failed to ready:", err);
     }
@@ -2443,7 +2442,7 @@ async function initializeDiscordApp() {
     console.error("Discord SDK not detected or missing URL parameters");
     $.dialog({
       title: '<span class="modalTitle">Error</span>',
-      content: '<span class="modalText">Discord SDK not detected, some features may not work correctly. You might want to restart the activity.</span>',
+      content: '<span class="modalText">Discord SDK not detected, some features may not work correctly. You might want to restart the activity. If this issue persists, please contact Befuddle Dev for support.</span>',
       type: 'red',
       theme: window.game.theme,
       animation: 'top',
@@ -2461,6 +2460,7 @@ async function initializeDiscordApp() {
         }
       }
     });
+    return false;
   }
 
 }
@@ -2805,7 +2805,11 @@ $(document).ready(async function () {
   }
 
   if (window.isDiscord) {
-    await initializeDiscordApp();
+    let initialized = await initializeDiscordApp();
+    if (!initialized) {
+      toggleLoadingScreen(false);
+      return;
+    }
   }
 
   //setup onclick for top nav buttons
