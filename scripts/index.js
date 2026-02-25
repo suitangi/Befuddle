@@ -22,17 +22,17 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // Retry utility with exponential backoff for Discord API calls
 async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelayMs = 1000) {
   let lastError;
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       console.log(`API call attempt ${attempt + 1}/${maxRetries + 1} to ${url}`);
-      
+
       const response = await fetch(url, {
         ...options,
         // Add timeout to prevent hanging requests
         signal: AbortSignal.timeout(30000) // 30 second timeout
       });
-      
+
       // Handle rate limiting (HTTP 429)
       if (response.status === 429) {
         const retryAfter = response.headers.get('Retry-After');
@@ -43,40 +43,40 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelayMs = 1
           continue;
         }
       }
-      
+
       // Handle server errors (5xx)
       if (response.status >= 500 && response.status < 600) {
         throw new Error(`Server error: ${response.status}`);
       }
-      
+
       // Handle client errors (4xx) - don't retry these except for rate limiting
       if (response.status >= 400 && response.status < 500 && response.status !== 429) {
         throw new Error(`Client error: ${response.status}`);
       }
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return response;
-      
+
     } catch (error) {
       lastError = error;
       console.warn(`API call failed (attempt ${attempt + 1}):`, error.message);
-      
+
       // Don't retry on client errors (except timeout) or if we've reached max retries
-      if (attempt === maxRetries || 
-          (error.name !== 'TimeoutError' && error.message.includes('Client error'))) {
+      if (attempt === maxRetries ||
+        (error.name !== 'TimeoutError' && error.message.includes('Client error'))) {
         break;
       }
-      
+
       // Calculate delay with exponential backoff + jitter
       const delayMs = baseDelayMs * Math.pow(2, attempt) + Math.random() * 1000;
       console.log(`Retrying in ${delayMs.toFixed(0)}ms...`);
       await sleep(delayMs);
     }
   }
-  
+
   throw lastError || new Error('Max retries exceeded');
 }
 
@@ -2486,33 +2486,33 @@ async function getDiscordUserInfo(retryCount = 0) {
         },
         body: JSON.stringify({ code }),
       }, 2, 2000); // 2 retries with 2s base delay for auth calls
-      
+
       if (!response.ok) {
         throw new Error(`Token exchange failed: ${response.status}`);
       }
-      
+
       const data = await response.json();
       if (!data.access_token) {
         throw new Error('No access token received from Discord API');
       }
-      
+
       const token = data.access_token;
       const auth = await window.discordSdk.commands.authenticate({
         access_token: token,
       });
-      
+
       if (!auth.user || !auth.user.id || !auth.user.username) {
         throw new Error('Missing Discord user info in authentication response');
       }
-      
+
       console.log("User ID:", auth.user.id);
       console.log("Username:", auth.user.username);
       window.discordUser = auth.user;
       localStorage.setItem('discordUser', JSON.stringify(auth.user));
-      
+
     } catch (err) {
       console.error("Discord User Authorization Failed:", err);
-      
+
       let errorMessage = 'Discord User Authorization Failed, some features may not work correctly.';
       if (err.message.includes('Rate limited')) {
         errorMessage = 'Discord API rate limit exceeded. Please wait a moment before trying again.';
@@ -2521,7 +2521,7 @@ async function getDiscordUserInfo(retryCount = 0) {
       } else if (err.name === 'TimeoutError') {
         errorMessage = 'Discord API request timed out. Please check your connection and try again.';
       }
-      
+
       $.dialog({
         title: '<span class="modalTitle">Discord Authorization Error</span>',
         content: `<span class="modalText">${errorMessage}</span>`,
@@ -2564,11 +2564,11 @@ async function sendDiscordMessageUpdate() {
       if (!window.discordUser || !window.discordUser.id) {
         throw new Error('No Discord user info available for message update');
       }
-      
+
       if (!window.discordSdk || !window.discordSdk.channelId) {
         throw new Error('No Discord channel info available for message update');
       }
-      
+
       const payload = {
         mode: window.game.mode,
         channelId: window.discordSdk.channelId,
@@ -2579,7 +2579,7 @@ async function sendDiscordMessageUpdate() {
         lives: window.gameSesh.tlv - window.gameSesh.wrongGuess.length,
         guessProgress: window.gameSesh.guessProgress
       };
-      
+
       const response = await fetchWithRetry('/share', {
         method: 'POST',
         headers: {
@@ -2587,18 +2587,20 @@ async function sendDiscordMessageUpdate() {
         },
         body: JSON.stringify(payload)
       }, 3, 1500); // 3 retries with 1.5s base delay
-      
+
       if (response.ok) {
-        window.gameSesh.discordSent = true;
-        setStorage('daily', JSON.stringify(window.gameSesh));
+        if (window.game.mode === 'daily') {
+          window.gameSesh.discordSent = true;
+          setStorage('daily', JSON.stringify(window.gameSesh));
+        }
         console.log('Discord message update sent successfully');
       } else {
         throw new Error(`Discord message update failed: ${response.status}`);
       }
-      
+
     } catch (error) {
       console.error('Failed to send Discord message update:', error);
-      
+
       // Don't show user dialogs for message updates since they're not critical
       // Just log the error and continue - the game can still function
       if (error.message.includes('Rate limited')) {
@@ -2609,8 +2611,10 @@ async function sendDiscordMessageUpdate() {
       } else {
         console.error('Discord message update failed permanently:', error.message);
         // Mark as sent to prevent endless retries for permanent failures
-        window.gameSesh.discordSent = true;
-        setStorage('daily', JSON.stringify(window.gameSesh));
+        if (window.game.mode === 'daily') {
+          window.gameSesh.discordSent = true;
+          setStorage('daily', JSON.stringify(window.gameSesh));
+        }
       }
     }
   }
@@ -2622,30 +2626,30 @@ async function getDiscordLaunchConfig() {
       if (!window.discordUser) {
         throw new Error("No Discord user info found, cannot get launch config");
       }
-      
+
       if (!window.discordSdk || !window.discordSdk.channelId) {
         throw new Error("No Discord channel info found, cannot get launch config");
       }
-      
+
       const { channelId } = window.discordSdk;
       const userId = window.discordUser.id;
-      
+
       const res = await fetchWithRetry(`/api/config?channelId=${encodeURIComponent(channelId)}&userId=${encodeURIComponent(userId)}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json'
         }
       }, 2, 1000); // 2 retries with 1s base delay for config calls
-      
+
       if (!res.ok) {
         throw new Error(`Failed to fetch launch config: ${res.status}`);
       }
-      
+
       const intent = await res.json();
       if (!intent || typeof intent !== 'object') {
         throw new Error('Invalid launch config response format');
       }
-      
+
       console.log("Launch intent received from backend:", intent);
 
       if (intent.mode === 'daily') {
@@ -2659,10 +2663,10 @@ async function getDiscordLaunchConfig() {
         console.log("Loading standard Befuddle...");
         return null;
       }
-      
+
     } catch (error) {
       console.error('Failed to get Discord launch config:', error);
-      
+
       // For launch config failures, we can gracefully degrade to standard mode
       if (error.message.includes('Rate limited')) {
         console.warn('Discord API rate limited while getting launch config - using standard mode');
@@ -2671,7 +2675,7 @@ async function getDiscordLaunchConfig() {
       } else {
         console.warn('Discord launch config failed - using standard mode:', error.message);
       }
-      
+
       // Return null to indicate standard mode should be used
       return null;
     }
