@@ -41,27 +41,6 @@
   <script type='text/javascript' src='/scripts/Widget_2.js'></script>
   <link rel="stylesheet" href="/styles/jquery-confirm.min.css">
 
-  <script type="module">
-    // 1. Import the specific version (+esm allows it to work as a module)
-    import { DiscordSDK } from "/scripts/discord-sdk.js";
-
-    // 2. Initialize with your specific Client ID
-    const discordSdk = new DiscordSDK("1389389854747525152");
-
-    // 3. CRITICAL: Attach it to the window so 'index.js' can see it
-    window.discordSdk = discordSdk;
-
-    // 4. (Optional) You can setup the handshake here, or do it in index.js
-    async function setup() {
-      await discordSdk.ready();
-      console.log("Discord SDK is ready via Module!");
-
-      // Now we know it's safe for index.js to use it
-    }
-
-    setup();
-  </script>
-
   <!-- local -->
   <link rel="stylesheet" type="text/css" href="styles/index.css">
   <script async type="text/javascript" src="scripts/symbols.js"></script>
