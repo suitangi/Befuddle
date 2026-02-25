@@ -3,8 +3,6 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 ## https://befuddle.xyz/
 
-[![Page Deployment](https://github.com/suitangi/Befuddle/actions/workflows/static.yml/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/static.yml)
-
 © Ignatius Liu, 2025
 
 # Updating Befuddle
@@ -41,6 +39,7 @@ Portions of Befuddle are unofficial Fan Content permitted under the Wizards of t
 
 # Changelog
 ```
+2/17/2026: New loading screen, optimizations, support for Discord Activities
 1/12/2026: Card update; new dailies; fixed share URL bug
 12/5/2025: Card update; new dailies
 10/6/2025: Card update; new dailies
