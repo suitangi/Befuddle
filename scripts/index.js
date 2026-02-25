@@ -2,6 +2,7 @@
 const canVibrate = window.navigator.vibrate;
 const befuddleAppVersion = "WEB 2026.2.24.2200";
 const tcgSVG = '<svg class="tcg-svg" version="1.1" viewBox="0.0 0.0 144.0 120.0" fill="none" stroke="none" stroke-linecap="square" stroke-miterlimit="10" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><clipPath id="p.0"><path d="m0 0l144.0 0l0 120.0l-144.0 0l0 -120.0z" clip-rule="nonzero"/></clipPath><g clip-path="url(#p.0)"><path fill="#000000" fill-opacity="0.0" d="m0 0l144.0 0l0 120.0l-144.0 0z" fill-rule="evenodd"/><path fill="#ffffff" d="m3.6983974 43.321297l0 0c-2.0432932 -5.575428 0.84098935 -11.693382 6.4422255 -13.664833l40.56652 -14.278071l0 0c2.689808 -0.94672394 5.6592407 -0.79107285 8.255051 0.4327116c2.5958138 1.2237835 4.6053696 3.4154549 5.5865936 6.0928707l21.734444 59.30565c2.0432892 5.575424 -0.8409958 11.693382 -6.44223 13.664833l-40.56652 14.278069c-5.6012383 1.9714508 -11.798353 -0.95014954 -13.841646 -6.5255814z" fill-rule="evenodd"/><path stroke="#333333" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="butt" d="m3.6983974 43.321297l0 0c-2.0432932 -5.575428 0.84098935 -11.693382 6.4422255 -13.664833l40.56652 -14.278071l0 0c2.689808 -0.94672394 5.6592407 -0.79107285 8.255051 0.4327116c2.5958138 1.2237835 4.6053696 3.4154549 5.5865936 6.0928707l21.734444 59.30565c2.0432892 5.575424 -0.8409958 11.693382 -6.44223 13.664833l-40.56652 14.278069c-5.6012383 1.9714508 -11.798353 -0.95014954 -13.841646 -6.5255814z" fill-rule="evenodd"/><path fill="#ffffff" d="m79.253204 21.990696l0 0c2.013565 -5.6003723 8.205383 -8.563349 13.829811 -6.6179914l40.734505 14.089097l0 0c2.700943 0.93419456 4.9071503 2.8984814 6.1332703 5.460745c1.22612 2.5622635 1.3717194 5.512615 0.4047699 8.202007l-21.369644 59.435795c-2.013565 5.6003723 -8.205383 8.563347 -13.829819 6.6179886l-40.734497 -14.089096c-5.6244316 -1.9453583 -8.551613 -8.062378 -6.538044 -13.66275z" fill-rule="evenodd"/><path stroke="#333333" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="butt" d="m79.253204 21.990696l0 0c2.013565 -5.6003723 8.205383 -8.563349 13.829811 -6.6179914l40.734505 14.089097l0 0c2.700943 0.93419456 4.9071503 2.8984814 6.1332703 5.460745c1.22612 2.5622635 1.3717194 5.512615 0.4047699 8.202007l-21.369644 59.435795c-2.013565 5.6003723 -8.205383 8.563347 -13.829819 6.6179886l-40.734497 -14.089096c-5.6244316 -1.9453583 -8.551613 -8.062378 -6.538044 -13.66275z" fill-rule="evenodd"/><path fill="#ffffff" d="m36.106525 18.050085l0 0c0 -5.9491396 4.822731 -10.77187 10.77187 -10.77187l43.08618 0l0 0c2.8568802 0 5.5967484 1.1348906 7.616867 3.1550074c2.020111 2.0201178 3.1550064 4.759984 3.1550064 7.6168623l0 62.960197c0 5.949135 -4.822731 10.771866 -10.771873 10.771866l-43.08618 0c-5.9491386 0 -10.77187 -4.822731 -10.77187 -10.771866z" fill-rule="evenodd"/><path stroke="#333333" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="butt" d="m36.106525 18.050085l0 0c0 -5.9491396 4.822731 -10.77187 10.77187 -10.77187l43.08618 0l0 0c2.8568802 0 5.5967484 1.1348906 7.616867 3.1550074c2.020111 2.0201178 3.1550064 4.759984 3.1550064 7.6168623l0 62.960197c0 5.949135 -4.822731 10.771866 -10.771873 10.771866l-43.08618 0c-5.9491386 0 -10.77187 -4.822731 -10.77187 -10.771866z" fill-rule="evenodd"/><path fill="#333333" d="m79.776436 24.556463l-4.074669 14.430754l-3.3064575 -1.0685692l-1.3463058 14.468933l-3.5430756 -0.83686066l-5.1932907 21.343666l-3.7317772 -23.917072l4.118435 1.2251434l-2.120121 -15.0548935l5.1785316 1.0673485l-2.2834625 -15.851421z" fill-rule="evenodd"/><path stroke="#303030" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="butt" d="m79.776436 24.556463l-4.074669 14.430754l-3.3064575 -1.0685692l-1.3463058 14.468933l-3.5430756 -0.83686066l-5.1932907 21.343666l-3.7317772 -23.917072l4.118435 1.2251434l-2.120121 -15.0548935l5.1785316 1.0673485l-2.2834625 -15.851421z" fill-rule="evenodd"/></g></svg>';
+const DISCORD_APPLICATION_ID = '1389389854747525152';
 
 // --- localStorage migration and utilities ---
 function setStorage(key, value) {
@@ -114,7 +115,9 @@ function requestCard(id) {
       });
     }
     let fetchUrl = 'https://api.scryfall.com/cards/collection';
-
+    if (window.isDiscord) {
+      fetchUrl = getDiscordProxiedUrl(fetchUrl);
+    }
     fetch(fetchUrl, {
       method: 'POST',
       headers: {
@@ -133,6 +136,9 @@ function requestCard(id) {
 
   function fetchSingleCard(id) {
     let fetchUrl = 'https://api.scryfall.com/cards/' + id;
+    if (window.isDiscord) {
+      fetchUrl = getDiscordProxiedUrl(fetchUrl);
+    }
     fetch(fetchUrl)
       .then(response => response.json())
       .then(data => loadCard(data))
@@ -306,6 +312,9 @@ function loadCard(data) {
     toggleLoadingScreen(false);
   }
   let imgSrc = window.mtgCard['image_uris']['art_crop'];
+  if (window.isDiscord) {
+    imgSrc = getDiscordProxiedUrl(imgSrc);
+  }
   newImg.src = imgSrc;
 
   let str = window.mtgCard['name'];
@@ -491,6 +500,10 @@ function gameLostFree() {
     setStorage('freeStats', JSON.stringify(window.stats.free)); //save free mode stats to local storage
   }
 
+  if (window.isDiscord) {
+    sendDiscordMessageUpdate();
+  };
+
   $.confirm({
     title: "<span class=\"modalTitle\">Totally Lost</span>",
     content: getCardHtml(),
@@ -512,7 +525,7 @@ function gameLostFree() {
         }
       },
       link: {
-        text: (!navigator.share) ? "Copy" : "Share",
+        text: (window.isDiscord || !navigator.share) ? "Copy" : "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
           let str = 'Befuddle:\n' + buildGuessString() + '\n' +
@@ -560,6 +573,10 @@ function gameLostDaily() {
   }
 
   let imgSrc = 'https://storage.ko-fi.com/cdn/cup-border.png';
+  if (window.isDiscord) {
+    sendDiscordMessageUpdate();
+    imgSrc = getDiscordProxiedUrl(imgSrc);
+  };
 
   window.dailyModal = $.confirm({
     title: "<span class=\"modalTitle\">Totally Lost</span>",
@@ -606,7 +623,7 @@ function gameLostDaily() {
         }
       },
       link: {
-        text: (!navigator.share) ? "Copy" : "Share",
+        text: (window.isDiscord || !navigator.share) ? "Copy" : "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
           let d = new Date();
@@ -664,6 +681,10 @@ function gameWinDaily() {
   }
 
   let imgSrc = 'https://storage.ko-fi.com/cdn/cup-border.png';
+  if (window.isDiscord) {
+    imgSrc = getDiscordProxiedUrl(imgSrc);
+    sendDiscordMessageUpdate();
+  };
 
   window.dailyModal = $.confirm({
     title: `<span class=\"modalText\">${getWinTerms(wr)}${(wr != 0 ? (` — ${wr} wrong`) : '')}</span>`,
@@ -710,7 +731,7 @@ function gameWinDaily() {
         }
       },
       link: {
-        text: (!navigator.share) ? "Copy" : "Share",
+        text: (window.isDiscord || !navigator.share) ? "Copy" : "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
           let d = new Date();
@@ -728,6 +749,10 @@ function gameWinDaily() {
 function gameWinFree() {
 
   let wr = window.gameSesh.wrongGuess.length;
+
+  if (window.isDiscord) {
+    sendDiscordMessageUpdate();
+  };
 
   if (!window.gameSesh.hideBlanks) {
     if (wr == 0)
@@ -778,7 +803,7 @@ function gameWinFree() {
         }
       },
       link: {
-        text: (!navigator.share) ? "Copy" : "Share",
+        text: (window.isDiscord || !navigator.share) ? "Copy" : "Share",
         btnClass: 'btn-green',
         action: function (linkButton) {
           let str = 'Befuddle: \n' + buildGuessString() + '\n' +
@@ -831,7 +856,7 @@ function _doClipboardWrite(linkButton, str, url) {
 
 function clipboardHandler(linkButton, str, url) {
   // Use native share when available (mobile browsers) and fall back to clipboard
-  if (navigator.share) {
+  if (navigator.share && !window.isDiscord) {
     navigator.share({
       title: 'Befuddle',
       text: `${str}\n`,
@@ -884,12 +909,18 @@ function getCardHtml() {
   if (window.mtgCard['layout'] == 'transform' || window.mtgCard['layout'] == 'modal_dfc') {
     let imgSrc0 = window.mtgCard['card_faces'][window.mtgCard.cf]['image_uris']['normal'];
     let imgSrc1 = window.mtgCard['card_faces'][1 - window.mtgCard.cf]['image_uris']['normal'];
-
+    if (window.isDiscord) {
+      imgSrc0 = getDiscordProxiedUrl(imgSrc0);
+      imgSrc1 = getDiscordProxiedUrl(imgSrc1);
+    }
     html = '<div class="flip-card"><div class="flip-card-inner"><div class="flip-card-front">' +
       '<img src=\"' + imgSrc0 + '\" style=\"border-radius:8% / 6%;\"><span class="material-symbols-outlined flip-symbol-front"> chevron_right </span></div> <div class="flip-card-back">' +
       '<img src=\"' + imgSrc1 + '\" style=\"border-radius:8% / 6%;\"><span class="material-symbols-outlined flip-symbol-back"> chevron_left </span></div></div></div>';
   } else {
     let imgSrc = window.mtgCard.image_uris.normal;
+    if (window.isDiscord) {
+      imgSrc = getDiscordProxiedUrl(imgSrc);
+    }
     html = "<img src=\"" + imgSrc + "\" style=\"border-radius:8% / 6%;\">";
   }
   return html;
@@ -1519,6 +1550,9 @@ function reportBug() {
 
   let mainHtml, formHtml;
   let formUri = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSfofhsXMv1iW188eXql2h5KwPr08dE4j93EwA3-hd9lNxr5OA/formResponse';
+  if (window.isDiscord) {
+    formUri = getDiscordProxiedUrl(formUri);
+  }
   mainHtml = '<div class="modalTitle" style="text-align: center;">Report a Bug</div><br>' +
     '<div id="mainBug"><button id="gameBugButton" class="rabButton">Gameplay Bug</button>' +
     '<button id="artBugButton" class="rabButton">Art Issue</button>' +
@@ -1631,7 +1665,19 @@ function reportBug() {
 
 //function to buy drink
 function buyDrink() {
+  if (isDiscord) {
+    try {
+      discordSdk.commands.openExternalLink({ url: 'https://ko-fi.com/suitangi' });
+    } catch (error) {
+      console.error("Could not open link in Discord:", error);
+    }
+    return;
+  }
+
   let src = "https://ko-fi.com/suitangi/?hidefeed=true&amp;widget=true&amp;embed=true&amp;preview=true";
+  if (window.isDiscord) {
+    src = getDiscordProxiedUrl(src);
+  }
   $.dialog({
     title: ' ',
     content: `<iframe id="kofiframe" src="${src}" style="border:none;padding:4px;" height="712" title="suitangi"></iframe>`,
@@ -1825,6 +1871,8 @@ function loadGame() {
     function freeCard(data) {
       if (getParameterByName('cardId'))
         requestCard(getParameterByName('cardId'));
+      else if (window.discordCardId)
+        requestCard(window.discordCardId);
       else
         requestCard();
     }
@@ -2173,6 +2221,9 @@ function checkTabFocused() {
 //Submits daily data
 function submitDailyData(win) {
   let uri = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSf8M4zoBjF6ZcY0v4ebBXmBCKr0vpB_EtAZLPE2-B0ZDfGBLg/formResponse";
+  if (window.isDiscord) {
+    uri = getDiscordProxiedUrl(uri);
+  }
   const entryNames = ['entry.1034508364', 'entry.462826655', 'entry.2082961611'];
   const values = [window.gameSesh.doy, window.gameSesh.guesses, win];
 
@@ -2202,6 +2253,19 @@ function submitDailyData(win) {
   }, 2000);
 }
 
+function getDiscordProxiedUrl(originalUrl) {
+  if (!originalUrl) return '';
+
+  return originalUrl
+    .replace("https://api.scryfall.com", "/scry-com/api")
+    .replace("https://c2.scryfall.com", "/scry-com/c2")
+    .replace("https://cards.scryfall.io", "/scry-io/cards")
+    .replace("https://svgs.scryfall.io", "/scry-io/svgs")
+    .replace("https://docs.google.com/forms", "/google/forms")
+    .replace("https://ko-fi.com", "/kofi")
+    .replace("https://storage.ko-fi.com", "/kofi-storage");
+}
+
 function isMobile() {
   let hasTouchScreen = false;
 
@@ -2227,6 +2291,174 @@ function isMobile() {
     }
   }
   return hasTouchScreen;
+}
+
+async function initializeDiscordApp() {
+  console.log("Checking platform environment...");
+
+  window.addEventListener('message', (event) => {
+    if (event.data?.evt === 'READY') {
+      console.log('--- RAW DISCORD HANDSHAKE ---');
+      console.log(JSON.stringify(event.data.data, null, 2));
+    }
+  });
+
+  // 2. Wait up to 2 seconds for the SDK module to attach to window
+  let attempts = 0;
+  while (!window.discordSdk && attempts < 5) {
+    await new Promise(r => setTimeout(r, 100));
+    attempts++;
+  }
+
+  // 3. Determine environment
+  // We check for the SDK object AND a Discord-specific URL param as a backup
+  const urlParams = new URLSearchParams(window.location.search);
+  const hasDiscordParam = urlParams.has('frame_id') || urlParams.has('instance_id');
+
+  if (window.discordSdk && hasDiscordParam) {
+    console.log("Running inside Discord Activity");
+    window.isDiscord = true;
+
+    //convert symbol urls
+    Object.keys(window.mtgSymbols).forEach(key => {
+      window.mtgSymbols[key] = getDiscordProxiedUrl(window.mtgSymbols[key]);
+    });
+
+    if (isMobile()) {
+      console.log("Mobile environment detected");
+      document.getElementsByTagName('html')[0].style = "transform: translateY(50px); height: calc(100% - 50px);";
+    }
+
+    try {
+      await discordSdk.ready();
+      console.log("Discord Handshake Complete!");
+      // Proceed with Discord-specific features (Auth, etc.)
+
+      if (!localStorage.getItem('discordUser')) {
+        console.log("No Discord user info found in localStorage, getting user info...");
+        await getDiscordUserInfo();
+      } else {
+        window.discordUser = JSON.parse(localStorage.getItem('discordUser'));
+        console.log("Discord user info loaded from localStorage:", window.discordUser);
+      }
+
+    } catch (err) {
+      console.error("Discord SDK failed to ready:", err);
+    }
+  } else {
+    console.log("Running in Standard Web Browser");
+    window.isDiscord = false;
+  }
+
+}
+
+/**
+ * This is to get the user's Discord info if they're playing in the Discord Activity
+ */
+async function getDiscordUserInfo() {
+  console.log("Attempting to get Discord user info...");
+  if (window.isDiscord) {
+    try {
+      const { code } = await window.discordSdk.commands.authorize({
+        client_id: window.discordSdk.clientId,
+        response_type: "code",
+        scope: ["identify"],
+        prompt: "none"
+      });
+
+      const response = await fetch('/api/token', {
+        method: 'POST',
+        body: JSON.stringify({ code }),
+      });
+      const data = await response.json();
+      const token = data.access_token;
+      const auth = await window.discordSdk.commands.authenticate({
+        access_token: token,
+      });
+      if (!auth.user || !auth.user.id || !auth.user.username) {
+        throw new Error('Missing Discord user info');
+      }
+      console.log("User ID:", auth.user.id);
+      console.log("Username:", auth.user.username);
+      window.discordUser = auth.user;
+      localStorage.setItem('discordUser', JSON.stringify(auth.user));
+    } catch (err) {
+      console.error("Discord User Authorization Failed:", err);
+      $.dialog({
+        title: '<span class="modalTitle">Error</span>',
+        content: '<span class="modalText">Discord User Authorization Failed, some features may not work correctly.</span>',
+        type: 'red',
+        theme: window.game.theme,
+        animation: 'top',
+        closeAnimation: 'top',
+        animateFromElement: false,
+        boxWidth: 'min(400px, 80%)',
+        draggable: false,
+        useBootstrap: false,
+        typeAnimated: true,
+        backgroundDismiss: true,
+        buttons: {
+          retry: {
+            text: 'Retry',
+            btnClass: 'btn-blue',
+            action: function () {
+              getDiscordUserInfo();
+            }
+          },
+          close: {
+            text: 'Close',
+            btnClass: 'btn-default'
+          }
+        }
+      });
+    }
+  }
+}
+
+async function sendDiscordMessageUpdate() {
+  if (window.isDiscord && !window.gameSesh.discordSent) {
+    const response = await fetch('/share', {
+      method: 'POST',
+      body: JSON.stringify({
+        mode: window.game.mode,
+        channelId: window.discordSdk.channelId,
+        userId: window.discordUser.id,
+        hiddenMode: window.gameSesh.hideBlanks,
+        cardId: window.mtgCard.id,
+        cardArtUrl: window.mtgCard.image_uris ? window.mtgCard.image_uris.art_crop : (window.mtgCard.card_faces ? window.mtgCard.card_faces[0].image_uris.art_crop : ''),
+        lives: window.gameSesh.tlv - window.gameSesh.wrongGuess.length,
+        guessProgress: window.gameSesh.guessProgress
+      })
+    });
+    window.gameSesh.discordSent = true;
+    setStorage('daily', JSON.stringify(window.gameSesh));
+  }
+}
+
+async function getDiscordLaunchConfig() {
+  if (window.isDiscord) {
+    if (!window.discordUser) {
+      console.error("No Discord user info found, cannot get launch config");
+      return;
+    }
+    const { channelId } = window.discordSdk;
+    const userId = window.discordUser.id;
+    await sleep(1000);
+    const res = await fetch(`/api/config?channelId=${channelId}&userId=${userId}`);
+    const intent = await res.json();
+    console.log("Launch intent received from backend:", intent);
+
+    if (intent.mode === 'daily') {
+      console.log("Launched with intent for Daily Befuddle");
+      return 'daily';
+    } else if (intent.mode === 'free' && intent.cardId) {
+      console.log("Launched with intent for Free Befuddle, card ID:", intent.cardId);
+      window.discordCardId = intent.cardId;
+      return 'cardId';
+    } else {
+      console.log("Loading standard Befuddle...");
+    }
+  }
 }
 
 //start script
@@ -2410,8 +2642,10 @@ $(document).ready(async function () {
   } else if (getParameterByName('daily')) {
     console.log('Daily link detected');
     startDaily();
+  } else if (discordLaunchParam === 'daily') {
+    console.log('Discord daily trigger detected');
+    startDaily();
   } else {
-    await sleep(800);
     toggleLoadingScreen(false);
     mainMenuDisplay();
   }
