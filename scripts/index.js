@@ -19,6 +19,67 @@ function removeStorage(key) {
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Retry utility with exponential backoff for Discord API calls
+async function fetchWithRetry(url, options = {}, maxRetries = 3, baseDelayMs = 1000) {
+  let lastError;
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`API call attempt ${attempt + 1}/${maxRetries + 1} to ${url}`);
+      
+      const response = await fetch(url, {
+        ...options,
+        // Add timeout to prevent hanging requests
+        signal: AbortSignal.timeout(30000) // 30 second timeout
+      });
+      
+      // Handle rate limiting (HTTP 429)
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After');
+        const delayMs = retryAfter ? parseInt(retryAfter) * 1000 : baseDelayMs * Math.pow(2, attempt);
+        console.warn(`Rate limited, waiting ${delayMs}ms before retry...`);
+        if (attempt < maxRetries) {
+          await sleep(delayMs);
+          continue;
+        }
+      }
+      
+      // Handle server errors (5xx)
+      if (response.status >= 500 && response.status < 600) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+      
+      // Handle client errors (4xx) - don't retry these except for rate limiting
+      if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+        throw new Error(`Client error: ${response.status}`);
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return response;
+      
+    } catch (error) {
+      lastError = error;
+      console.warn(`API call failed (attempt ${attempt + 1}):`, error.message);
+      
+      // Don't retry on client errors (except timeout) or if we've reached max retries
+      if (attempt === maxRetries || 
+          (error.name !== 'TimeoutError' && error.message.includes('Client error'))) {
+        break;
+      }
+      
+      // Calculate delay with exponential backoff + jitter
+      const delayMs = baseDelayMs * Math.pow(2, attempt) + Math.random() * 1000;
+      console.log(`Retrying in ${delayMs.toFixed(0)}ms...`);
+      await sleep(delayMs);
+    }
+  }
+  
+  throw lastError || new Error('Max retries exceeded');
+}
+
 // Migrate from js-cookie to localStorage (run once per user)
 function migrateCookiesToLocalStorage() {
   if (localStorage.getItem('__cookiesMigrated')) return;
@@ -33,6 +94,11 @@ function migrateCookiesToLocalStorage() {
     }
     localStorage.setItem('__cookiesMigrated', 'true');
   }
+  Cookies.remove('befuddle');
+  Cookies.remove('daily');
+  Cookies.remove('free');
+  Cookies.remove('dailyStats');
+  Cookies.remove('freeStats');
 }
 
 migrateCookiesToLocalStorage();
@@ -118,19 +184,33 @@ function requestCard(id) {
     if (window.isDiscord) {
       fetchUrl = getDiscordProxiedUrl(fetchUrl);
     }
-    fetch(fetchUrl, {
+    fetchWithRetry(fetchUrl, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(bodydata),
-    }).then(response => response.json())
+    }, 3, 1000)
+      .then(response => response.json())
       .then(data => {
-        window.cardQueue.push(...data['data']);
-      }).catch(error => {
-        console.error(error);
-        fetchError();
+        if (data && data.data && Array.isArray(data.data)) {
+          window.cardQueue.push(...data.data);
+        } else {
+          throw new Error('Invalid response format from Scryfall API');
+        }
+      })
+      .catch(error => {
+        console.error('Failed to fetch card collection:', error);
+        if (error.message.includes('Rate limited')) {
+          fetchError('Rate limited by Scryfall API. Please wait a moment and try again.');
+        } else if (error.message.includes('Server error')) {
+          fetchError('Scryfall servers are currently experiencing issues. Please try again later.');
+        } else if (error.name === 'TimeoutError') {
+          fetchError('Request timed out. Please check your connection and try again.');
+        } else {
+          fetchError('Couldn\'t load card images and information. Check your connection and/or Scryfall API status.');
+        }
       });
   }
 
@@ -139,19 +219,34 @@ function requestCard(id) {
     if (window.isDiscord) {
       fetchUrl = getDiscordProxiedUrl(fetchUrl);
     }
-    fetch(fetchUrl)
+    fetchWithRetry(fetchUrl, {}, 3, 1000)
       .then(response => response.json())
-      .then(data => loadCard(data))
+      .then(data => {
+        if (data && data.id) {
+          loadCard(data);
+        } else {
+          throw new Error('Invalid card data received from Scryfall API');
+        }
+      })
       .catch(error => {
-        console.error(error);
-        fetchError();
+        console.error('Failed to fetch single card:', error);
+        if (error.message.includes('Rate limited')) {
+          fetchError('Rate limited by Scryfall API. Please wait a moment and try again.');
+        } else if (error.message.includes('Server error')) {
+          fetchError('Scryfall servers are currently experiencing issues. Please try again later.');
+        } else if (error.name === 'TimeoutError') {
+          fetchError('Request timed out. Please check your connection and try again.');
+        } else {
+          fetchError('Couldn\'t load the requested card. It may not exist or there may be a connection issue.');
+        }
       });
   }
 
-  function fetchError() {
+  function fetchError(customMessage) {
+    const message = customMessage || 'Couldn\'t load card images and information. Check your connection and/or Scryfall API status.';
     $.dialog({
       title: '<span class=\"modalTitle\">Error</span>',
-      content: '<span class=\"modalText\">Couldn\'t load card images and information. Check your connection and/or Scryfall API status.</span>',
+      content: `<span class=\"modalText\">${message}</span>`,
       type: 'red',
       theme: window.game.theme,
       animation: 'top',
@@ -1347,7 +1442,7 @@ function menuModal() {
   function clearConfirm() {
     $.confirm({
       title: '<span class=\"modalTitle\">Clear Data</span>',
-      content: '<span class=\"helpText\">This will clear all cookies, delete all statistics and all unfinished Befuddles. Are you sure?</span>',
+      content: '<span class=\"helpText\">This will clear all cookies, local storage files, delete all statistics and all unfinished Befuddles. Are you sure?</span>',
       theme: 'dark red',
       animation: 'top',
       closeAnimation: 'top',
@@ -1361,11 +1456,11 @@ function menuModal() {
           text: 'Clear Data',
           btnClass: 'btn-red',
           action: function () {
-            Cookies.remove('befuddle');
-            Cookies.remove('daily');
-            Cookies.remove('free');
-            Cookies.remove('dailyStats');
-            Cookies.remove('freeStats');
+            removeStorage('befuddle');
+            removeStorage('daily');
+            removeStorage('free');
+            removeStorage('dailyStats');
+            removeStorage('freeStats');
           }
         },
         cancel: {
@@ -1712,7 +1807,7 @@ function continueGameModal() {
         btnClass: 'btn-purple',
         action: function () {
           window.gameSesh.end = true;
-          Cookies.remove('free');
+          removeStorage('free');
           loadGame();
         }
       },
@@ -1931,11 +2026,11 @@ function loadTimer() {
             window.dailyModal.close();
             window.dailyModal = null;
           }
-          Cookies.remove('daily');
+          removeStorage('daily');
           window.gameSesh.end = true;
           loadGame();
         } else {
-          Cookies.remove('daily');
+          removeStorage('daily');
         }
         loadTimer();
         return;
@@ -2186,12 +2281,12 @@ function lineChart(ctx, data, title) {
  * Show or Hide the loading screen
  */
 function toggleLoadingScreen(isVisible) {
-    const screen = document.getElementById('loading-screen');
-    if (isVisible) {
-        screen.classList.remove('hidden');
-    } else {
-        screen.classList.add('hidden');
-    }
+  const screen = document.getElementById('loading-screen');
+  if (isVisible) {
+    screen.classList.remove('hidden');
+  } else {
+    screen.classList.add('hidden');
+  }
 }
 
 //sets the theme for the site
@@ -2317,7 +2412,6 @@ async function initializeDiscordApp() {
 
   if (window.discordSdk && hasDiscordParam) {
     console.log("Running inside Discord Activity");
-    window.isDiscord = true;
 
     //convert symbol urls
     Object.keys(window.mtgSymbols).forEach(key => {
@@ -2330,7 +2424,7 @@ async function initializeDiscordApp() {
     }
 
     try {
-      await discordSdk.ready();
+      await window.discordSdk.ready();
       console.log("Discord Handshake Complete!");
       // Proceed with Discord-specific features (Auth, etc.)
 
@@ -2346,8 +2440,27 @@ async function initializeDiscordApp() {
       console.error("Discord SDK failed to ready:", err);
     }
   } else {
-    console.log("Running in Standard Web Browser");
-    window.isDiscord = false;
+    console.error("Discord SDK not detected or missing URL parameters");
+    $.dialog({
+      title: '<span class="modalTitle">Error</span>',
+      content: '<span class="modalText">Discord SDK not detected, some features may not work correctly. You might want to restart the activity.</span>',
+      type: 'red',
+      theme: window.game.theme,
+      animation: 'top',
+      closeAnimation: 'top',
+      animateFromElement: false,
+      boxWidth: 'min(400px, 80%)',
+      draggable: false,
+      useBootstrap: false,
+      typeAnimated: true,
+      backgroundDismiss: true,
+      buttons: {
+        close: {
+          text: 'Close',
+          btnClass: 'btn-default'
+        }
+      }
+    });
   }
 
 }
@@ -2355,7 +2468,7 @@ async function initializeDiscordApp() {
 /**
  * This is to get the user's Discord info if they're playing in the Discord Activity
  */
-async function getDiscordUserInfo() {
+async function getDiscordUserInfo(retryCount = 0) {
   console.log("Attempting to get Discord user info...");
   if (window.isDiscord) {
     try {
@@ -2366,27 +2479,52 @@ async function getDiscordUserInfo() {
         prompt: "none"
       });
 
-      const response = await fetch('/api/token', {
+      const response = await fetchWithRetry('/api/token', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ code }),
-      });
+      }, 2, 2000); // 2 retries with 2s base delay for auth calls
+      
+      if (!response.ok) {
+        throw new Error(`Token exchange failed: ${response.status}`);
+      }
+      
       const data = await response.json();
+      if (!data.access_token) {
+        throw new Error('No access token received from Discord API');
+      }
+      
       const token = data.access_token;
       const auth = await window.discordSdk.commands.authenticate({
         access_token: token,
       });
+      
       if (!auth.user || !auth.user.id || !auth.user.username) {
-        throw new Error('Missing Discord user info');
+        throw new Error('Missing Discord user info in authentication response');
       }
+      
       console.log("User ID:", auth.user.id);
       console.log("Username:", auth.user.username);
       window.discordUser = auth.user;
       localStorage.setItem('discordUser', JSON.stringify(auth.user));
+      
     } catch (err) {
       console.error("Discord User Authorization Failed:", err);
+      
+      let errorMessage = 'Discord User Authorization Failed, some features may not work correctly.';
+      if (err.message.includes('Rate limited')) {
+        errorMessage = 'Discord API rate limit exceeded. Please wait a moment before trying again.';
+      } else if (err.message.includes('Server error')) {
+        errorMessage = 'Discord servers are experiencing issues. Please try again later.';
+      } else if (err.name === 'TimeoutError') {
+        errorMessage = 'Discord API request timed out. Please check your connection and try again.';
+      }
+      
       $.dialog({
-        title: '<span class="modalTitle">Error</span>',
-        content: '<span class="modalText">Discord User Authorization Failed, some features may not work correctly.</span>',
+        title: '<span class="modalTitle">Discord Authorization Error</span>',
+        content: `<span class="modalText">${errorMessage}</span>`,
         type: 'red',
         theme: window.game.theme,
         animation: 'top',
@@ -2399,10 +2537,15 @@ async function getDiscordUserInfo() {
         backgroundDismiss: true,
         buttons: {
           retry: {
-            text: 'Retry',
+            text: retryCount >= 2 ? 'Final Retry' : 'Retry',
             btnClass: 'btn-blue',
             action: function () {
-              getDiscordUserInfo();
+              if (retryCount < 2) {
+                // Wait a bit before retrying
+                setTimeout(() => getDiscordUserInfo(retryCount + 1), 2000 * Math.pow(2, retryCount));
+              } else {
+                getDiscordUserInfo(0); // Reset retry count on manual retry
+              }
             }
           },
           close: {
@@ -2417,9 +2560,16 @@ async function getDiscordUserInfo() {
 
 async function sendDiscordMessageUpdate() {
   if (window.isDiscord && !window.gameSesh.discordSent) {
-    const response = await fetch('/share', {
-      method: 'POST',
-      body: JSON.stringify({
+    try {
+      if (!window.discordUser || !window.discordUser.id) {
+        throw new Error('No Discord user info available for message update');
+      }
+      
+      if (!window.discordSdk || !window.discordSdk.channelId) {
+        throw new Error('No Discord channel info available for message update');
+      }
+      
+      const payload = {
         mode: window.game.mode,
         channelId: window.discordSdk.channelId,
         userId: window.discordUser.id,
@@ -2428,42 +2578,109 @@ async function sendDiscordMessageUpdate() {
         cardArtUrl: window.mtgCard.image_uris ? window.mtgCard.image_uris.art_crop : (window.mtgCard.card_faces ? window.mtgCard.card_faces[0].image_uris.art_crop : ''),
         lives: window.gameSesh.tlv - window.gameSesh.wrongGuess.length,
         guessProgress: window.gameSesh.guessProgress
-      })
-    });
-    window.gameSesh.discordSent = true;
-    setStorage('daily', JSON.stringify(window.gameSesh));
+      };
+      
+      const response = await fetchWithRetry('/share', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      }, 3, 1500); // 3 retries with 1.5s base delay
+      
+      if (response.ok) {
+        window.gameSesh.discordSent = true;
+        setStorage('daily', JSON.stringify(window.gameSesh));
+        console.log('Discord message update sent successfully');
+      } else {
+        throw new Error(`Discord message update failed: ${response.status}`);
+      }
+      
+    } catch (error) {
+      console.error('Failed to send Discord message update:', error);
+      
+      // Don't show user dialogs for message updates since they're not critical
+      // Just log the error and continue - the game can still function
+      if (error.message.includes('Rate limited')) {
+        console.warn('Discord message update rate limited - will try again later');
+        // Don't mark as sent so it can be retried
+      } else if (error.name === 'TimeoutError') {
+        console.warn('Discord message update timed out - will try again later');
+      } else {
+        console.error('Discord message update failed permanently:', error.message);
+        // Mark as sent to prevent endless retries for permanent failures
+        window.gameSesh.discordSent = true;
+        setStorage('daily', JSON.stringify(window.gameSesh));
+      }
+    }
   }
 }
 
 async function getDiscordLaunchConfig() {
   if (window.isDiscord) {
-    if (!window.discordUser) {
-      console.error("No Discord user info found, cannot get launch config");
-      return;
-    }
-    const { channelId } = window.discordSdk;
-    const userId = window.discordUser.id;
-    await sleep(1000);
-    const res = await fetch(`/api/config?channelId=${channelId}&userId=${userId}`);
-    const intent = await res.json();
-    console.log("Launch intent received from backend:", intent);
+    try {
+      if (!window.discordUser) {
+        throw new Error("No Discord user info found, cannot get launch config");
+      }
+      
+      if (!window.discordSdk || !window.discordSdk.channelId) {
+        throw new Error("No Discord channel info found, cannot get launch config");
+      }
+      
+      const { channelId } = window.discordSdk;
+      const userId = window.discordUser.id;
+      
+      const res = await fetchWithRetry(`/api/config?channelId=${encodeURIComponent(channelId)}&userId=${encodeURIComponent(userId)}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      }, 2, 1000); // 2 retries with 1s base delay for config calls
+      
+      if (!res.ok) {
+        throw new Error(`Failed to fetch launch config: ${res.status}`);
+      }
+      
+      const intent = await res.json();
+      if (!intent || typeof intent !== 'object') {
+        throw new Error('Invalid launch config response format');
+      }
+      
+      console.log("Launch intent received from backend:", intent);
 
-    if (intent.mode === 'daily') {
-      console.log("Launched with intent for Daily Befuddle");
-      return 'daily';
-    } else if (intent.mode === 'free' && intent.cardId) {
-      console.log("Launched with intent for Free Befuddle, card ID:", intent.cardId);
-      window.discordCardId = intent.cardId;
-      return 'cardId';
-    } else {
-      console.log("Loading standard Befuddle...");
+      if (intent.mode === 'daily') {
+        console.log("Launched with intent for Daily Befuddle");
+        return 'daily';
+      } else if (intent.mode === 'free' && intent.cardId) {
+        console.log("Launched with intent for Free Befuddle, card ID:", intent.cardId);
+        window.discordCardId = intent.cardId;
+        return 'cardId';
+      } else {
+        console.log("Loading standard Befuddle...");
+        return null;
+      }
+      
+    } catch (error) {
+      console.error('Failed to get Discord launch config:', error);
+      
+      // For launch config failures, we can gracefully degrade to standard mode
+      if (error.message.includes('Rate limited')) {
+        console.warn('Discord API rate limited while getting launch config - using standard mode');
+      } else if (error.name === 'TimeoutError') {
+        console.warn('Discord launch config request timed out - using standard mode');
+      } else {
+        console.warn('Discord launch config failed - using standard mode:', error.message);
+      }
+      
+      // Return null to indicate standard mode should be used
+      return null;
     }
   }
 }
 
 //start script
 $(document).ready(async function () {
-  console.log('Befuddle version: ' + befuddleAppVersion);
+  console.log(`Befuddle version: ${window.isDiscord ? 'DISCORD' : 'WEB'} ${befuddleAppVersion}`);
   console.log('https://tinyurl.com/specialcardforbefuddle');
 
   window.displayKeyboard = {};
@@ -2532,7 +2749,6 @@ $(document).ready(async function () {
   });
   window.accentedChars = new Set(Object.keys(window.reverseAccentMap));
 
-  window.isDiscord = false;
 
   for (var i = 0; i < 25; i++) {
     window.stats.free.wr[0].push([0, 0]);
@@ -2587,7 +2803,10 @@ $(document).ready(async function () {
       window.stats.daily = JSON.parse(getStorage('dailyStats'));
     setTheme();
   }
-  await initializeDiscordApp();
+
+  if (window.isDiscord) {
+    await initializeDiscordApp();
+  }
 
   //setup onclick for top nav buttons
   document.getElementById('stats-button').addEventListener('click', function () {
@@ -2636,6 +2855,8 @@ $(document).ready(async function () {
   window.game.mode = '';
 
   //get Discord activity launch configs
+
+  await sleep(1000);
   let discordLaunchParam = await getDiscordLaunchConfig();
 
   //specific link to card
