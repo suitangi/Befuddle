@@ -8,11 +8,20 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 © Ignatius Liu, 2025
 
 # Updating Befuddle
-Run `node ./maintenance/update.js` from the root directory of the repo. The script accepts the following flags:
-- `-nd` or `-nodownload`: Skips downloading the bulk data from Scryfall
-- `-daily`: Adds 30 days to the Daily mode
 
-Then commit/push the changes.
+## Version Bump
+Before deploying changes, run `node ./maintenance/bump-version.js` from the root directory. This script will:
+- Update `scripts/index.js` line 3 with today's date in yyyy.mm.dd format
+- Update `index.html` lines 64, 65, and 67 with the new version number in `?v=yyyy.mm.dd` format
+
+This ensures browser caches are cleared when new versions are deployed.
+
+## Content Update
+Run `node ./maintenance/update.js` from the root directory of the repo. The script accepts the following flags:
+- `-nd` or `-nodownload`: Skips downloading of bulk data from Scryfall
+- `-daily`: Adds 30 days to Daily mode
+
+Then commit/push changes.
 
 # Todo:
 
@@ -30,7 +39,7 @@ Then commit/push the changes.
 -   Global stats
 
 # Special Thanks
--   For beta testing and for helping conceptualize the idea, the one an only [G-Jayakar](https://github.com/G-Jayakar).
+-   For beta testing and for helping conceptualize the idea, the one and only [G-Jayakar](https://github.com/G-Jayakar).
 -   Beta testing and pro bug finder Ksax.
 
 # Disclaimer and Credits
@@ -41,6 +50,7 @@ Portions of Befuddle are unofficial Fan Content permitted under the Wizards of t
 
 # Changelog
 ```
+3/14/2026: Added Privacy Policy and Terms of Service pages
 3/7/2026: Card update; new dailies, version number display on loading screen
 2/13/2026: New loading screen, Discord integrations
 1/12/2026: Card update; new dailies; fixed share URL bug

@@ -1482,14 +1482,18 @@ function menuModal() {
       '<div id="creditText"class="expandiv collapsediv">• Card Data: <a href="https://scryfall.com/" target="_blank">Scryfall</a>' +
       '<br>• Card Images: <a href="https://scryfall.com/" target="_blank">Scryfall</a>' +
       '<br>• Font: <a href="https://company.wizards.com/en" target="_blank">Wizards of the Coast</a><br><br></div>' +
-      '<div class="hr"></div><div class=\"modalText\" id="disclaimer">Disclaimer  <span id="disclaimerExpand" class="material-symbols-outlined"> expand_more </span></div>' +
+      '<div class="hr"></div><div class="modalText" id="disclaimer">Disclaimer  <span id="disclaimerExpand" class="material-symbols-outlined"> expand_more </span></div>' +
       '<div id="disclaimerText" class="expandiv collapsediv">Portions of Befuddle are unofficial Fan Content permitted under the <a href="https://company.wizards.com/en/legal/fancontentpolicy" target="_blank">Wizards of the Coast Fan Content Policy</a>. ' +
       'The literal and graphical information presented on this site about Magic: The Gathering, including card images, the mana symbols, is copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. Befuddle is not produced by, endorsed by, supported by, or affiliated with Wizards of the Coast.<br><br></div>' +
       '<div class="hr"></div>' +
       '<div class="helpText" style="text-align: center;line-height:1.8;">Developed with <span id="easterEggHeart" class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;"> favorite </span> by Suitangi' +
-      '<br><a><span id="rab">Report a Bug</span></a>' +
       '<br><a href="https://twitter.com/BefuddleMTG" target="_blank"><span>Twitter</span></a>' +
-      '<br><a><span id="bmad">Buy me a Drink</span></a></div>',
+      '<br><a><span id="rab">Report a Bug</span></a>' +
+      '<br><a><span id="bmad">Buy me a Drink</span></a></div>' +
+      '<br><div class="hr"></div>' +
+      '<div class="helpText" style="text-align: center;line-height:1.8;">' +
+      '<a href="../privacy-policy/" target="_blank"><span>Privacy Policy</span></a>' +
+      '<br><a href="../ToS/" target="_blank"><span>Terms of Service</span></a></div>',
     theme: window.game.theme,
     animation: 'left',
     closeAnimation: 'left',
