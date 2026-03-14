@@ -1,11 +1,9 @@
 # Befuddle
 A Magic: The Gathering card art letter guessing game similar to Hangman. With daily new puzzles and a free play mode.
 
-## https://befuddle.xyz/
+### ![Icon](./icons/favicon-16x16.png) https://befuddle.xyz/
 
-[![Page Deployment](https://github.com/suitangi/Befuddle/actions/workflows/static.yml/badge.svg)](https://github.com/suitangi/Befuddle/actions/workflows/static.yml)
-
-© Ignatius Liu, 2025
+© Ignatius Liu, 2026
 
 # Updating Befuddle
 
