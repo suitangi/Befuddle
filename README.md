@@ -48,6 +48,7 @@ Portions of Befuddle are unofficial Fan Content permitted under the Wizards of t
 
 # Changelog
 ```
+3/15/2026: Fixed a obscure but causes infinite-loading bug
 3/14/2026: Added Privacy Policy and Terms of Service pages
 3/7/2026: Card update; new dailies, version number display on loading screen
 2/13/2026: New loading screen, Discord integrations
