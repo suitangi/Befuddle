@@ -908,7 +908,7 @@ body {
   height: 0px;
 }
 
-#credits {
+#credits, #disclaimer, #legal {
   font-family: 'Beleren Bold';
   font-size: 18px;
   cursor: pointer;
@@ -921,35 +921,12 @@ body {
   transform: rotate(-180deg);
 }
 
-#creditText {
+#creditText, #disclaimerText, #legalText {
   font-family: 'Roboto Mono';
   font-size: 13px;
 }
 
-#creditExpand {
-  font-size: 18px;
-  position: relative;
-  transition: transform 0.5s;
-  transition-timing-function: ease-out;
-  top: 3px;
-}
-
-#disclaimer {
-  font-family: 'Beleren Bold';
-  font-size: 18px;
-  cursor: pointer;
-  line-height: 40px;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  -webkit-tap-highlight-color: transparent;
-}
-
-#disclaimerText {
-  font-family: 'Roboto Mono';
-  font-size: 11px;
-  text-align: justify;
-}
-
-#disclaimerExpand {
+#creditExpand, #disclaimerExpand, #legalExpand {
   font-size: 18px;
   position: relative;
   transition: transform 0.5s;
