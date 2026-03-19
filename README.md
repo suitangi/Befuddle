@@ -3,6 +3,8 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 ### ![Icon](./icons/favicon-16x16.png) https://befuddle.xyz/
 
+![Screenshot](./discord-assets/screenshot1.png)
+
 © Ignatius Liu, 2026
 
 # Updating Befuddle
