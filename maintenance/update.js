@@ -7,21 +7,25 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 const url = require('url');
+const zlib = require('zlib');
 const DAILY_CARDS = 50;
 
-function deleteCardsJson(filename) {
-  console.log("Deleting " + filename + "...")
-  if (!fs.existsSync(filename)) {
-    getBulkData();
-    return;
-  }
-  fs.unlink(filename, (err) => {
-    if (err) {
-      throw err;
+// Bulk data is now served as a gzipped JSONL file (.jsonl.gz). Each line in the
+// uncompressed file is its own JSON object, with no wrapping array. We download
+// the .gz to disk and un-gzip it ourselves (it is not transfer compression).
+const BULK_GZ = './ignore/mtgCards.jsonl.gz';
+const BULK_JSONL = './ignore/mtgCards.jsonl';
+
+function deleteCardsJson() {
+  // Clean up both the gzipped archive and the unpacked JSONL from prior runs.
+  [BULK_GZ, BULK_JSONL].forEach((filename) => {
+    if (fs.existsSync(filename)) {
+      console.log("Deleting " + filename + "...");
+      fs.unlinkSync(filename);
+      console.log("Deleted " + filename + " successfully.");
     }
-    console.log("Deleted " + filename + " successfully.");
-    getBulkData();
   });
+  getBulkData();
 }
 
 function getBulkData() {
@@ -31,7 +35,7 @@ function getBulkData() {
     host: 'api.scryfall.com',
     path: '/bulk-data',
     headers: {
-      'User-Agent': 'BefuddleApp/24.7.29',
+      'User-Agent': 'BefuddleApp/24.8.11',
       'Accept': 'application/json;q=0.9,*/*;q=0.8'
     }
   }
@@ -47,27 +51,29 @@ function getBulkData() {
 
     // The whole response has been received. Print out the result.
     resp.on('end', () => {
-      // console.log(data);
-      console.log("Downloading from: " + JSON.parse(data)['data'][1]['download_uri']);
-      let url = new URL(JSON.parse(data)['data'][1]['download_uri']);
+      // Bulk files are now served as gzipped JSONL via jsonl_download_uri.
+      // The old download_uri (JSON) has been retired.
+      let bulkEntry = JSON.parse(data)['data'][1];
+      console.log("Downloading from: " + bulkEntry['jsonl_download_uri']);
+      let url = new URL(bulkEntry['jsonl_download_uri']);
 
       let dw_option = {
         host: url.hostname,
         path: url.pathname,
         headers: {
-          'User-Agent': 'BefuddleApp/24.7.29',
+          'User-Agent': 'BefuddleApp/24.8.11',
           'Accept': 'application/json;q=0.9,*/*;q=0.8'
         }
       }
 
       https.get(dw_option, (res) => {
-        const path = './ignore/mtgCards.json';
-        const filePath = fs.createWriteStream(path);
+        // Save the raw .jsonl.gz archive first; we un-gzip it on disk next.
+        const filePath = fs.createWriteStream(BULK_GZ);
         res.pipe(filePath);
         filePath.on('finish', () => {
           filePath.close();
-          console.log('Bulk Data Download Completed');
-          start();
+          console.log('Bulk Data Download Completed (.jsonl.gz)');
+          gunzipBulkData();
         })
       })
     });
@@ -76,6 +82,32 @@ function getBulkData() {
     console.log("URI Error: " + err.message);
     throw (err);
   });
+}
+
+function gunzipBulkData() {
+  console.log("Un-gzipping " + BULK_GZ + " ...");
+  fs.createReadStream(BULK_GZ)
+    .pipe(zlib.createGunzip())
+    .pipe(fs.createWriteStream(BULK_JSONL))
+    .on('finish', () => {
+      console.log('  Decompressed to ' + BULK_JSONL);
+      start();
+    })
+    .on('error', (err) => {
+      console.log("Gunzip Error: " + err.message);
+      throw err;
+    });
+}
+
+// JSONL: each line is a standalone JSON object (no wrapping array). Read the
+// file line-by-line and parse each line into an array element so the rest of
+// the script can keep treating it like the old bulk JSON array.
+function loadCardsJsonl() {
+  console.log("Loading " + BULK_JSONL + " ...");
+  const content = fs.readFileSync(BULK_JSONL, 'utf8');
+  return content.split('\n')
+    .filter((line) => line.trim() !== '')
+    .map((line) => JSON.parse(line));
 }
 
 function getDateNumber() {
@@ -92,7 +124,7 @@ function arrayIntersect(a, b) {
 
 function start() {
 
-  let d = require('../ignore/mtgCards.json');
+  let d = loadCardsJsonl();
   let historical = require('../data/historical.json');
 
   const setTypeExclude = ['memorabilia', 'token'];
@@ -260,5 +292,5 @@ if (process.argv.includes('-nd') || process.argv.includes('-nodownload')) {
   console.log('No download mode selected');
   start();
 } else {
-  deleteCardsJson("./ignore/mtgCards.json");
+  deleteCardsJson();
 }

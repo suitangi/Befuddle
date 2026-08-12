@@ -7,6 +7,24 @@ A Magic: The Gathering card art letter guessing game similar to Hangman. With da
 
 © Ignatius Liu, 2026
 
+# Testing locally
+
+The site fetches local JSON files (`dailyList.json`, `cardList.json`), so opening `index.html` directly via `file://` won't work — browsers block those requests. Serve the repo root with a static server instead.
+
+The quickest option uses [`serve`](https://github.com/vercel/serve) via `npx`. No global install needed; it downloads and runs on the fly:
+
+```bash
+npx serve .
+```
+
+Then open the URL it prints (default http://localhost:3000). To use a specific port:
+
+```bash
+npx serve -l 8123 .
+```
+
+> Alternatives: `npx http-server .` or Python's `python -m http.server`.
+
 # Updating Befuddle
 
 ## Version Bump
